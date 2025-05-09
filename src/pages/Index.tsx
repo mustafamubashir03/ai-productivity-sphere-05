@@ -1,9 +1,15 @@
 
-// Redirecting to HomePage component
-import HomePage from "./HomePage";
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
+import App from "../App";
 
 const Index = () => {
-  return <HomePage />;
+  return (
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
 };
 
 export default Index;

@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-8">
           {/* About section */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">AI Productivity Hub</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">AI Productivity Hub</h3>
             <p className="text-gray-300 text-sm">
               Your trusted resource for discovering the best AI tools to enhance productivity, 
               streamline workflows, and boost efficiency.
@@ -32,7 +32,7 @@ const Footer = () => {
           
           {/* Quick links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-gray-300 hover:text-primary text-sm transition-colors">
@@ -64,7 +64,7 @@ const Footer = () => {
           
           {/* Legal links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Legal</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">Legal</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/privacy-policy" className="text-gray-300 hover:text-primary text-sm transition-colors">

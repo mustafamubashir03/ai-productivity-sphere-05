@@ -56,7 +56,7 @@ const ToolCard = ({ tool }: ToolCardProps) => {
         </div>
         <div>
           <h3 className="font-semibold text-lg dark:text-white">{tool.name}</h3>
-          <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary dark:bg-primary/20 mt-1">
+          <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground mt-1">
             {getCategoryName(tool.category)}
           </span>
         </div>

@@ -131,7 +131,7 @@ const ToolsPage = () => {
                     <PaginationItem>
                       <PaginationPrevious 
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={`${currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} dark:text-gray-300 dark:hover:text-white`}
                       />
                     </PaginationItem>
                     
@@ -140,7 +140,7 @@ const ToolsPage = () => {
                         <PaginationLink
                           isActive={currentPage === i + 1}
                           onClick={() => setCurrentPage(i + 1)}
-                          className="cursor-pointer"
+                          className="cursor-pointer dark:text-gray-300 dark:hover:text-white"
                         >
                           {i + 1}
                         </PaginationLink>
@@ -150,7 +150,7 @@ const ToolsPage = () => {
                     <PaginationItem>
                       <PaginationNext 
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={`${currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} dark:text-gray-300 dark:hover:text-white`}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -160,7 +160,7 @@ const ToolsPage = () => {
           </>
         ) : (
           <div className="text-center py-10">
-            <h3 className="text-xl font-medium mb-2 dark:text-white">No tools found</h3>
+            <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-white">No tools found</h3>
             <p className="text-gray-600 dark:text-gray-300">
               Try adjusting your search or filters to find what you're looking for.
             </p>

@@ -43,8 +43,8 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? "text-primary dark:text-white font-semibold"
-                      : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-white"
+                      ? "text-primary dark:text-primary-foreground font-semibold"
+                      : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground"
                   }`
                 }
               >
@@ -81,8 +81,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `block px-3 py-2 rounded-md text-base font-medium ${
                   isActive
-                    ? "text-primary dark:text-white font-semibold"
-                    : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-white"
+                    ? "text-primary dark:text-primary-foreground font-semibold"
+                    : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground"
                 }`
               }
               onClick={closeMenu}

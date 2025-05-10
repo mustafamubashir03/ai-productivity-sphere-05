@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -10,7 +9,7 @@ const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     if (slug) {
       const foundPost = getBlogPostBySlug(slug);
@@ -18,7 +17,7 @@ const BlogPostPage = () => {
       setLoading(false);
     }
   }, [slug]);
-  
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-10 flex justify-center items-center min-h-[60vh]">
@@ -26,7 +25,7 @@ const BlogPostPage = () => {
       </div>
     );
   }
-  
+
   if (!post) {
     return (
       <div className="container mx-auto px-4 py-10 text-center min-h-[60vh]">
@@ -38,7 +37,7 @@ const BlogPostPage = () => {
       </div>
     );
   }
-  
+
   return (
     <>
       <SEOHead 
@@ -53,7 +52,7 @@ const BlogPostPage = () => {
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
           </Link>
         </div>
-        
+
         {/* Featured Image */}
         <div className="mb-8">
           <img
@@ -62,24 +61,23 @@ const BlogPostPage = () => {
             className="w-full h-64 md:h-96 object-cover rounded-lg shadow"
           />
         </div>
-        
+
         {/* Post Header */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>
           <p className="text-gray-500">{post.date}</p>
         </div>
-        
-        {/* Post Content */}
+
+        {/* Post Content with styled HTML */}
         <div className="max-w-3xl mx-auto">
-          <div 
-            className="prose max-w-none prose-headings:text-gray-800 prose-a:text-primary"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
-          
+          <div className="prose prose-lg dark:prose-invert max-w-none prose-a:text-primary prose-img:rounded-lg prose-headings:scroll-mt-20">
+            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          </div>
+
           {/* Author Section */}
-          <div className="mt-10 pt-10 border-t border-gray-200">
+          <div className="mt-10 pt-10 border-t border-gray-200 dark:border-gray-700">
             <h3 className="font-semibold text-lg mb-2">About AI Productivity Hub</h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               AI Productivity Hub curates the best AI tools to help professionals enhance their workflow and productivity.
               Our team of experts reviews and tests hundreds of AI solutions to bring you reliable recommendations.
             </p>

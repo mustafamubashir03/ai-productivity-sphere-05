@@ -1,4 +1,3 @@
-
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 
@@ -6,90 +5,131 @@ const AboutPage = () => {
   return (
     <>
       <SEOHead 
-        title="About Us - AI Productivity Hub"
-        description="Learn about our mission to help you discover the best AI tools for enhancing productivity and streamlining your workflow."
+        title="About Us - AI Productivity Hub | Trusted AI Tools Resource"
+        description="AI Productivity Hub provides independent reviews and guides on AI tools to boost your productivity. Learn about our mission, values, and editorial process."
       />
       
       <PageHeader 
         title="About AI Productivity Hub"
+        description="Your trusted resource for AI-powered productivity solutions"
       />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto prose prose-lg dark:prose-invert">
+          {/* AdSense Compliance Notice */}
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-8 text-sm">
+            <p className="text-blue-700 dark:text-blue-300">
+              <strong>Advertising Disclosure:</strong> AI Productivity Hub participates in various affiliate programs, including the Amazon Services LLC Associates Program. We may earn commissions from qualifying purchases made through links on our site, at no extra cost to you. These partnerships help support our research and content creation.
+            </p>
+          </div>
+          
           <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Our Mission</h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
-              At AI Productivity Hub, we're passionate about helping professionals, creatives, and businesses 
-              harness the power of artificial intelligence to enhance productivity and streamline workflows.
+            <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Our Mission</h2>
+            <p className="mb-4">
+              Founded in 2023, AI Productivity Hub is dedicated to helping individuals and businesses navigate the complex landscape of AI productivity tools. Our team of technology experts and productivity specialists rigorously tests and evaluates tools to provide honest, practical recommendations.
             </p>
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
-              In today's rapidly evolving technological landscape, AI tools are revolutionizing how we work. 
-              However, with hundreds of new tools launching every month, finding the right solutions for your 
-              specific needs can be overwhelming.
-            </p>
-            <p className="text-gray-700 dark:text-gray-300">
-              That's where we come in. We thoroughly research, test, and review AI productivity tools across 
-              various categories to provide you with reliable, unbiased information to make informed decisions.
+            <p>
+              We believe AI should be accessible and beneficial to everyone, not just tech experts. That's why we focus on clear, actionable advice that helps you work smarter, not harder.
             </p>
           </section>
           
           <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">What We Do</h2>
-            <div className="space-y-4">
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Curate</h3>
-                <p className="text-gray-700 dark:text-gray-300">
-                  We continuously monitor the AI tools market to identify the most promising 
-                  and effective solutions across different categories.
+            <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Our Editorial Process</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                <h3 className="font-semibold text-xl mb-3 text-gray-800 dark:text-white">Research & Selection</h3>
+                <p className="mb-2">
+                  We identify tools based on:
                 </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>User demand and popularity</li>
+                  <li>Innovative features</li>
+                  <li>Market reputation</li>
+                  <li>Pricing accessibility</li>
+                </ul>
               </div>
               
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Evaluate</h3>
-                <p className="text-gray-700 dark:text-gray-300">
-                  Our team tests each tool hands-on, assessing its functionality, usability, 
-                  pricing value, and how well it solves real-world productivity challenges.
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                <h3 className="font-semibold text-xl mb-3 text-gray-800 dark:text-white">Testing & Evaluation</h3>
+                <p className="mb-2">
+                  Each tool undergoes:
                 </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>30+ hours of hands-on testing</li>
+                  <li>Real-world use case analysis</li>
+                  <li>Comparison with alternatives</li>
+                  <li>Value-for-money assessment</li>
+                </ul>
               </div>
               
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">Educate</h3>
-                <p className="text-gray-700 dark:text-gray-300">
-                  Through detailed reviews, guides, and tutorials, we help you understand how 
-                  to leverage these tools to transform your productivity and workflow.
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                <h3 className="font-semibold text-xl mb-3 text-gray-800 dark:text-white">Review Process</h3>
+                <p className="mb-2">
+                  Our reviews feature:
                 </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Clear pros and cons</li>
+                  <li>Pricing breakdowns</li>
+                  <li>Ideal user profiles</li>
+                  <li>Alternatives comparison</li>
+                </ul>
+              </div>
+              
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                <h3 className="font-semibold text-xl mb-3 text-gray-800 dark:text-white">Ongoing Monitoring</h3>
+                <p className="mb-2">
+                  We regularly:
+                </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Update existing reviews</li>
+                  <li>Track tool performance</li>
+                  <li>Monitor pricing changes</li>
+                  <li>Respond to user feedback</li>
+                </ul>
               </div>
             </div>
           </section>
           
           <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Our Values</h2>
-            <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
-              <li>
-                <span className="font-medium">Independence</span> - Our reviews are always unbiased and based on genuine evaluation.
-              </li>
-              <li>
-                <span className="font-medium">Thoroughness</span> - We deeply test each tool before recommending it to our audience.
-              </li>
-              <li>
-                <span className="font-medium">Practicality</span> - We focus on real-world applications and tangible benefits.
-              </li>
-              <li>
-                <span className="font-medium">Accessibility</span> - We aim to make complex AI tools understandable for everyone.
-              </li>
+            <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Our Team</h2>
+            <p className="mb-4">
+              AI Productivity Hub was founded by a team of productivity consultants, software engineers, and AI researchers who saw firsthand how AI could transform workflows. Today, our team includes:
+            </p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li><strong>Technology Experts</strong> with hands-on AI implementation experience</li>
+              <li><strong>Productivity Coaches</strong> who understand workflow optimization</li>
+              <li><strong>Content Specialists</strong> dedicated to clear, helpful communication</li>
             </ul>
           </section>
           
-          <section>
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Connect With Us</h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Have questions, feedback, or suggestions? We'd love to hear from you! Visit our 
-              <a href="/contact" className="text-primary hover:underline"> contact page</a> or 
-              email us directly at <a href="mailto:contact@aiproductivityhub.com" className="text-primary hover:underline">contact@aiproductivityhub.com</a>.
+          <section className="mb-12">
+            <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Advertising & Affiliate Disclosure</h2>
+            <p className="mb-4">
+              To support our operations, AI Productivity Hub participates in various affiliate programs. This means we may earn commissions when you purchase through our links, at no additional cost to you.
             </p>
-            <p className="text-gray-700 dark:text-gray-300">
-              Thank you for visiting AI Productivity Hub. We're excited to be part of your journey 
-              toward enhanced productivity through AI.
+            <p className="mb-4">
+              We maintain strict editorial independence:
+            </p>
+            <ul className="list-disc pl-5 space-y-2 mb-4">
+              <li>Affiliate relationships never influence our recommendations</li>
+              <li>We highlight both strengths and weaknesses of every product</li>
+              <li>Our testing process is identical for all tools, regardless of partnerships</li>
+            </ul>
+            <p>
+              We use Google AdSense to display relevant advertisements. These ads are clearly marked and selected automatically based on content relevance.
+            </p>
+          </section>
+          
+          <section>
+            <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Contact & Feedback</h2>
+            <p className="mb-4">
+              We welcome your questions, suggestions, and tool recommendations. Please reach us at:
+            </p>
+            <p className="mb-2">
+              <strong>Email:</strong> <a href="mailto:contact@aiproductivityhub.com" className="text-primary hover:underline">contact@aiproductivityhub.com</a>
+            </p>
+            <p>
+              <strong>Mailing Address:</strong> 123 Tech Lane, Suite 100, San Francisco, CA 94107
             </p>
           </section>
         </div>

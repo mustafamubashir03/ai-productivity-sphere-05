@@ -23,7 +23,7 @@ const BlogPage = () => {
           {blogPosts.map((post) => (
             <div 
               key={post.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden card-hover flex flex-col md:flex-row"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover flex flex-col md:flex-row"
             >
               <div className="md:w-1/3">
                 <img 
@@ -33,7 +33,7 @@ const BlogPage = () => {
                 />
               </div>
               <div className="md:w-2/3 p-6">
-                <h2 className="text-2xl font-semibold mb-2">
+                <h2 className="text-2xl font-semibold mb-2 text-gray-800 dark:text-white">
                   <Link 
                     to={`/blog/${post.slug}`} 
                     className="hover:text-primary transition-colors"
@@ -41,8 +41,8 @@ const BlogPage = () => {
                     {post.title}
                   </Link>
                 </h2>
-                <p className="text-sm text-gray-500 mb-3">{post.date}</p>
-                <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{post.date}</p>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">{post.excerpt}</p>
                 <Link 
                   to={`/blog/${post.slug}`} 
                   className="text-primary font-medium flex items-center hover:underline mt-auto"

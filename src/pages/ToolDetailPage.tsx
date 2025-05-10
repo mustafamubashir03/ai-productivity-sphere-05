@@ -22,7 +22,7 @@ const ToolDetailPage = () => {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-10 flex justify-center items-center min-h-[60vh]">
-        <p>Loading...</p>
+        <p className="dark:text-gray-300">Loading...</p>
       </div>
     );
   }
@@ -30,8 +30,8 @@ const ToolDetailPage = () => {
   if (!tool) {
     return (
       <div className="container mx-auto px-4 py-10 text-center min-h-[60vh]">
-        <h2 className="text-2xl font-bold mb-4">Tool Not Found</h2>
-        <p className="mb-6">The tool you're looking for doesn't exist or has been removed.</p>
+        <h2 className="text-2xl font-bold mb-4 dark:text-white">Tool Not Found</h2>
+        <p className="mb-6 dark:text-gray-300">The tool you're looking for doesn't exist or has been removed.</p>
         <Link to="/tools">
           <Button>Back to All Tools</Button>
         </Link>
@@ -58,44 +58,44 @@ const ToolDetailPage = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center">
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center">
                 <img
                   src={tool.logo}
                   alt={`${tool.name} logo`}
                   className="w-12 h-12 object-contain"
                 />
               </div>
-              <h1 className="text-3xl font-bold">{tool.name}</h1>
+              <h1 className="text-3xl font-bold dark:text-white">{tool.name}</h1>
             </div>
             
-            <div className="prose max-w-none">
-              <p className="text-lg mb-6">{tool.description}</p>
+            <div className="prose max-w-none dark:prose-invert">
+              <p className="text-lg mb-6 text-gray-700 dark:text-gray-300">{tool.description}</p>
               
               <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-3">Key Features</h2>
+                <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Key Features</h2>
                 <ul className="list-disc pl-5 space-y-1">
                   {tool.features.map((feature: string, index: number) => (
-                    <li key={index} className="text-gray-700">{feature}</li>
+                    <li key={index} className="text-gray-700 dark:text-gray-300">{feature}</li>
                   ))}
                 </ul>
               </div>
               
               <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-3">Use Cases</h2>
+                <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Use Cases</h2>
                 <ul className="list-disc pl-5 space-y-1">
                   {tool.useCases.map((useCase: string, index: number) => (
-                    <li key={index} className="text-gray-700">{useCase}</li>
+                    <li key={index} className="text-gray-700 dark:text-gray-300">{useCase}</li>
                   ))}
                 </ul>
               </div>
               
-              <div className="bg-gray-50 p-6 rounded-lg mb-8">
+              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-8">
                 <img
                   src="/placeholder.svg"
                   alt={`${tool.name} screenshot`}
                   className="w-full h-auto rounded-md shadow-sm mb-4"
                 />
-                <p className="text-sm text-gray-500 text-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                   {tool.name} interface screenshot
                 </p>
               </div>
@@ -104,11 +104,11 @@ const ToolDetailPage = () => {
           
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white shadow rounded-lg p-6 sticky top-20">
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 sticky top-20">
               {tool.pricing && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-2">Pricing</h3>
-                  <p className="text-gray-700">{tool.pricing}</p>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Pricing</h3>
+                  <p className="text-gray-700 dark:text-gray-300">{tool.pricing}</p>
                 </div>
               )}
               
@@ -123,8 +123,8 @@ const ToolDetailPage = () => {
                 </Button>
               </a>
               
-              <div className="mt-6 pt-6 border-t">
-                <h3 className="text-lg font-semibold mb-2">Category</h3>
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Category</h3>
                 <Link
                   to={`/tools/category/${tool.category}`}
                   className="text-primary hover:underline"

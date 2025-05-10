@@ -63,13 +63,13 @@ const ContactPage = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold mb-4">Send us a message</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Send us a message</h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Your Name <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -79,11 +79,12 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       placeholder="John Doe"
+                      className="dark:bg-gray-700 dark:border-gray-600"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Email Address <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -94,12 +95,13 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       placeholder="john@example.com"
+                      className="dark:bg-gray-700 dark:border-gray-600"
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Subject <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -109,11 +111,12 @@ const ContactPage = () => {
                     onChange={handleChange}
                     required
                     placeholder="How can we help you?"
+                    className="dark:bg-gray-700 dark:border-gray-600"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Message <span className="text-red-500">*</span>
                   </label>
                   <Textarea
@@ -124,6 +127,7 @@ const ContactPage = () => {
                     required
                     placeholder="Please describe your inquiry or feedback..."
                     rows={6}
+                    className="dark:bg-gray-700 dark:border-gray-600"
                   />
                 </div>
                 
@@ -139,14 +143,14 @@ const ContactPage = () => {
           </div>
           
           <div>
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <h2 className="text-xl font-bold mb-4">Contact Information</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+              <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Contact Information</h2>
               
               <div className="space-y-4">
                 <div className="flex items-start">
                   <Mail className="h-5 w-5 text-primary mr-3 mt-0.5" />
                   <div>
-                    <p className="font-medium">Email Us</p>
+                    <p className="font-medium text-gray-800 dark:text-white">Email Us</p>
                     <a 
                       href="mailto:contact@aiproductivityhub.com"
                       className="text-primary hover:underline"
@@ -159,9 +163,9 @@ const ContactPage = () => {
                 <div className="flex items-start">
                   <Phone className="h-5 w-5 text-primary mr-3 mt-0.5" />
                   <div>
-                    <p className="font-medium">Call Us</p>
-                    <p>+1 (555) 123-4567</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-gray-800 dark:text-white">Call Us</p>
+                    <p className="dark:text-gray-300">+1 (555) 123-4567</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       Monday-Friday, 9AM-5PM EST
                     </p>
                   </div>
@@ -169,15 +173,15 @@ const ContactPage = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold mb-4">Follow Us</h2>
-              <p className="text-gray-700 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Follow Us</h2>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
                 Stay updated with our latest tool reviews and productivity tips.
               </p>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-600 hover:text-primary">Twitter</a>
-                <a href="#" className="text-gray-600 hover:text-primary">LinkedIn</a>
-                <a href="#" className="text-gray-600 hover:text-primary">Facebook</a>
+                <a href="#" className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary">Twitter</a>
+                <a href="#" className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary">LinkedIn</a>
+                <a href="#" className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary">Facebook</a>
               </div>
             </div>
           </div>

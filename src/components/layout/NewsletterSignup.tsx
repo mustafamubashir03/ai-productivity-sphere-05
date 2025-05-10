@@ -26,9 +26,9 @@ const NewsletterSignup = () => {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-      <h3 className="text-lg font-semibold mb-3 dark:text-white">AI Tool Updates</h3>
+      <h3 className="text-lg font-semibold mb-3 dark:text-white">Stay Ahead with the Latest AI Tools</h3>
       <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-        Stay updated with the latest AI tools, use cases & guides.
+        Subscribe to receive top tool updates, guides, and reviews.
       </p>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="flex flex-col sm:flex-row gap-2">
@@ -43,7 +43,7 @@ const NewsletterSignup = () => {
           <Button 
             type="submit" 
             disabled={isSubmitting}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap hover:bg-primary/90 transition-colors"
           >
             {isSubmitting ? "Subscribing..." : "Subscribe"}
           </Button>

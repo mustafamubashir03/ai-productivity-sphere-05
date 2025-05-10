@@ -19,7 +19,7 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
       to={`/tools/category/${category.slug}`} 
       className="group bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 flex flex-col items-center text-center gap-3 card-hover"
     >
-      <div className="w-16 h-16 rounded-full bg-accent dark:bg-gray-700 flex items-center justify-center mb-2">
+      <div className="w-16 h-16 rounded-full bg-accent dark:bg-gray-700 flex items-center justify-center mb-2 transition-transform group-hover:scale-110 duration-300">
         <img
           src={category.icon}
           alt={category.name}

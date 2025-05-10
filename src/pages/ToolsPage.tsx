@@ -6,15 +6,19 @@ import PageHeader from "@/components/common/PageHeader";
 import ToolCard, { Tool } from "@/components/common/ToolCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Search } from "lucide-react";
 import { tools, getToolsByCategory } from "@/data/tools";
 import { categories } from "@/data/categories";
+
+const TOOLS_PER_PAGE = 9;
 
 const ToolsPage = () => {
   const { categorySlug } = useParams();
   const [filteredTools, setFilteredTools] = useState<Tool[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(categorySlug || null);
+  const [currentPage, setCurrentPage] = useState(1);
   
   // Find category by slug
   const category = categorySlug 
@@ -39,6 +43,7 @@ const ToolsPage = () => {
     }
     
     setFilteredTools(result);
+    setCurrentPage(1); // Reset pagination when filters change
   }, [searchQuery, activeCategory, categorySlug]);
   
   const handleSearch = (e: React.FormEvent) => {
@@ -49,6 +54,13 @@ const ToolsPage = () => {
   const handleCategoryClick = (slug: string) => {
     setActiveCategory(slug === activeCategory ? null : slug);
   };
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredTools.length / TOOLS_PER_PAGE);
+  const paginatedTools = filteredTools.slice(
+    (currentPage - 1) * TOOLS_PER_PAGE,
+    currentPage * TOOLS_PER_PAGE
+  );
   
   const title = category ? `${category.name}` : "All AI Tools";
   const description = category 
@@ -80,38 +92,72 @@ const ToolsPage = () => {
             </div>
           </form>
           
-          {!categorySlug && (
-            <div className="flex flex-wrap gap-2 justify-center">
-              {categories.map((cat) => (
-                <Button
-                  key={cat.id}
-                  variant={activeCategory === cat.slug ? "default" : "outline"}
-                  onClick={() => handleCategoryClick(cat.slug)}
-                  className="mb-2 dark:border-gray-700 dark:text-gray-200 dark:data-[state=active]:bg-primary"
-                >
-                  {cat.name}
-                </Button>
-              ))}
-              {activeCategory && (
-                <Button 
-                  variant="secondary" 
-                  onClick={() => setActiveCategory(null)}
-                  className="mb-2 dark:bg-gray-700 dark:text-white"
-                >
-                  Clear Filters
-                </Button>
-              )}
-            </div>
-          )}
+          <div className="flex flex-wrap gap-2 justify-center">
+            <Button
+              key="all"
+              variant={activeCategory === null ? "default" : "outline"}
+              onClick={() => setActiveCategory(null)}
+              className="mb-2 dark:border-gray-700 dark:text-gray-200"
+            >
+              All
+            </Button>
+            {categories.map((cat) => (
+              <Button
+                key={cat.id}
+                variant={activeCategory === cat.slug ? "default" : "outline"}
+                onClick={() => handleCategoryClick(cat.slug)}
+                className="mb-2 dark:border-gray-700 dark:text-gray-200"
+              >
+                {cat.name}
+              </Button>
+            ))}
+          </div>
         </div>
         
         {/* Tools Grid */}
-        {filteredTools.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} />
-            ))}
-          </div>
+        {paginatedTools.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paginatedTools.map((tool) => (
+                <ToolCard key={tool.id} tool={tool} />
+              ))}
+            </div>
+            
+            {/* Pagination - Only show if we have more than one page */}
+            {totalPages > 1 && (
+              <div className="mt-10">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    
+                    {[...Array(totalPages)].map((_, i) => (
+                      <PaginationItem key={i}>
+                        <PaginationLink
+                          isActive={currentPage === i + 1}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className="cursor-pointer"
+                        >
+                          {i + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-10">
             <h3 className="text-xl font-medium mb-2 dark:text-white">No tools found</h3>

@@ -19,11 +19,15 @@ const HomePage = () => {
     setTrendingTools(getTrendingTools());
   }, []);
 
+  const scrollToTools = () => {
+    document.getElementById('tools-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <>
       <SEOHead
         title="AI Productivity Hub - Best AI Tools for Productivity"
-        description="Discover top AI tools for productivity, video editing, photo editing, copywriting, coding, and automation. Find the perfect AI solution for your workflow."
+        description="Curated tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity."
       />
       
       {/* Hero Section */}
@@ -36,17 +40,15 @@ const HomePage = () => {
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0 z-10">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 animate-fade-in">
-                Find the Right AI Tools <span className="text-primary">for Your Workflow</span>
+                Boost Your Productivity with the <span className="text-primary">Best AI Tools</span>
               </h1>
               <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 animate-fade-in" style={{animationDelay: "0.2s"}}>
-                Discover, compare, and choose from hundreds of AI productivity tools to enhance your work and creativity.
+                Curated tools for creators, developers, and entrepreneurs – all in one place.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{animationDelay: "0.4s"}}>
-                <Link to="/tools">
-                  <Button size="lg" className="w-full sm:w-auto">
-                    Explore All Tools
-                  </Button>
-                </Link>
+                <Button size="lg" className="w-full sm:w-auto" onClick={scrollToTools}>
+                  Explore Tools
+                </Button>
                 <Link to="/blog">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto dark:border-gray-700 dark:text-gray-200">
                     Read Our Blog
@@ -134,7 +136,7 @@ const HomePage = () => {
       </section>
 
       {/* Trending Tools Section */}
-      <section className="py-16 dark:bg-gray-800 transition-colors duration-300">
+      <section id="tools-section" className="py-16 dark:bg-gray-800 transition-colors duration-300">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
             <h2 className="section-title mb-0">Top Trending AI Tools</h2>
@@ -204,9 +206,9 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-8">
-              <h2 className="section-title">Stay Updated</h2>
+              <h2 className="section-title">Stay Ahead with the Latest AI Tools</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Get the latest AI tools and productivity insights delivered to your inbox.
+                Subscribe to receive top tool updates, guides, and productivity insights delivered to your inbox.
               </p>
             </div>
             <NewsletterSignup />

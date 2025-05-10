@@ -1,5 +1,6 @@
 
 import { Link } from "react-router-dom";
+import { Twitter, Linkedin, Youtube } from "lucide-react";
 import NewsletterSignup from "./NewsletterSignup";
 
 const Footer = () => {
@@ -16,6 +17,17 @@ const Footer = () => {
               Your trusted resource for discovering the best AI tools to enhance productivity, 
               streamline workflows, and boost efficiency.
             </p>
+            <div className="flex mt-4 space-x-4">
+              <a href="#" className="text-gray-300 hover:text-primary transition-colors" aria-label="Twitter">
+                <Twitter size={18} />
+              </a>
+              <a href="#" className="text-gray-300 hover:text-primary transition-colors" aria-label="LinkedIn">
+                <Linkedin size={18} />
+              </a>
+              <a href="#" className="text-gray-300 hover:text-primary transition-colors" aria-label="YouTube">
+                <Youtube size={18} />
+              </a>
+            </div>
           </div>
           
           {/* Quick links */}

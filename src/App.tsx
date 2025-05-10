@@ -19,6 +19,7 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
 import DisclaimerPage from "./pages/DisclaimerPage";
 import NotFound from "./pages/NotFound";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <Layout>
+          <ScrollToTop/>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/tools" element={<ToolsPage />} />

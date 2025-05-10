@@ -47,11 +47,11 @@ const HomePage = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{animationDelay: "0.4s"}}>
                 <Button size="lg" className="w-full sm:w-auto" onClick={scrollToTools}>
-                  Explore Tools
+                  Explore Top AI Tools
                 </Button>
                 <Link to="/blog">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto dark:border-gray-700 dark:text-gray-200">
-                    Read Our Blog
+                    Read Our Blogs
                   </Button>
                 </Link>
               </div>

@@ -1,4 +1,3 @@
-
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 
@@ -7,85 +6,98 @@ const DisclaimerPage = () => {
     <>
       <SEOHead 
         title="Disclaimer - AI Productivity Hub"
-        description="Read our disclaimer to understand how we operate, our affiliations, and other important information about AI Productivity Hub."
+        description="Read our comprehensive disclaimer covering affiliate disclosures, advertising, content accuracy, and terms of use for AI Productivity Hub."
       />
       
       <PageHeader 
-        title="Disclaimer"
+        title="Website Disclaimer"
       />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="max-w-3xl mx-auto prose">
-          <p>Last updated: May 9, 2025</p>
+        <div className="max-w-3xl mx-auto prose prose-lg">
+          <p className="text-gray-600 font-medium">Last Updated: May 9, 2025</p>
           
-          <h2>Affiliate Disclosure</h2>
-          <p>
-            AI Productivity Hub ("we," "our," or "us") participates in affiliate marketing programs, 
-            which means we may earn commissions on products or services that are purchased through links 
-            on our website. We may also receive compensation from companies whose products or services 
-            are featured on our site.
-          </p>
-          <p>
-            When you click on affiliate links and make purchases, we may earn a commission at no additional 
-            cost to you. These commissions help support the maintenance and operation of AI Productivity Hub, 
-            allowing us to continue providing valuable content and resources.
-          </p>
+          <div className="my-8">
+            <h2 className="text-2xl font-bold mb-4">1. General Information</h2>
+            <p className="mb-4">
+              The information provided by AI Productivity Hub ("we," "our," or "us") on https://aiproductivityhub.com (the "Site") is for general informational purposes only. All information on the Site is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the Site.
+            </p>
+          </div>
           
-          <h2>Advertising Disclosure</h2>
-          <p>
-            AI Productivity Hub displays advertisements, including Google AdSense ads, throughout the website. 
-            These advertisements are clearly labeled and are selected automatically by our advertising partners 
-            based on various factors, such as your browsing history and interests.
-          </p>
-          <p>
-            We strive to ensure that all advertisements displayed on our site are relevant, appropriate, and 
-            do not detract from the user experience. However, we do not personally endorse all products or 
-            services that may be advertised on AI Productivity Hub.
-          </p>
+          <div className="my-8">
+            <h2 className="text-2xl font-bold mb-4">2. Affiliate Disclosure</h2>
+            <p className="mb-4">
+              The Site may contain links to affiliate websites, and we receive an affiliate commission for any purchases made by you on the affiliate website using such links. Our affiliates include but are not limited to:
+            </p>
+            <ul className="list-disc pl-6 mb-4">
+              <li>Amazon Services LLC Associates Program</li>
+              <li>Other AI tool affiliate programs</li>
+            </ul>
+            <p>
+              We are a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn fees by linking to Amazon.com and affiliated sites.
+            </p>
+          </div>
           
-          <h2>Accuracy of Information</h2>
-          <p>
-            We make every effort to provide accurate, up-to-date information about AI productivity tools 
-            and related topics. However, the AI technology landscape evolves rapidly, and information may 
-            change after publication. Features, pricing, availability, and other details of the tools and 
-            services mentioned on our site may change without notice.
-          </p>
-          <p>
-            While we strive for accuracy, we cannot guarantee that all information on AI Productivity Hub 
-            is completely error-free or current. We recommend that you verify important information directly 
-            with the tool providers before making any decisions.
-          </p>
+          <div className="my-8">
+            <h2 className="text-2xl font-bold mb-4">3. Advertising Disclosure</h2>
+            <p className="mb-4">
+              The Site uses Google AdSense and other advertising networks. These third-party vendors use cookies to serve ads based on a user's prior visits to our website or other websites.
+            </p>
+            <p>
+              Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our sites and/or other sites on the Internet. Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline">Google's Ads Settings</a>.
+            </p>
+          </div>
           
-          <h2>No Guarantees</h2>
-          <p>
-            We do not guarantee specific results from using any of the AI tools or implementing any strategies 
-            discussed on our site. The effectiveness of AI productivity tools can vary based on individual 
-            circumstances, expertise, implementation, and other factors.
-          </p>
-          <p>
-            User experiences, productivity gains, and outcomes from using the tools featured on 
-            AI Productivity Hub may vary, and we make no promises regarding results.
-          </p>
+          <div className="my-8">
+            <h2 className="text-2xl font-bold mb-4">4. Content Accuracy</h2>
+            <p className="mb-4">
+              The AI tools landscape changes rapidly. While we strive to provide accurate and up-to-date information, we cannot guarantee that all content is completely current or error-free. Product features, pricing, and availability may change without notice.
+            </p>
+            <p>
+              We recommend verifying critical information directly with the product providers before making any purchasing decisions.
+            </p>
+          </div>
           
-          <h2>External Links</h2>
-          <p>
-            AI Productivity Hub contains links to external websites that are not operated by us. We have no 
-            control over the content and practices of these sites and cannot be held responsible for their 
-            privacy policies, content, or services.
-          </p>
-          <p>
-            We provide these links for your convenience and to provide additional information, but linking 
-            to them does not imply our endorsement of the site or its contents.
-          </p>
+          <div className="my-8">
+            <h2 className="text-2xl font-bold mb-4">5. No Professional Advice</h2>
+            <p>
+              The information contained on this Site is not intended as, and shall not be understood or construed as, professional advice. Your use of the Site does not create any professional-client relationship between you and AI Productivity Hub.
+            </p>
+          </div>
           
-          <h2>Contact Us</h2>
-          <p>
-            If you have any questions about this Disclaimer, please contact us at:
-          </p>
-          <p>
-            Email: disclaimer@aiproductivityhub.com<br />
-            Postal Address: 123 Tech Lane, Suite 100, San Francisco, CA 94107
-          </p>
+          <div className="my-8">
+            <h2 className="text-2xl font-bold mb-4">6. External Links Disclaimer</h2>
+            <p className="mb-4">
+              The Site may contain links to external websites that are not provided or maintained by or in any way affiliated with us. Please note that we do not guarantee the accuracy, relevance, timeliness, or completeness of any information on these external websites.
+            </p>
+            <p>
+              We strongly advise you to review the Privacy Policy and Terms of Service of every site you visit.
+            </p>
+          </div>
+          
+          <div className="my-8">
+            <h2 className="text-2xl font-bold mb-4">7. Limitation of Liability</h2>
+            <p>
+              In no event shall AI Productivity Hub, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Site.
+            </p>
+          </div>
+          
+          <div className="my-8">
+            <h2 className="text-2xl font-bold mb-4">8. Contact Information</h2>
+            <p className="mb-2">
+              For any questions regarding this disclaimer, please contact us at:
+            </p>
+            <address className="not-italic">
+              <p>Email: <a href="mailto:disclaimer@aiproductivityhub.com" className="text-blue-600 hover:underline">disclaimer@aiproductivityhub.com</a></p>
+              <p>Postal Address: 123 Tech Lane, Suite 100, San Francisco, CA 94107</p>
+            </address>
+          </div>
+          
+          <div className="mt-12 pt-6 border-t border-gray-200">
+            <p className="text-sm text-gray-500">
+              This disclaimer was last updated on May 9, 2025 and may be amended from time to time without notice.
+            </p>
+          </div>
         </div>
       </div>
     </>

@@ -93,8 +93,12 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 }
 
@@ -104,11 +108,11 @@
   }
   
   .tool-card {
-    @apply rounded-lg bg-white shadow-md p-5 flex flex-col gap-4 card-hover;
+    @apply rounded-lg bg-white dark:bg-gray-800 shadow-md dark:shadow-gray-900/30 p-5 flex flex-col gap-4 card-hover;
   }
   
   .section-title {
-    @apply text-2xl md:text-3xl font-bold mb-4 text-gray-800;
+    @apply text-2xl md:text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100;
   }
   
   .container-padding {

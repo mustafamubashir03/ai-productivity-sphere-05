@@ -69,13 +69,13 @@ const ToolsPage = () => {
         <div className="mb-10 space-y-6">
           <form onSubmit={handleSearch} className="max-w-md mx-auto">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" />
               <Input
                 type="text"
                 placeholder="Search for tools..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2"
+                className="pl-10 pr-4 py-2 dark:bg-gray-800 dark:text-white dark:border-gray-700"
               />
             </div>
           </form>
@@ -87,7 +87,7 @@ const ToolsPage = () => {
                   key={cat.id}
                   variant={activeCategory === cat.slug ? "default" : "outline"}
                   onClick={() => handleCategoryClick(cat.slug)}
-                  className="mb-2"
+                  className="mb-2 dark:border-gray-700 dark:text-gray-200 dark:data-[state=active]:bg-primary"
                 >
                   {cat.name}
                 </Button>
@@ -96,7 +96,7 @@ const ToolsPage = () => {
                 <Button 
                   variant="secondary" 
                   onClick={() => setActiveCategory(null)}
-                  className="mb-2"
+                  className="mb-2 dark:bg-gray-700 dark:text-white"
                 >
                   Clear Filters
                 </Button>
@@ -114,8 +114,8 @@ const ToolsPage = () => {
           </div>
         ) : (
           <div className="text-center py-10">
-            <h3 className="text-xl font-medium mb-2">No tools found</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-medium mb-2 dark:text-white">No tools found</h3>
+            <p className="text-gray-600 dark:text-gray-300">
               Try adjusting your search or filters to find what you're looking for.
             </p>
           </div>

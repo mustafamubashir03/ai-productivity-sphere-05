@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Pencil, Film, Image, Terminal, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/common/SEOHead";
 import CategoryCard from "@/components/common/CategoryCard";
@@ -27,10 +27,14 @@ const HomePage = () => {
       />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+      <section className="bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 overflow-hidden relative">
+        <div className="absolute inset-0 opacity-10 dark:opacity-5">
+          <div className="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        </div>
+        
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
           <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 mb-8 md:mb-0">
+            <div className="md:w-1/2 mb-8 md:mb-0 z-10">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 animate-fade-in">
                 Find the Right AI Tools <span className="text-primary">for Your Workflow</span>
               </h1>
@@ -51,11 +55,61 @@ const HomePage = () => {
               </div>
             </div>
             <div className="md:w-1/2 flex justify-center md:justify-end animate-scale-in">
-              <img 
-                src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&auto=format&fit=crop" 
-                alt="AI Productivity visualization showing digital workflow enhancement" 
-                className="rounded-lg shadow-xl max-w-full h-auto"
-              />
+              <div className="relative w-full max-w-md h-80 perspective-1000">
+                {/* 3D Dashboard Visualization */}
+                <div className="relative w-full h-full">
+                  {/* Central figure */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                    <div className="w-20 h-20 bg-white/90 dark:bg-gray-800/90 rounded-full shadow-lg flex items-center justify-center">
+                      <img 
+                        src="/placeholder.svg" 
+                        alt="User silhouette" 
+                        className="w-12 h-12" 
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Orbital Tool Cards */}
+                  <div className="absolute left-1/2 top-0 -translate-x-1/2 transform -translate-y-5 animate-float" style={{animationDelay: "0s"}}>
+                    <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
+                      <Pencil className="w-8 h-8 text-purple-500 mb-2" />
+                      <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Writing</span>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute right-5 top-1/4 transform animate-float" style={{animationDelay: "0.5s"}}>
+                    <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
+                      <Film className="w-8 h-8 text-blue-500 mb-2" />
+                      <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Video</span>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute left-5 top-1/4 transform animate-float" style={{animationDelay: "1s"}}>
+                    <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
+                      <Image className="w-8 h-8 text-green-500 mb-2" />
+                      <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Design</span>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute right-10 bottom-10 transform animate-float" style={{animationDelay: "1.5s"}}>
+                    <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
+                      <Terminal className="w-8 h-8 text-amber-500 mb-2" />
+                      <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Coding</span>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute left-10 bottom-10 transform animate-float" style={{animationDelay: "2s"}}>
+                    <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
+                      <Bot className="w-8 h-8 text-red-500 mb-2" />
+                      <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Automation</span>
+                    </div>
+                  </div>
+                  
+                  {/* Decorative elements */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-blue-500/10 dark:from-indigo-500/5 dark:to-blue-500/5 rounded-full blur-3xl transform scale-75 animate-pulse-subtle"></div>
+                  <div className="absolute inset-0 border border-blue-200/30 dark:border-blue-500/10 rounded-full"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

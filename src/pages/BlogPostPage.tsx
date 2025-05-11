@@ -1,9 +1,11 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/common/SEOHead";
 import { getBlogPostBySlug } from "@/data/blog";
+import BlogDetailSkeleton from "@/components/skeletons/BlogDetailSkeleton";
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -12,18 +14,19 @@ const BlogPostPage = () => {
 
   useEffect(() => {
     if (slug) {
-      const foundPost = getBlogPostBySlug(slug);
-      setPost(foundPost);
-      setLoading(false);
+      // Simulate data fetching delay
+      const timer = setTimeout(() => {
+        const foundPost = getBlogPostBySlug(slug);
+        setPost(foundPost);
+        setLoading(false);
+      }, 1200);
+      
+      return () => clearTimeout(timer);
     }
   }, [slug]);
 
   if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-10 flex justify-center items-center min-h-[60vh]">
-        <p>Loading...</p>
-      </div>
-    );
+    return <BlogDetailSkeleton />;
   }
 
   if (!post) {

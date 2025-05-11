@@ -10,6 +10,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Search } from "lucide-react";
 import { tools, getToolsByCategory } from "@/data/tools";
 import { categories } from "@/data/categories";
+import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 
 const TOOLS_PER_PAGE = 9;
 
@@ -19,6 +20,7 @@ const ToolsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(categorySlug || null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   
   // Find category by slug
   const category = categorySlug 
@@ -26,25 +28,37 @@ const ToolsPage = () => {
     : null;
   
   useEffect(() => {
-    let result = [...tools];
+    // Simulate data fetching delay
+    const timer = setTimeout(() => {
+      let result = [...tools];
+      
+      // Filter by category if provided
+      if (activeCategory) {
+        result = getToolsByCategory(activeCategory);
+      }
+      
+      // Filter by search query
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        result = result.filter(
+          tool => tool.name.toLowerCase().includes(query) || 
+                 tool.description.toLowerCase().includes(query)
+        );
+      }
+      
+      setFilteredTools(result);
+      setLoading(false);
+    }, 1200);
     
-    // Filter by category if provided
-    if (activeCategory) {
-      result = getToolsByCategory(activeCategory);
-    }
-    
-    // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        tool => tool.name.toLowerCase().includes(query) || 
-               tool.description.toLowerCase().includes(query)
-      );
-    }
-    
-    setFilteredTools(result);
-    setCurrentPage(1); // Reset pagination when filters change
+    return () => clearTimeout(timer);
   }, [searchQuery, activeCategory, categorySlug]);
+  
+  useEffect(() => {
+    if (categorySlug !== activeCategory) {
+      setActiveCategory(categorySlug || null);
+      setLoading(true);
+    }
+  }, [categorySlug]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +67,7 @@ const ToolsPage = () => {
   
   const handleCategoryClick = (slug: string) => {
     setActiveCategory(slug === activeCategory ? null : slug);
+    setLoading(true);
   };
   
   // Calculate pagination
@@ -96,7 +111,7 @@ const ToolsPage = () => {
             <Button
               key="all"
               variant={activeCategory === null ? "default" : "outline"}
-              onClick={() => setActiveCategory(null)}
+              onClick={() => handleCategoryClick(null)}
               className="mb-2 dark:border-gray-700 dark:text-gray-200"
             >
               All
@@ -115,7 +130,13 @@ const ToolsPage = () => {
         </div>
         
         {/* Tools Grid */}
-        {paginatedTools.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array(6).fill(0).map((_, index) => (
+              <ToolCardSkeleton key={`skeleton-${index}`} />
+            ))}
+          </div>
+        ) : paginatedTools.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedTools.map((tool) => (

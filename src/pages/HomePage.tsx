@@ -10,13 +10,42 @@ import { categories } from "@/data/categories";
 import { getTrendingTools } from "@/data/tools";
 import { blogPosts } from "@/data/blog";
 import NewsletterSignup from "@/components/layout/NewsletterSignup";
+import CategoryCardSkeleton from "@/components/skeletons/CategoryCardSkeleton";
+import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
+import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
 
 const HomePage = () => {
   const [trendingTools, setTrendingTools] = useState<Tool[]>([]);
-  const [featuredPosts, setFeaturedPosts] = useState(blogPosts.slice(0, 2));
+  const [featuredPosts, setFeaturedPosts] = useState([]);
+  const [loadingTools, setLoadingTools] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [displayedCategories, setDisplayedCategories] = useState([]);
   
   useEffect(() => {
-    setTrendingTools(getTrendingTools());
+    // Simulate data fetching delay for trending tools
+    const toolsTimer = setTimeout(() => {
+      setTrendingTools(getTrendingTools());
+      setLoadingTools(false);
+    }, 1200);
+    
+    // Simulate data fetching delay for categories
+    const categoriesTimer = setTimeout(() => {
+      setDisplayedCategories(categories);
+      setLoadingCategories(false);
+    }, 800);
+    
+    // Simulate data fetching delay for blog posts
+    const postsTimer = setTimeout(() => {
+      setFeaturedPosts(blogPosts.slice(0, 2));
+      setLoadingPosts(false);
+    }, 1500);
+    
+    return () => {
+      clearTimeout(toolsTimer);
+      clearTimeout(categoriesTimer);
+      clearTimeout(postsTimer);
+    };
   }, []);
 
   const scrollToTools = () => {
@@ -128,9 +157,15 @@ const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category) => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
+            {loadingCategories ? (
+              Array(6).fill(0).map((_, index) => (
+                <CategoryCardSkeleton key={`cat-skeleton-${index}`} />
+              ))
+            ) : (
+              displayedCategories.map((category) => (
+                <CategoryCard key={category.id} category={category} />
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -149,9 +184,15 @@ const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trendingTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} />
-            ))}
+            {loadingTools ? (
+              Array(3).fill(0).map((_, index) => (
+                <ToolCardSkeleton key={`tool-skeleton-${index}`} />
+              ))
+            ) : (
+              trendingTools.map((tool) => (
+                <ToolCard key={tool.id} tool={tool} />
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -170,33 +211,39 @@ const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {featuredPosts.map((post) => (
-              <div key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover border border-gray-100 dark:border-gray-700">
-                <img 
-                  src={post.image} 
-                  alt={post.title} 
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2 dark:text-white">
+            {loadingPosts ? (
+              Array(2).fill(0).map((_, index) => (
+                <BlogCardSkeleton key={`blog-skeleton-${index}`} />
+              ))
+            ) : (
+              featuredPosts.map((post) => (
+                <div key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover border border-gray-100 dark:border-gray-700">
+                  <img 
+                    src={post.image} 
+                    alt={post.title} 
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2 dark:text-white">
+                      <Link 
+                        to={`/blog/${post.slug}`} 
+                        className="hover:text-primary transition-colors"
+                      >
+                        {post.title}
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{post.date}</p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">{post.excerpt}</p>
                     <Link 
                       to={`/blog/${post.slug}`} 
-                      className="hover:text-primary transition-colors"
+                      className="text-primary font-medium flex items-center hover:underline"
                     >
-                      {post.title}
+                      Read More <ArrowRight className="ml-1 h-4 w-4" />
                     </Link>
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{post.date}</p>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">{post.excerpt}</p>
-                  <Link 
-                    to={`/blog/${post.slug}`} 
-                    className="text-primary font-medium flex items-center hover:underline"
-                  >
-                    Read More <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>

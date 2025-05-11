@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/common/SEOHead";
 import { getToolBySlug } from "@/data/tools";
+import ToolDetailSkeleton from "@/components/skeletons/ToolDetailSkeleton";
 
 const ToolDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -13,18 +14,19 @@ const ToolDetailPage = () => {
   
   useEffect(() => {
     if (slug) {
-      const foundTool = getToolBySlug(slug);
-      setTool(foundTool);
-      setLoading(false);
+      // Simulate data fetching delay
+      const timer = setTimeout(() => {
+        const foundTool = getToolBySlug(slug);
+        setTool(foundTool);
+        setLoading(false);
+      }, 1200);
+      
+      return () => clearTimeout(timer);
     }
   }, [slug]);
   
   if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-10 flex justify-center items-center min-h-[60vh]">
-        <p className="dark:text-gray-300">Loading...</p>
-      </div>
-    );
+    return <ToolDetailSkeleton />;
   }
   
   if (!tool) {

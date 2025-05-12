@@ -36,7 +36,7 @@ const Navbar = () => {
               {isMobile ? (
                 <Logo size="small" />
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <Logo size="small" />
                   <span className="text-primary font-bold text-xl dark:text-white">AI Productivity Hub</span>
                 </div>

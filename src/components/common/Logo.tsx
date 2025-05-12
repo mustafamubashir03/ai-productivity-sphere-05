@@ -26,39 +26,45 @@ const Logo: React.FC<LogoProps> = ({ size = "medium", className = "" }) => {
         xmlns="http://www.w3.org/2000/svg"
         className="transition-all duration-300"
       >
-        {/* Outer circle gradient */}
-        <circle cx="32" cy="32" r="30" fill="url(#circleGradient)" />
+        {/* Main circular background */}
+        <circle cx="32" cy="32" r="30" fill="url(#logoGradient)" />
         
-        {/* Inner network node connectors */}
-        <path d="M32 15L46 25V40L32 50L18 40V25L32 15Z" stroke="#D6BCFA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Central abstract brain/network symbol */}
+        <path 
+          d="M32 16L44 32L32 48L20 32L32 16Z" 
+          fill="#F8F7FF" 
+          stroke="#9B87F5" 
+          strokeWidth="2" 
+        />
         
-        {/* Connection lines */}
-        <line x1="32" y1="15" x2="32" y2="50" stroke="#D6BCFA" strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.6" />
-        <line x1="18" y1="25" x2="46" y2="25" stroke="#D6BCFA" strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.6" />
-        <line x1="18" y1="40" x2="46" y2="40" stroke="#D6BCFA" strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.6" />
-        
-        {/* Center brain node */}
-        <circle cx="32" cy="32" r="8" fill="#9B87F5" />
-        
-        {/* Satellite nodes */}
-        <circle cx="32" cy="15" r="4" fill="#7E69AB" />
-        <circle cx="46" cy="25" r="4" fill="#6E59A5" />
-        <circle cx="46" cy="40" r="4" fill="#7E69AB" />
-        <circle cx="32" cy="50" r="4" fill="#9B87F5" />
-        <circle cx="18" cy="40" r="4" fill="#6E59A5" />
-        <circle cx="18" cy="25" r="4" fill="#9B87F5" />
-        
-        {/* Pulse animation */}
-        <circle cx="32" cy="32" r="16" stroke="#9B87F5" strokeWidth="1.5" strokeDasharray="3 3" className="animate-pulse-subtle">
-          <animate attributeName="r" values="16;20;16" dur="3s" repeatCount="indefinite" />
-          <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" repeatCount="indefinite" />
+        {/* Pulse ring */}
+        <circle 
+          cx="32" 
+          cy="32" 
+          r="18" 
+          stroke="#F8F7FF" 
+          strokeWidth="2" 
+          strokeDasharray="4 4" 
+          className="animate-pulse-subtle"
+        >
+          <animate attributeName="r" values="18;22;18" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="1;0.6;1" dur="3s" repeatCount="indefinite" />
         </circle>
+        
+        {/* Connection points */}
+        <circle cx="32" cy="16" r="4" fill="#F8F7FF" />
+        <circle cx="44" cy="32" r="4" fill="#F8F7FF" />
+        <circle cx="32" cy="48" r="4" fill="#F8F7FF" />
+        <circle cx="20" cy="32" r="4" fill="#F8F7FF" />
+        
+        {/* Center core */}
+        <circle cx="32" cy="32" r="6" fill="#F8F7FF" stroke="#9B87F5" strokeWidth="2" />
         
         {/* Gradient definitions */}
         <defs>
-          <linearGradient id="circleGradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#9B87F5" />
-            <stop offset="1" stopColor="#6E59A5" />
+          <linearGradient id="logoGradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#8B5CF6" />
+            <stop offset="1" stopColor="#6366F1" />
           </linearGradient>
         </defs>
       </svg>

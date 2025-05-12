@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Pencil, Film, Image, Terminal, Bot } from "lucide-react";
@@ -13,6 +12,7 @@ import NewsletterSignup from "@/components/layout/NewsletterSignup";
 import CategoryCardSkeleton from "@/components/skeletons/CategoryCardSkeleton";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
+import Logo from "@/components/common/Logo";
 
 const HomePage = () => {
   const [trendingTools, setTrendingTools] = useState<Tool[]>([]);
@@ -89,15 +89,9 @@ const HomePage = () => {
               <div className="relative w-full max-w-md h-80 perspective-1000">
                 {/* 3D Dashboard Visualization */}
                 <div className="relative w-full h-full">
-                  {/* Central figure */}
+                  {/* Central figure - Now with our logo */}
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                    <div className="w-20 h-20 bg-white/90 dark:bg-gray-800/90 rounded-full shadow-lg flex items-center justify-center">
-                      <img 
-                        src="/placeholder.svg" 
-                        alt="User silhouette" 
-                        className="w-12 h-12" 
-                      />
-                    </div>
+                    <Logo size="large" className="animate-float" />
                   </div>
                   
                   {/* Orbital Tool Cards */}

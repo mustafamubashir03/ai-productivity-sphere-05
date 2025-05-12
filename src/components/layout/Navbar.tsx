@@ -4,9 +4,12 @@ import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import Logo from "@/components/common/Logo";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -30,7 +33,14 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <NavLink to="/" className="flex-shrink-0 flex items-center" onClick={closeMenu}>
-              <span className="text-primary font-bold text-xl dark:text-white">AI Productivity Hub</span>
+              {isMobile ? (
+                <Logo size="small" />
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Logo size="small" />
+                  <span className="text-primary font-bold text-xl dark:text-white">AI Productivity Hub</span>
+                </div>
+              )}
             </NavLink>
           </div>
           

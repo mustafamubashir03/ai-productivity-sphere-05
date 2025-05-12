@@ -146,7 +146,7 @@ const BlogPage = () => {
                     </h2>
                     <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-3">
                       <Clock className="h-3 w-3 mr-1" />
-                      <span>{ '5'} min read</span>
+                      <span>{post.readTime || '5'} min read</span>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                       {post.excerpt}
@@ -166,21 +166,19 @@ const BlogPage = () => {
           {/* Pagination */}
           {!loading && totalPages > 1 && (
             <div className="mt-10">
-              <Pagination className="transition-opacity duration-300">
+              <Pagination>
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious 
                       onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                      className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                      className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
                     />
                   </PaginationItem>
                   
                   {getPageNumbers().map((pageNumber, index) => (
                     pageNumber === 'ellipsis' ? (
                       <PaginationItem key={`ellipsis-${index}`}>
-                        <PaginationLink className="cursor-default hover:bg-transparent">
-                          …
-                        </PaginationLink>
+                        <span className="px-4 py-2">...</span>
                       </PaginationItem>
                     ) : (
                       <PaginationItem key={`page-${pageNumber}`}>
@@ -197,7 +195,7 @@ const BlogPage = () => {
                   <PaginationItem>
                     <PaginationNext 
                       onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-                      className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                      className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
                     />
                   </PaginationItem>
                 </PaginationContent>

@@ -1,15 +1,40 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, Clock, Bookmark } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 import { blogPosts } from "@/data/blog";
 import { useEffect, useState } from "react";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 const BlogPage = () => {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
+  // Get current page from URL query or default to 1
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const postsPerPage = 6;
+  
+  // Calculate pagination values
+  const totalPosts = blogPosts.length;
+  const totalPages = Math.ceil(totalPosts / postsPerPage);
+  
+  // Ensure current page is valid
+  useEffect(() => {
+    if (currentPage < 1 || currentPage > totalPages) {
+      setSearchParams({ page: "1" });
+    }
+  }, [currentPage, totalPages, setSearchParams]);
   
   useEffect(() => {
     // Simulate data fetching delay
@@ -20,6 +45,55 @@ const BlogPage = () => {
     
     return () => clearTimeout(timer);
   }, []);
+  
+  // Get current page posts
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+  // Change page
+  const handlePageChange = (pageNumber) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setSearchParams({ page: pageNumber.toString() });
+  };
+
+  // Generate page numbers
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 5;
+    
+    if (totalPages <= maxPagesToShow) {
+      // Show all pages if total is less than max to show
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Always include first page, last page, current page, and some adjacent pages
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push('ellipsis');
+        pageNumbers.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(1);
+        pageNumbers.push('ellipsis');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        pageNumbers.push(1);
+        pageNumbers.push('ellipsis');
+        pageNumbers.push(currentPage - 1);
+        pageNumbers.push(currentPage);
+        pageNumbers.push(currentPage + 1);
+        pageNumbers.push('ellipsis');
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
 
   return (
     <>
@@ -38,12 +112,12 @@ const BlogPage = () => {
           <div className="grid grid-cols-1 gap-8">
             {loading ? (
               // Show skeletons while loading
-              Array(3).fill(0).map((_, index) => (
+              Array(6).fill(0).map((_, index) => (
                 <BlogCardSkeleton key={`skeleton-${index}`} />
               ))
             ) : (
               // Show actual blog posts when loaded
-              posts.map((post) => (
+              currentPosts.map((post) => (
                 <div 
                   key={post.id}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row"
@@ -88,6 +162,48 @@ const BlogPage = () => {
               ))
             )}
           </div>
+
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <div className="mt-10">
+              <Pagination className="transition-opacity duration-300">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                      className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                    />
+                  </PaginationItem>
+                  
+                  {getPageNumbers().map((pageNumber, index) => (
+                    pageNumber === 'ellipsis' ? (
+                      <PaginationItem key={`ellipsis-${index}`}>
+                        <PaginationLink className="cursor-default hover:bg-transparent">
+                          …
+                        </PaginationLink>
+                      </PaginationItem>
+                    ) : (
+                      <PaginationItem key={`page-${pageNumber}`}>
+                        <PaginationLink 
+                          isActive={currentPage === pageNumber}
+                          onClick={() => handlePageChange(pageNumber)}
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    )
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                      className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
 
           {/* Minimal newsletter signup at bottom */}
           <div className="mt-16 border-t border-gray-200 dark:border-gray-700 pt-8 text-center">

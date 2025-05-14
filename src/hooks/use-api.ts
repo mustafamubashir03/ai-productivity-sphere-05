@@ -191,8 +191,8 @@ export const useCompareTools = (slugs: string[]) => {
   const { getToolBySlug } = require('@/data/tools');
   const tools = slugs.map(slug => getToolBySlug(slug)).filter(Boolean);
   
-  // Create a properly typed params object - ensure it matches the ApiOptions interface
-  const params: Record<string, string> = { 
+  // Fixed: Create params object that matches ApiOptions interface expectations
+  const params = {
     slugs: slugs.join(',')
   };
   

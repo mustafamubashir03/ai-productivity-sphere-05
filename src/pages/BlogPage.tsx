@@ -1,4 +1,3 @@
-
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, Clock, Bookmark, BookmarkCheck, Calendar } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
@@ -15,7 +14,7 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from "@/components/ui/pagination";
-import { useBlogs } from "@/hooks/use-api";
+import { useBlogs, API_BASE_URL } from "@/hooks/use-api";
 
 // Define the Blog type based on the API response
 interface Blog {

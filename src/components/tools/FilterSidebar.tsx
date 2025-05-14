@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/collapsible";
 import { industries } from "@/data/industries";
 import { useCases } from "@/data/useCases";
-import { cn } from "@/lib/utils";
+import { cn, getFilterLayoutClasses } from "@/lib/utils";
 
 interface FilterSidebarProps {
   onSelectIndustry: (industrySlug: string | null) => void;
@@ -33,47 +33,46 @@ const FilterSidebar = ({
   isMobile
 }: FilterSidebarProps) => {
   const [isOpen, setIsOpen] = useState(!isMobile);
+  const classes = getFilterLayoutClasses(isMobile);
   
   // Handle button clicks without page reload
   const handleIndustryClick = (industrySlug: string | null, e?: React.MouseEvent) => {
-    // Prevent default event handling to avoid page reloads
     if (e) e.preventDefault();
     onSelectIndustry(industrySlug);
   };
   
   const handleUseCaseClick = (useCaseSlug: string | null, e?: React.MouseEvent) => {
-    // Prevent default event handling to avoid page reloads
     if (e) e.preventDefault();
     onSelectUseCase(useCaseSlug);
   };
   
   return (
     <div className={cn(
-      "mb-8",
-      isMobile ? "w-full" : "w-full lg:w-64 lg:mr-6 lg:flex-shrink-0"
+      "mb-6",
+      isMobile ? "w-full" : "w-full lg:w-64 lg:flex-shrink-0"
     )}>
       {isMobile ? (
-        <Accordion type="single" collapsible className="w-full border rounded-lg mb-6">
-          <AccordionItem value="filters">
-            <AccordionTrigger className="px-4 py-3 font-medium">
+        <Accordion type="single" collapsible className={classes.container}>
+          <AccordionItem value="filters" className="border-none">
+            <AccordionTrigger className={classes.header}>
               <span className="flex items-center">
                 <Filter className="w-4 h-4 mr-2" />
                 Filters
               </span>
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
+            <AccordionContent className={classes.content}>
               <div className="space-y-6">
                 {/* Industry Filter */}
                 <div className="filter-section">
-                  <h3 className="text-lg font-medium mb-3">Industries</h3>
-                  <div className="space-y-2">
+                  <h3 className={classes.sectionTitle}>Industries</h3>
+                  <div className={classes.buttonGroup}>
                     <Button
                       key="all-industries"
                       variant={activeIndustry === null ? "default" : "outline"}
                       onClick={(e) => handleIndustryClick(null, e)}
                       size="sm"
-                      className="w-full justify-start"
-                      type="button" // Explicitly set button type to prevent form submission
+                      className={classes.button}
+                      type="button"
                     >
                       All Industries
                     </Button>
@@ -83,8 +82,8 @@ const FilterSidebar = ({
                         variant={activeIndustry === industry.slug ? "default" : "outline"}
                         onClick={(e) => handleIndustryClick(industry.slug, e)}
                         size="sm"
-                        className="w-full justify-start"
-                        type="button" // Explicitly set button type to prevent form submission
+                        className={classes.button}
+                        type="button"
                       >
                         {industry.name}
                       </Button>
@@ -94,15 +93,15 @@ const FilterSidebar = ({
                 
                 {/* Use Case Filter */}
                 <div className="filter-section">
-                  <h3 className="text-lg font-medium mb-3">Use Cases</h3>
-                  <div className="space-y-2">
+                  <h3 className={classes.sectionTitle}>Use Cases</h3>
+                  <div className={classes.buttonGroup}>
                     <Button
                       key="all-usecases"
                       variant={activeUseCase === null ? "default" : "outline"}
                       onClick={(e) => handleUseCaseClick(null, e)}
                       size="sm"
-                      className="w-full justify-start"
-                      type="button" // Explicitly set button type to prevent form submission
+                      className={classes.button}
+                      type="button"
                     >
                       All Use Cases
                     </Button>
@@ -112,8 +111,8 @@ const FilterSidebar = ({
                         variant={activeUseCase === useCase.slug ? "default" : "outline"}
                         onClick={(e) => handleUseCaseClick(useCase.slug, e)}
                         size="sm"
-                        className="w-full justify-start"
-                        type="button" // Explicitly set button type to prevent form submission
+                        className={classes.button}
+                        type="button"
                       >
                         {useCase.name}
                       </Button>
@@ -125,8 +124,8 @@ const FilterSidebar = ({
           </AccordionItem>
         </Accordion>
       ) : (
-        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border rounded-lg mb-6">
-          <div className="flex items-center justify-between px-4 py-3 border-b">
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className={classes.container}>
+          <div className={classes.header}>
             <div className="flex items-center">
               <Filter className="w-4 h-4 mr-2" />
               <h3 className="font-medium">Filters</h3>
@@ -139,18 +138,18 @@ const FilterSidebar = ({
             </CollapsibleTrigger>
           </div>
           
-          <CollapsibleContent className="px-4 py-4 space-y-6">
+          <CollapsibleContent className={classes.content}>
             {/* Industry Filter */}
             <div className="filter-section">
-              <h3 className="text-lg font-medium mb-3">Industries</h3>
-              <div className="space-y-2">
+              <h3 className={classes.sectionTitle}>Industries</h3>
+              <div className={classes.buttonGroup}>
                 <Button
                   key="all-industries-desktop"
                   variant={activeIndustry === null ? "default" : "outline"}
                   onClick={(e) => handleIndustryClick(null, e)}
                   size="sm"
-                  className="w-full justify-start"
-                  type="button" // Explicitly set button type to prevent form submission
+                  className={classes.button}
+                  type="button"
                 >
                   All Industries
                 </Button>
@@ -160,8 +159,8 @@ const FilterSidebar = ({
                     variant={activeIndustry === industry.slug ? "default" : "outline"}
                     onClick={(e) => handleIndustryClick(industry.slug, e)}
                     size="sm"
-                    className="w-full justify-start"
-                    type="button" // Explicitly set button type to prevent form submission
+                    className={classes.button}
+                    type="button"
                   >
                     {industry.name}
                   </Button>
@@ -171,15 +170,15 @@ const FilterSidebar = ({
             
             {/* Use Case Filter */}
             <div className="filter-section">
-              <h3 className="text-lg font-medium mb-3">Use Cases</h3>
-              <div className="space-y-2">
+              <h3 className={classes.sectionTitle}>Use Cases</h3>
+              <div className={classes.buttonGroup}>
                 <Button
                   key="all-usecases-desktop"
                   variant={activeUseCase === null ? "default" : "outline"}
                   onClick={(e) => handleUseCaseClick(null, e)}
                   size="sm"
-                  className="w-full justify-start"
-                  type="button" // Explicitly set button type to prevent form submission
+                  className={classes.button}
+                  type="button"
                 >
                   All Use Cases
                 </Button>
@@ -189,8 +188,8 @@ const FilterSidebar = ({
                     variant={activeUseCase === useCase.slug ? "default" : "outline"}
                     onClick={(e) => handleUseCaseClick(useCase.slug, e)}
                     size="sm"
-                    className="w-full justify-start"
-                    type="button" // Explicitly set button type to prevent form submission
+                    className={classes.button}
+                    type="button"
                   >
                     {useCase.name}
                   </Button>

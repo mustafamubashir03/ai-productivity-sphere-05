@@ -40,20 +40,20 @@ const Navbar = () => {
               ) : (
                 <div className="flex items-center gap-3">
                   <Logo size="small" />
-                  <span className="text-primary font-bold text-xl dark:text-white">AI Productivity Hub</span>
+                  <span className="text-primary font-bold text-xl dark:text-white">Top Rated AI</span>
                 </div>
               )}
             </NavLink>
           </div>
           
           {/* Desktop menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-4">
             {navItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  `px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive
                       ? "text-primary dark:text-primary-foreground font-semibold"
                       : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground"

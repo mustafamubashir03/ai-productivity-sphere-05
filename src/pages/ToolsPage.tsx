@@ -14,6 +14,7 @@ import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import CompareBar from "@/components/tools/CompareBar";
 import FilterSidebar from "@/components/tools/FilterSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 const TOOLS_PER_PAGE = 9;
 
@@ -159,17 +160,17 @@ const ToolsPage = () => {
   return (
     <>
       <EnhancedSEO 
-        title={`${title} - AI Productivity Hub`}
+        title={`${title} - Top Rated AI`}
         description={`Discover top ${title.toLowerCase()} to enhance your productivity and workflow efficiency.`}
         structuredData={structuredData}
       />
       
       <PageHeader title={title} description={description} />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search */}
         <div className="mb-8">
-          <form onSubmit={handleSearch} className="max-w-md mx-auto mb-8">
+          <form onSubmit={handleSearch} className="max-w-md mx-auto mb-6">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" />
               <Input
@@ -177,7 +178,7 @@ const ToolsPage = () => {
                 placeholder="Search for tools..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                className="pl-10 pr-4 py-2 dark:bg-gray-800 dark:text-white dark:border-gray-700 shadow-sm"
               />
             </div>
           </form>
@@ -188,7 +189,10 @@ const ToolsPage = () => {
               key="all"
               variant={activeCategory === null ? "default" : "outline"}
               onClick={() => handleCategoryClick(null)}
-              className="mb-2 dark:border-gray-700 dark:text-gray-200"
+              className={cn(
+                "mb-2 dark:border-gray-700 dark:text-gray-200",
+                "hover:bg-primary/90 transition-colors"
+              )}
             >
               All
             </Button>
@@ -197,7 +201,10 @@ const ToolsPage = () => {
                 key={cat.id}
                 variant={activeCategory === cat.slug ? "default" : "outline"}
                 onClick={() => handleCategoryClick(cat.slug)}
-                className="mb-2 dark:border-gray-700 dark:text-gray-200"
+                className={cn(
+                  "mb-2 dark:border-gray-700 dark:text-gray-200",
+                  "hover:bg-primary/90 transition-colors"
+                )}
               >
                 {cat.name}
               </Button>
@@ -225,7 +232,7 @@ const ToolsPage = () => {
               </div>
             ) : paginatedTools.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                   {paginatedTools.map((tool) => (
                     <ToolCard key={tool.id} tool={tool} />
                   ))}
@@ -243,17 +250,55 @@ const ToolsPage = () => {
                           />
                         </PaginationItem>
                         
-                        {[...Array(totalPages)].map((_, i) => (
-                          <PaginationItem key={i}>
-                            <PaginationLink
-                              isActive={currentPage === i + 1}
-                              onClick={() => setCurrentPage(i + 1)}
-                              className="cursor-pointer dark:text-gray-300 dark:hover:text-white"
-                            >
-                              {i + 1}
-                            </PaginationLink>
-                          </PaginationItem>
-                        ))}
+                        {[...Array(totalPages)].map((_, i) => {
+                          // Only display a limited number of pagination links on mobile
+                          if (isMobile && totalPages > 5) {
+                            // Always show first, last, current and adjacent pages
+                            if (
+                              i === 0 || 
+                              i === totalPages - 1 || 
+                              i === currentPage - 1 ||
+                              i === currentPage - 2 ||
+                              i === currentPage
+                            ) {
+                              return (
+                                <PaginationItem key={i}>
+                                  <PaginationLink
+                                    isActive={currentPage === i + 1}
+                                    onClick={() => setCurrentPage(i + 1)}
+                                    className="cursor-pointer dark:text-gray-300 dark:hover:text-white"
+                                  >
+                                    {i + 1}
+                                  </PaginationLink>
+                                </PaginationItem>
+                              );
+                            } else if (
+                              (i === 1 && currentPage > 3) || 
+                              (i === totalPages - 2 && currentPage < totalPages - 2)
+                            ) {
+                              // Add ellipsis where needed
+                              return (
+                                <PaginationItem key={i}>
+                                  <span className="px-4 py-2 dark:text-gray-400">...</span>
+                                </PaginationItem>
+                              );
+                            }
+                            return null;
+                          }
+                          
+                          // On desktop, show all pagination links
+                          return (
+                            <PaginationItem key={i}>
+                              <PaginationLink
+                                isActive={currentPage === i + 1}
+                                onClick={() => setCurrentPage(i + 1)}
+                                className="cursor-pointer dark:text-gray-300 dark:hover:text-white"
+                              >
+                                {i + 1}
+                              </PaginationLink>
+                            </PaginationItem>
+                          );
+                        })}
                         
                         <PaginationItem>
                           <PaginationNext 
@@ -267,11 +312,24 @@ const ToolsPage = () => {
                 )}
               </>
             ) : (
-              <div className="text-center py-10">
+              <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                 <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-white">No tools found</h3>
                 <p className="text-gray-600 dark:text-gray-300">
                   Try adjusting your search or filters to find what you're looking for.
                 </p>
+                <Button 
+                  onClick={() => {
+                    setSearchQuery("");
+                    setActiveCategory(null);
+                    setActiveIndustry(null);
+                    setActiveUseCase(null);
+                    setCurrentPage(1);
+                  }}
+                  variant="outline"
+                  className="mt-4"
+                >
+                  Reset all filters
+                </Button>
               </div>
             )}
           </div>

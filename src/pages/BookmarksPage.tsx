@@ -1,10 +1,11 @@
 
 import { Link } from "react-router-dom";
-import { ArrowRight, Clock, Bookmark } from "lucide-react";
+import { ArrowRight, Clock, Bookmark, Calendar } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { toast } from "@/components/ui/sonner";
+import { API_BASE_URL } from "@/hooks/use-api";
 
 const BookmarksPage = () => {
   const { bookmarks, removeBookmark } = useBookmarks();
@@ -12,6 +13,25 @@ const BookmarksPage = () => {
   const handleRemoveBookmark = (id: string, title: string) => {
     removeBookmark(id);
     toast.success(`"${title}" has been removed from bookmarks`);
+  };
+
+  // Format date to readable format
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  // Format image URL
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return '/placeholder.svg';
+    return imagePath.startsWith('/') && !imagePath.startsWith('http') 
+      ? `${API_BASE_URL}${imagePath}` 
+      : imagePath;
   };
 
   return (
@@ -48,22 +68,28 @@ const BookmarksPage = () => {
             <div className="grid grid-cols-1 gap-8">
               {bookmarks.map((post) => (
                 <div 
-                  key={post.id}
+                  key={post._id}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row"
                 >
                   <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
                     <img 
-                      src={post.image} 
+                      src={getImageUrl(post.image)}
                       alt={post.title} 
                       className="w-full h-48 md:h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/placeholder.svg";
+                      }}
                     />
                   </div>
                   <div className="md:w-3/5 lg:w-2/3 p-5 flex flex-col">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{post.date}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {formatDate(post.date)}
+                      </span>
                       <button 
                         className="text-primary hover:text-primary-dark" 
-                        onClick={() => handleRemoveBookmark(post.id, post.title)}
+                        onClick={() => handleRemoveBookmark(post._id, post.title)}
                         aria-label="Remove bookmark"
                       >
                         <Bookmark className="h-4 w-4 fill-current" />

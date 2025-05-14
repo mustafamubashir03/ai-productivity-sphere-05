@@ -1,9 +1,8 @@
 
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Clock, Bookmark, BookmarkCheck } from "lucide-react";
+import { ArrowRight, Clock, Bookmark, BookmarkCheck, Calendar } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
-import { blogPosts } from "@/data/blog";
 import { useEffect, useState } from "react";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
 import { useBookmarks } from "@/context/BookmarkContext";
@@ -16,10 +15,32 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from "@/components/ui/pagination";
+import { useBlogs } from "@/hooks/use-api";
+
+// Define the Blog type based on the API response
+interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  image: string;
+  content: string;
+  date: string;
+  createdAt: string;
+  updatedAt: string;
+  seo?: {
+    canonicalUrl?: string;
+    imageUrl?: string;
+    siteName?: string;
+    twitterHandle?: string;
+    type?: string;
+    publishedTime?: string;
+    updatedTime?: string;
+    noIndex?: boolean;
+  };
+}
 
 const BlogPage = () => {
-  const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
@@ -28,45 +49,56 @@ const BlogPage = () => {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const postsPerPage = 6;
   
+  // Use the blogs API hook
+  const { data: blogs, isLoading, error } = useBlogs();
+  
   // Calculate pagination values
-  const totalPosts = blogPosts.length;
+  const totalPosts = blogs?.length || 0;
   const totalPages = Math.ceil(totalPosts / postsPerPage);
   
   // Ensure current page is valid
   useEffect(() => {
-    if (currentPage < 1 || currentPage > totalPages) {
+    if (blogs && (currentPage < 1 || currentPage > totalPages)) {
       setSearchParams({ page: "1" });
     }
-  }, [currentPage, totalPages, setSearchParams]);
-  
-  useEffect(() => {
-    // Simulate data fetching delay
-    const timer = setTimeout(() => {
-      setPosts(blogPosts);
-      setLoading(false);
-    }, 1200);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
+  }, [currentPage, totalPages, setSearchParams, blogs]);
+
   // Get current page posts
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = blogs ? blogs.slice(indexOfFirstPost, indexOfLastPost) : [];
+
+  // Get read time (simple estimation based on content length)
+  const getReadTime = (content: string) => {
+    // Average reading speed: 200 words per minute
+    const wordCount = content.split(/\s+/).length;
+    const readTime = Math.ceil(wordCount / 200);
+    return readTime < 1 ? 1 : readTime;
+  };
+
+  // Format date to readable format
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
 
   // Change page
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = (pageNumber: number) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setSearchParams({ page: pageNumber.toString() });
   };
 
   // Toggle bookmark
-  const handleToggleBookmark = (postId, title) => {
-    if (isBookmarked(postId)) {
-      removeBookmark(postId);
+  const handleToggleBookmark = (blogId: string, title: string) => {
+    if (isBookmarked(blogId)) {
+      removeBookmark(blogId);
       toast.success(`"${title}" removed from bookmarks`);
     } else {
-      addBookmark(postId);
+      addBookmark(blogId);
       toast.success(`"${title}" added to bookmarks`);
     }
   };
@@ -109,6 +141,24 @@ const BlogPage = () => {
     return pageNumbers;
   };
 
+  // Handle error state
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-10 text-center">
+        <h2 className="text-xl font-semibold mb-4">Error loading blog posts</h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
+          We're having trouble loading the blog posts. Please try again later.
+        </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <>
       <SEOHead 
@@ -133,34 +183,42 @@ const BlogPage = () => {
         
         <div className="max-w-3xl mx-auto"> {/* Centered container */}
           <div className="grid grid-cols-1 gap-8">
-            {loading ? (
+            {isLoading ? (
               // Show skeletons while loading
               Array(6).fill(0).map((_, index) => (
                 <BlogCardSkeleton key={`skeleton-${index}`} />
               ))
-            ) : (
+            ) : blogs && blogs.length > 0 ? (
               // Show actual blog posts when loaded
-              currentPosts.map((post) => (
+              currentPosts.map((post: Blog) => (
                 <div 
-                  key={post.id}
+                  key={post._id}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row"
                 >
                   <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
                     <img 
-                      src={post.image} 
+                      src={post.image.startsWith('/') && !post.image.startsWith('http') 
+                        ? `${API_BASE_URL}${post.image}` 
+                        : post.image} 
                       alt={post.title} 
                       className="w-full h-48 md:h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/placeholder.svg";
+                      }}
                     />
                   </div>
                   <div className="md:w-3/5 lg:w-2/3 p-5 flex flex-col">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{post.date}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {formatDate(post.date)}
+                      </span>
                       <button 
-                        className={`${isBookmarked(post.id) ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
-                        onClick={() => handleToggleBookmark(post.id, post.title)}
-                        aria-label={isBookmarked(post.id) ? "Remove bookmark" : "Add bookmark"}
+                        className={`${isBookmarked(post._id) ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
+                        onClick={() => handleToggleBookmark(post._id, post.title)}
+                        aria-label={isBookmarked(post._id) ? "Remove bookmark" : "Add bookmark"}
                       >
-                        {isBookmarked(post.id) ? (
+                        {isBookmarked(post._id) ? (
                           <BookmarkCheck className="h-4 w-4" />
                         ) : (
                           <Bookmark className="h-4 w-4" />
@@ -177,7 +235,7 @@ const BlogPage = () => {
                     </h2>
                     <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-3">
                       <Clock className="h-3 w-3 mr-1" />
-                      <span>{post.readTime || '5'} min read</span>
+                      <span>{getReadTime(post.content)} min read</span>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                       {post.excerpt}
@@ -191,11 +249,16 @@ const BlogPage = () => {
                   </div>
                 </div>
               ))
+            ) : (
+              // No posts found
+              <div className="text-center py-8">
+                <p className="text-gray-600 dark:text-gray-400">No blog posts found.</p>
+              </div>
             )}
           </div>
 
           {/* Pagination */}
-          {!loading && totalPages > 1 && (
+          {!isLoading && totalPages > 1 && (
             <div className="mt-10">
               <Pagination>
                 <PaginationContent>
@@ -215,7 +278,7 @@ const BlogPage = () => {
                       <PaginationItem key={`page-${pageNumber}`}>
                         <PaginationLink 
                           isActive={currentPage === pageNumber}
-                          onClick={() => handlePageChange(pageNumber)}
+                          onClick={() => handlePageChange(pageNumber as number)}
                         >
                           {pageNumber}
                         </PaginationLink>

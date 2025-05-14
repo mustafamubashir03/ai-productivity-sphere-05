@@ -1,52 +1,52 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Bookmark, BookmarkCheck, Calendar, Clock, Share } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
-import { getBlogPostBySlug } from "@/data/blog";
-import { tools } from "@/data/tools";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { toast } from "@/components/ui/sonner";
 import BlogDetailSkeleton from "@/components/skeletons/BlogDetailSkeleton";
-import ToolCard, { Tool } from "@/components/common/ToolCard";
+import { useBlog, useTool, API_BASE_URL } from "@/hooks/use-api";
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<any>(null);
-  const [relatedTools, setRelatedTools] = useState<Tool[]>([]);
-  const [loading, setLoading] = useState(true);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  
+  // Fetch blog post from API
+  const { data: post, isLoading: isPostLoading, error } = useBlog(slug || '');
+  
+  // State for related tools (would need API endpoint for this)
+  const [relatedTools, setRelatedTools] = useState<any[]>([]);
+  const [isRelatedToolsLoading, setIsRelatedToolsLoading] = useState(false);
 
-  useEffect(() => {
-    if (slug) {
-      // Simulate data fetching delay
-      const timer = setTimeout(() => {
-        const foundPost = getBlogPostBySlug(slug);
-        setPost(foundPost);
-        
-        if (foundPost && foundPost.relatedTools) {
-          const related = foundPost.relatedTools
-            .map(toolId => tools.find(t => t.id === toolId))
-            .filter(Boolean) as Tool[];
-          
-          setRelatedTools(related);
-        }
-        
-        setLoading(false);
-      }, 800);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [slug]);
+  // Calculate read time
+  const getReadTime = (content: string) => {
+    // Average reading speed: 200 words per minute
+    const wordCount = content?.split(/\s+/).length || 0;
+    const readTime = Math.ceil(wordCount / 200);
+    return readTime < 1 ? 1 : readTime;
+  };
+
+  // Format date to readable format
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
 
   const handleToggleBookmark = () => {
     if (!post) return;
     
-    if (isBookmarked(post.id)) {
-      removeBookmark(post.id);
+    if (isBookmarked(post._id)) {
+      removeBookmark(post._id);
       toast.success(`"${post.title}" removed from bookmarks`);
     } else {
-      addBookmark(post.id);
+      addBookmark(post._id);
       toast.success(`"${post.title}" added to bookmarks`);
     }
   };
@@ -54,8 +54,8 @@ const BlogPostPage = () => {
   const handleSharePost = () => {
     if (navigator.share) {
       navigator.share({
-        title: post.title,
-        text: post.excerpt,
+        title: post?.title,
+        text: post?.excerpt,
         url: window.location.href,
       })
       .catch(() => {
@@ -73,11 +73,19 @@ const BlogPostPage = () => {
     navigator.clipboard.writeText(text);
   };
 
-  if (loading) {
+  // Format image URL
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return '/placeholder.svg';
+    return imagePath.startsWith('/') && !imagePath.startsWith('http') 
+      ? `${API_BASE_URL}${imagePath}` 
+      : imagePath;
+  };
+
+  if (isPostLoading) {
     return <BlogDetailSkeleton />;
   }
 
-  if (!post) {
+  if (error || !post) {
     return (
       <div className="container mx-auto px-4 py-10 text-center min-h-[60vh]">
         <h2 className="text-2xl font-bold mb-4">Post Not Found</h2>
@@ -96,21 +104,21 @@ const BlogPostPage = () => {
       data: {
         headline: post.title,
         description: post.excerpt,
-        image: post.image || "/placeholder.svg",
+        image: getImageUrl(post.seo?.imageUrl || post.image),
         author: {
           "@type": "Person",
-          name: post.author
+          name: "AI Productivity Hub Team"
         },
         publisher: {
           "@type": "Organization",
-          name: "AI Productivity Hub",
+          name: post.seo?.siteName || "AI Productivity Hub",
           logo: {
             "@type": "ImageObject",
             url: window.location.origin + "/favicon.svg"
           }
         },
         datePublished: post.date,
-        articleSection: post.category,
+        articleSection: post.category || "Technology",
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": window.location.href
@@ -124,8 +132,8 @@ const BlogPostPage = () => {
       <EnhancedSEO 
         title={`${post.title} - AI Productivity Hub`}
         description={post.excerpt}
-        image={post.image}
-        canonicalUrl={window.location.href}
+        image={getImageUrl(post.image)}
+        canonicalUrl={post.seo?.canonicalUrl || window.location.href}
         structuredData={structuredData}
       />
       
@@ -148,10 +156,10 @@ const BlogPostPage = () => {
             
             <button
               onClick={handleToggleBookmark}
-              className={`flex items-center ${isBookmarked(post.id) ? 'text-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary'} transition-colors`}
-              aria-label={isBookmarked(post.id) ? "Remove from bookmarks" : "Add to bookmarks"}
+              className={`flex items-center ${isBookmarked(post._id) ? 'text-primary' : 'text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary'} transition-colors`}
+              aria-label={isBookmarked(post._id) ? "Remove from bookmarks" : "Add to bookmarks"}
             >
-              {isBookmarked(post.id) ? (
+              {isBookmarked(post._id) ? (
                 <>
                   <BookmarkCheck className="h-5 w-5 mr-1" /> Bookmarked
                 </>
@@ -167,9 +175,13 @@ const BlogPostPage = () => {
         {/* Featured Image */}
         <div className="mb-8 relative">
           <img
-            src={post.image}
+            src={getImageUrl(post.image)}
             alt={post.title}
             className="w-full h-64 md:h-96 object-cover rounded-lg shadow-md"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/placeholder.svg";
+            }}
           />
           
           {post.category && (
@@ -196,24 +208,13 @@ const BlogPostPage = () => {
           <div className="flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1" />
-              <time dateTime={post.date}>{post.date}</time>
+              <time dateTime={post.date}>{formatDate(post.date)}</time>
             </div>
             
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
-              <span>{post.readTime} min read</span>
+              <span>{getReadTime(post.content)} min read</span>
             </div>
-            
-            {post.author && (
-              <div className="flex items-center">
-                <img 
-                  src={post.authorAvatar || "/placeholder.svg"} 
-                  alt={post.author}
-                  className="h-6 w-6 rounded-full mr-2 object-cover"
-                />
-                <span>{post.author}</span>
-              </div>
-            )}
           </div>
         </div>
 
@@ -222,18 +223,6 @@ const BlogPostPage = () => {
           <div className="prose prose-lg dark:prose-invert max-w-none prose-a:text-primary prose-img:rounded-lg prose-headings:scroll-mt-20">
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
-
-          {/* Related Tools Section */}
-          {relatedTools.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Tools Mentioned in This Article</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {relatedTools.map((tool) => (
-                  <ToolCard key={tool.id} tool={tool} />
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Social Sharing */}
           <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700">

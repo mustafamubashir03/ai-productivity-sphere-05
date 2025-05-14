@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/sonner';
 
 // Updated API base URL to use the real API
-const API_BASE_URL = 'https://topratedai.biovasurgicals.com';
+export const API_BASE_URL = 'https://topratedai.biovasurgicals.com';
 
 // Type definition for API options
 interface ApiOptions {
@@ -157,6 +157,23 @@ export const useCompareTools = (slugs: string[]) => {
   return useApiQuery(['tools', 'compare', ...slugs], endpoint, {
     params
   });
+};
+
+// New hook to fetch blogs from the API
+export const useBlogs = (params?: Record<string, string>) => {
+  return useApiQuery(
+    ['blogs', params],
+    '/api/blogs',
+    { params }
+  );
+};
+
+// Hook to fetch a single blog post by slug
+export const useBlog = (slug: string) => {
+  return useApiQuery(
+    ['blog', slug],
+    `/api/blogs/${slug}`
+  );
 };
 
 export const useSubmitTool = () => {

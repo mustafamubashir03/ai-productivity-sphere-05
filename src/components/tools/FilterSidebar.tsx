@@ -34,6 +34,15 @@ const FilterSidebar = ({
 }: FilterSidebarProps) => {
   const [isOpen, setIsOpen] = useState(!isMobile);
   
+  // Handle button clicks without page reload
+  const handleIndustryClick = (industrySlug: string | null) => {
+    onSelectIndustry(industrySlug);
+  };
+  
+  const handleUseCaseClick = (useCaseSlug: string | null) => {
+    onSelectUseCase(useCaseSlug);
+  };
+  
   return (
     <div className={cn(
       "mb-8",
@@ -56,7 +65,10 @@ const FilterSidebar = ({
                   <div className="space-y-2">
                     <Button
                       variant={activeIndustry === null ? "default" : "outline"}
-                      onClick={() => onSelectIndustry(null)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleIndustryClick(null);
+                      }}
                       size="sm"
                       className="w-full justify-start"
                     >
@@ -66,7 +78,10 @@ const FilterSidebar = ({
                       <Button
                         key={industry.id}
                         variant={activeIndustry === industry.slug ? "default" : "outline"}
-                        onClick={() => onSelectIndustry(industry.slug)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleIndustryClick(industry.slug);
+                        }}
                         size="sm"
                         className="w-full justify-start"
                       >
@@ -82,7 +97,10 @@ const FilterSidebar = ({
                   <div className="space-y-2">
                     <Button
                       variant={activeUseCase === null ? "default" : "outline"}
-                      onClick={() => onSelectUseCase(null)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleUseCaseClick(null);
+                      }}
                       size="sm"
                       className="w-full justify-start"
                     >
@@ -92,7 +110,10 @@ const FilterSidebar = ({
                       <Button
                         key={useCase.id}
                         variant={activeUseCase === useCase.slug ? "default" : "outline"}
-                        onClick={() => onSelectUseCase(useCase.slug)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleUseCaseClick(useCase.slug);
+                        }}
                         size="sm"
                         className="w-full justify-start"
                       >
@@ -127,7 +148,10 @@ const FilterSidebar = ({
               <div className="space-y-2">
                 <Button
                   variant={activeIndustry === null ? "default" : "outline"}
-                  onClick={() => onSelectIndustry(null)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleIndustryClick(null);
+                  }}
                   size="sm"
                   className="w-full justify-start"
                 >
@@ -137,7 +161,10 @@ const FilterSidebar = ({
                   <Button
                     key={industry.id}
                     variant={activeIndustry === industry.slug ? "default" : "outline"}
-                    onClick={() => onSelectIndustry(industry.slug)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleIndustryClick(industry.slug);
+                    }}
                     size="sm"
                     className="w-full justify-start"
                   >
@@ -153,7 +180,10 @@ const FilterSidebar = ({
               <div className="space-y-2">
                 <Button
                   variant={activeUseCase === null ? "default" : "outline"}
-                  onClick={() => onSelectUseCase(null)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleUseCaseClick(null);
+                  }}
                   size="sm"
                   className="w-full justify-start"
                 >
@@ -163,7 +193,10 @@ const FilterSidebar = ({
                   <Button
                     key={useCase.id}
                     variant={activeUseCase === useCase.slug ? "default" : "outline"}
-                    onClick={() => onSelectUseCase(useCase.slug)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleUseCaseClick(useCase.slug);
+                    }}
                     size="sm"
                     className="w-full justify-start"
                   >

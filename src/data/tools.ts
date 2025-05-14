@@ -29,7 +29,23 @@ export const tools = [
     useCase: ["video-creation"],
     editorVerdict: "VideoGPT stands out for its intuitive natural language commands and impressive automated scene detection. The AI-driven color grading produces professional results even for beginners. While it lacks some advanced customization options, it's an excellent choice for content creators who need high-quality videos quickly.",
     relatedTools: ["2", "5"],
-    relatedBlogs: ["2"]
+    relatedBlogs: ["2"],
+    tags: ["AI", "Video Editing", "Content Creation"],
+    lastUpdated: "2025-04-28",
+    systemRequirements: "Windows 10/11, macOS 11+, 8GB RAM minimum",
+    apiAvailable: true,
+    integratedWith: ["Adobe Premiere", "Final Cut Pro", "DaVinci Resolve"],
+    testimonials: [
+      {
+        name: "Sarah Johnson",
+        company: "CreativeTech Media",
+        comment: "VideoGPT cut our editing time in half while improving overall quality."
+      }
+    ],
+    screenshots: [
+      "/placeholder.svg",
+      "/placeholder.svg"
+    ]
   },
   {
     id: "2",
@@ -59,7 +75,23 @@ export const tools = [
     useCase: ["image-generation"],
     editorVerdict: "PixelMind delivers exceptional results for portrait enhancement and background manipulation. Its batch processing feature saves hours of repetitive work while maintaining consistency. The interface is intuitive enough for beginners but offers depth for professionals. The pricing is competitive given the time-saving automation features.",
     relatedTools: ["1", "3"],
-    relatedBlogs: ["1"]
+    relatedBlogs: ["1"],
+    tags: ["Photo Editing", "AI", "Design"],
+    lastUpdated: "2025-05-01",
+    systemRequirements: "Windows 10/11, macOS 12+, 16GB RAM recommended",
+    apiAvailable: true,
+    integratedWith: ["Adobe Photoshop", "Lightroom", "Capture One"],
+    testimonials: [
+      {
+        name: "Mark Reynolds",
+        company: "Studio45 Photography",
+        comment: "The portrait enhancement tools are extraordinary. I've never seen such natural results from an AI."
+      }
+    ],
+    screenshots: [
+      "/placeholder.svg",
+      "/placeholder.svg"
+    ]
   },
   {
     id: "3",
@@ -90,7 +122,23 @@ export const tools = [
     useCase: ["content-writing", "seo-optimization"],
     editorVerdict: "CopyGenius excels at maintaining brand voice consistency across different types of content. Its SEO optimization features are particularly valuable, with smart keyword integration that feels natural. The plagiarism prevention tool saves time and potential legal headaches. The free tier is generous enough for small businesses to get started.",
     relatedTools: ["4", "6"],
-    relatedBlogs: ["1", "2"]
+    relatedBlogs: ["1", "2"],
+    tags: ["AI Writing", "Content Marketing", "SEO"],
+    lastUpdated: "2025-05-10",
+    systemRequirements: "Web-based, modern browser required",
+    apiAvailable: true,
+    integratedWith: ["WordPress", "Shopify", "MailChimp", "HubSpot"],
+    testimonials: [
+      {
+        name: "David Chen",
+        company: "Growth Marketing Inc.",
+        comment: "We've seen a 32% increase in organic traffic since implementing CopyGenius for our SEO content."
+      }
+    ],
+    screenshots: [
+      "/placeholder.svg",
+      "/placeholder.svg"
+    ]
   },
   {
     id: "4",
@@ -120,7 +168,23 @@ export const tools = [
     useCase: ["business-automation"],
     editorVerdict: "CodeCompanion is a game-changer for developers of all skill levels. The code suggestions are remarkably accurate, especially for complex algorithms. Where it truly shines is in debugging and performance optimization - identifying potential issues before they become problems. The documentation generator saves hours of tedious work and improves team collaboration.",
     relatedTools: ["5", "6"],
-    relatedBlogs: ["2"]
+    relatedBlogs: ["2"],
+    tags: ["Development", "Coding", "AI Assistant"],
+    lastUpdated: "2025-05-05",
+    systemRequirements: "VS Code, JetBrains IDEs, or web-based interface",
+    apiAvailable: true,
+    integratedWith: ["GitHub", "GitLab", "VS Code", "JetBrains IDEs"],
+    testimonials: [
+      {
+        name: "Julia Novak",
+        company: "TechFusion Labs",
+        comment: "Our junior developers are performing like seniors thanks to CodeCompanion's guidance."
+      }
+    ],
+    screenshots: [
+      "/placeholder.svg",
+      "/placeholder.svg"
+    ]
   },
   {
     id: "5",
@@ -150,7 +214,23 @@ export const tools = [
     useCase: ["business-automation"],
     editorVerdict: "WorkflowWizard bridges the gap between complex enterprise automation tools and simple task automators. The AI-suggested workflow improvements are genuinely helpful, often identifying bottlenecks that would otherwise go unnoticed. While the learning curve is steeper than some competitors, the power and flexibility it offers makes it worthwhile for businesses serious about automation.",
     relatedTools: ["3", "6"],
-    relatedBlogs: ["2"]
+    relatedBlogs: ["2"],
+    tags: ["Automation", "Workflow", "No-code"],
+    lastUpdated: "2025-04-15",
+    systemRequirements: "Web-based, Chrome or Firefox browser recommended",
+    apiAvailable: true,
+    integratedWith: ["Zapier", "Make", "Slack", "Google Workspace", "Microsoft 365"],
+    testimonials: [
+      {
+        name: "Alex Thompson",
+        company: "Agile Business Solutions",
+        comment: "We've automated over 40 business processes, saving approximately 120 work hours per week."
+      }
+    ],
+    screenshots: [
+      "/placeholder.svg",
+      "/placeholder.svg"
+    ]
   },
   {
     id: "6",
@@ -179,7 +259,23 @@ export const tools = [
     useCase: ["business-automation"],
     editorVerdict: "AutoTask is the closest thing to having a personal assistant at a fraction of the cost. Its pattern recognition becomes impressively accurate after just a week of use. The email response suggestions are contextually appropriate and time-saving. While it lacks some of the deeper integrations of enterprise tools, it's perfect for individuals and small teams looking to reclaim hours from their week.",
     relatedTools: ["3", "5"],
-    relatedBlogs: []
+    relatedBlogs: [],
+    tags: ["Productivity", "AI Assistant", "Email Management"],
+    lastUpdated: "2025-04-20",
+    systemRequirements: "Works with Gmail, Outlook, Google Calendar, and Microsoft Calendar",
+    apiAvailable: false,
+    integratedWith: ["Gmail", "Outlook", "Google Calendar", "Microsoft To Do"],
+    testimonials: [
+      {
+        name: "Rebecca Liu",
+        company: "Independent Consultant",
+        comment: "I was skeptical at first, but now I can't imagine working without AutoTask. It's like having a mind-reading assistant."
+      }
+    ],
+    screenshots: [
+      "/placeholder.svg",
+      "/placeholder.svg"
+    ]
   }
 ];
 

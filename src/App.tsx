@@ -13,6 +13,7 @@ import ToolDetailPage from "./pages/ToolDetailPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import BookmarksPage from "./pages/BookmarksPage";
+import SavedToolsPage from "./pages/SavedToolsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
@@ -22,7 +23,16 @@ import NotFound from "./pages/NotFound";
 import CompareToolsPage from "./pages/CompareToolsPage";
 import ScrollToTop from "./components/common/ScrollToTop";
 
-const queryClient = new QueryClient();
+// Create a new query client for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -37,6 +47,7 @@ const App = () => (
           <Route path="/tools/category/:categorySlug" element={<ToolsPage />} />
           <Route path="/tools/:slug" element={<ToolDetailPage />} />
           <Route path="/compare/:slugs" element={<CompareToolsPage />} />
+          <Route path="/saved-tools" element={<SavedToolsPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/bookmarks" element={<BookmarksPage />} />

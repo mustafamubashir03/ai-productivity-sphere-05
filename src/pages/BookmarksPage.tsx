@@ -6,6 +6,7 @@ import PageHeader from "@/components/common/PageHeader";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { toast } from "@/components/ui/sonner";
 import { API_BASE_URL } from "@/hooks/use-api";
+import { getToolId } from "@/utils/dataAdapters";
 
 const BookmarksPage = () => {
   const { bookmarks, removeBookmark } = useBookmarks();
@@ -68,7 +69,7 @@ const BookmarksPage = () => {
             <div className="grid grid-cols-1 gap-8">
               {bookmarks.map((post) => (
                 <div 
-                  key={post._id}
+                  key={getToolId(post)}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row"
                 >
                   <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
@@ -89,7 +90,7 @@ const BookmarksPage = () => {
                       </span>
                       <button 
                         className="text-primary hover:text-primary-dark" 
-                        onClick={() => handleRemoveBookmark(post._id, post.title)}
+                        onClick={() => handleRemoveBookmark(getToolId(post), post.title)}
                         aria-label="Remove bookmark"
                       >
                         <Bookmark className="h-4 w-4 fill-current" />

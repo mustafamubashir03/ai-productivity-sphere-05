@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
 import { X } from "lucide-react";
 import { useCompare } from "@/context/CompareContext";
+import { getToolId } from "@/utils/dataAdapters";
 
 const CompareBar = () => {
   const { toolsToCompare, removeFromCompare, clearCompare, compareTools, maxCompareItems } = useCompare();
@@ -24,12 +25,12 @@ const CompareBar = () => {
             <div className="flex flex-wrap gap-2">
               {toolsToCompare.map((tool) => (
                 <div 
-                  key={tool.id} 
+                  key={getToolId(tool)} 
                   className="relative bg-gray-100 dark:bg-gray-700 rounded-md px-3 py-1.5 flex items-center"
                 >
                   <span className="text-sm font-medium dark:text-white mr-6 truncate max-w-[120px]">{tool.name}</span>
                   <button
-                    onClick={() => removeFromCompare(tool.id)}
+                    onClick={() => removeFromCompare(getToolId(tool))}
                     className="absolute right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     aria-label={`Remove ${tool.name} from comparison`}
                   >

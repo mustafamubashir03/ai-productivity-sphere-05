@@ -1,6 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/sonner';
+import { adaptToolsToInternal } from '@/utils/dataAdapters';
 
 // Updated API base URL to use the real API
 export const API_BASE_URL = 'https://topratedai.biovasurgicals.com';
@@ -132,9 +133,15 @@ export const useApiMutation = (
 // Updated useTools hook to use real API endpoint
 export const useTools = (params?: Record<string, string>) => {
   return useApiQuery(
-    ['tools', params], 
+    ['tools', JSON.stringify(params)], 
     '/api/tools',
-    { params }
+    { 
+      params,
+      // Transform data to ensure consistent format
+      onSuccess: (data) => {
+        return adaptToolsToInternal(data);
+      }
+    }
   );
 };
 
@@ -149,7 +156,7 @@ export const useCompareTools = (slugs: string[]) => {
   const endpoint = `/api/tools/compare`;
   
   // Create params object for the API request
-  const params = {
+  const params: Record<string, string> = {
     slugs: slugs.join(',')
   };
   
@@ -162,7 +169,7 @@ export const useCompareTools = (slugs: string[]) => {
 // New hook to fetch blogs from the API
 export const useBlogs = (params?: Record<string, string>) => {
   return useApiQuery(
-    ['blogs', params],
+    ['blogs', JSON.stringify(params)],
     '/api/blogs',
     { params }
   );

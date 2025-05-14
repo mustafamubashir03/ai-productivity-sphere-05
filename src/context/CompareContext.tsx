@@ -3,6 +3,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tool } from "@/components/common/ToolCard";
 import { toast } from "@/components/ui/sonner";
+import { getToolId } from "@/utils/dataAdapters";
 
 interface CompareContextType {
   toolsToCompare: Tool[];
@@ -27,7 +28,7 @@ export function CompareProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    if (toolsToCompare.some((t) => t.id === tool.id)) {
+    if (toolsToCompare.some((t) => getToolId(t) === getToolId(tool))) {
       toast.info(`${tool.name} is already in your comparison list`);
       return;
     }
@@ -37,15 +38,15 @@ export function CompareProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromCompare = (toolId: string) => {
-    const tool = toolsToCompare.find((t) => t.id === toolId);
+    const tool = toolsToCompare.find((t) => getToolId(t) === toolId);
     if (tool) {
-      setToolsToCompare(toolsToCompare.filter((t) => t.id !== toolId));
+      setToolsToCompare(toolsToCompare.filter((t) => getToolId(t) !== toolId));
       toast.info(`${tool.name} removed from comparison`);
     }
   };
 
   const isInCompare = (toolId: string) => {
-    return toolsToCompare.some((tool) => tool.id === toolId);
+    return toolsToCompare.some((tool) => getToolId(tool) === toolId);
   };
 
   const clearCompare = () => {

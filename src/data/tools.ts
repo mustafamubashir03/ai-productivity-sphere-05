@@ -1,5 +1,7 @@
+import { Tool } from "@/types/tools";
+import { adaptToolsToInternal } from "@/utils/dataAdapters";
 
-export const tools = [
+const rawTools = [
   {
     id: "1",
     name: "VideoGPT",
@@ -279,6 +281,8 @@ export const tools = [
   }
 ];
 
+export const tools: Tool[] = adaptToolsToInternal(rawTools);
+
 export const getTrendingTools = () => {
   return tools.filter(tool => tool.trending === true);
 };
@@ -300,10 +304,10 @@ export const getToolsByUseCase = (useCaseSlug: string) => {
 };
 
 export const getRelatedTools = (toolId: string) => {
-  const tool = tools.find(t => t.id === toolId);
+  const tool = tools.find(t => t._id === toolId || t.id === toolId);
   if (!tool || !tool.relatedTools || tool.relatedTools.length === 0) return [];
   
-  return tools.filter(t => tool.relatedTools.includes(t.id));
+  return tools.filter(t => tool.relatedTools?.includes(t._id || t.id || ''));
 };
 
 export const getTopRatedTools = () => {

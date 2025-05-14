@@ -1,16 +1,19 @@
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Bookmark, BookmarkCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/common/SEOHead";
 import { getBlogPostBySlug } from "@/data/blog";
+import { useBookmarks } from "@/context/BookmarkContext";
+import { toast } from "@/components/ui/sonner";
 import BlogDetailSkeleton from "@/components/skeletons/BlogDetailSkeleton";
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
 
   useEffect(() => {
     if (slug) {
@@ -24,6 +27,18 @@ const BlogPostPage = () => {
       return () => clearTimeout(timer);
     }
   }, [slug]);
+
+  const handleToggleBookmark = () => {
+    if (!post) return;
+    
+    if (isBookmarked(post.id)) {
+      removeBookmark(post.id);
+      toast.success(`"${post.title}" removed from bookmarks`);
+    } else {
+      addBookmark(post.id);
+      toast.success(`"${post.title}" added to bookmarks`);
+    }
+  };
 
   if (loading) {
     return <BlogDetailSkeleton />;
@@ -49,11 +64,27 @@ const BlogPostPage = () => {
       />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Back Button */}
-        <div className="mb-6">
+        {/* Back Button and Bookmark */}
+        <div className="mb-6 flex justify-between items-center">
           <Link to="/blog" className="inline-flex items-center text-primary hover:underline">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
           </Link>
+          
+          <button
+            onClick={handleToggleBookmark}
+            className={`flex items-center ${isBookmarked(post.id) ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
+            aria-label={isBookmarked(post.id) ? "Remove from bookmarks" : "Add to bookmarks"}
+          >
+            {isBookmarked(post.id) ? (
+              <>
+                <BookmarkCheck className="mr-2 h-5 w-5" /> Bookmarked
+              </>
+            ) : (
+              <>
+                <Bookmark className="mr-2 h-5 w-5" /> Bookmark
+              </>
+            )}
+          </button>
         </div>
 
         {/* Featured Image */}

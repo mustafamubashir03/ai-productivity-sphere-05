@@ -1,11 +1,13 @@
 
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Clock, Bookmark } from "lucide-react";
+import { ArrowRight, Clock, Bookmark, BookmarkCheck } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 import { blogPosts } from "@/data/blog";
 import { useEffect, useState } from "react";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
+import { useBookmarks } from "@/context/BookmarkContext";
+import { toast } from "@/components/ui/sonner";
 import { 
   Pagination, 
   PaginationContent, 
@@ -20,6 +22,7 @@ const BlogPage = () => {
   const [posts, setPosts] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   
   // Get current page from URL query or default to 1
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
@@ -55,6 +58,17 @@ const BlogPage = () => {
   const handlePageChange = (pageNumber) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setSearchParams({ page: pageNumber.toString() });
+  };
+
+  // Toggle bookmark
+  const handleToggleBookmark = (postId, title) => {
+    if (isBookmarked(postId)) {
+      removeBookmark(postId);
+      toast.success(`"${title}" removed from bookmarks`);
+    } else {
+      addBookmark(postId);
+      toast.success(`"${title}" added to bookmarks`);
+    }
   };
 
   // Generate page numbers
@@ -108,6 +122,15 @@ const BlogPage = () => {
       />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex justify-end mb-6">
+          <Link 
+            to="/bookmarks" 
+            className="flex items-center text-primary hover:underline"
+          >
+            <Bookmark className="mr-2 h-4 w-4" /> View Bookmarks
+          </Link>
+        </div>
+        
         <div className="max-w-3xl mx-auto"> {/* Centered container */}
           <div className="grid grid-cols-1 gap-8">
             {loading ? (
@@ -132,8 +155,16 @@ const BlogPage = () => {
                   <div className="md:w-3/5 lg:w-2/3 p-5 flex flex-col">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs text-gray-500 dark:text-gray-400">{post.date}</span>
-                      <button className="text-gray-400 hover:text-primary">
-                        <Bookmark className="h-4 w-4" />
+                      <button 
+                        className={`${isBookmarked(post.id) ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
+                        onClick={() => handleToggleBookmark(post.id, post.title)}
+                        aria-label={isBookmarked(post.id) ? "Remove bookmark" : "Add bookmark"}
+                      >
+                        {isBookmarked(post.id) ? (
+                          <BookmarkCheck className="h-4 w-4" />
+                        ) : (
+                          <Bookmark className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                     <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">

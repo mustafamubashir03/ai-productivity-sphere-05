@@ -1,191 +1,192 @@
-
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/sonner';
 
-// Default API base URL - can be overridden with environment variables
-const DEFAULT_API_URL = '/api';
+// Default base URL for API requests (replace with your actual API base URL when ready)
+const API_BASE_URL = 'https://api.aiproductivityhub.com';
 
-// Get the API base URL from environment or use default
-const getApiBaseUrl = () => {
-  // This would be replaced with actual environment variable in a real app
-  return DEFAULT_API_URL;
-};
+// Type definition for API options
+interface ApiOptions {
+  headers?: HeadersInit;
+  params?: Record<string, string>;
+  mockData?: any; // For development/testing without real API
+  useMock?: boolean; // Toggle to use mock data
+  onSuccess?: (data: any) => void;
+  onError?: (error: any) => void;
+}
 
-// Generic API fetch function
-const fetchFromApi = async <T,>(endpoint: string, options?: RequestInit): Promise<T> => {
-  const baseUrl = getApiBaseUrl();
-  const url = `${baseUrl}${endpoint}`;
+// Helper function to build URL with query parameters
+export const buildUrl = (endpoint: string, params?: Record<string, string>): string => {
+  const url = new URL(`${API_BASE_URL}${endpoint}`);
   
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options?.headers || {}),
-      },
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        url.searchParams.append(key, value);
+      }
     });
-    
-    if (!response.ok) {
-      // Try to get error message from response
-      let errorMessage = `API Error: ${response.status} ${response.statusText}`;
-      try {
-        const errorData = await response.json();
-        if (errorData.message) {
-          errorMessage = errorData.message;
-        }
-      } catch (e) {
-        // Couldn't parse error message, use default
-      }
-      
-      throw new Error(errorMessage);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error(`Error fetching from ${endpoint}:`, error);
-    throw error;
   }
+  
+  return url.toString();
 };
 
-// Hook for fetching data with options to use mock data
-export function useApiQuery<T>(
-  queryKey: string[], 
-  endpoint: string, 
-  options?: {
-    mockData?: T;
-    useMock?: boolean;
-    queryOptions?: any;
-    requestOptions?: RequestInit;
-  }
-) {
-  const { mockData, useMock = false, queryOptions = {}, requestOptions } = options || {};
-  
-  // Define fetch function based on mock settings
-  const fetchData = async (): Promise<T> => {
-    if (useMock && mockData) {
-      // Simulate API delay with mock data
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(mockData);
-        }, 800);
-      });
-    }
-    
-    return fetchFromApi<T>(endpoint, requestOptions);
-  };
-  
-  // Use React Query for data fetching with the configured function
-  return useQuery({
-    queryKey,
-    queryFn: fetchData,
-    ...queryOptions,
-    onError: (error: Error) => {
-      // Display error toast
-      toast.error(error.message || 'Failed to fetch data');
-      
-      // Call custom error handler if provided
-      if (queryOptions.onError) {
-        queryOptions.onError(error);
-      }
-    }
-  });
-}
-
-// Hook for mutations (POST, PUT, DELETE)
-export function useApiMutation<TData, TVariables>(
+// Generic GET request using React Query
+export const useApiQuery = (
+  queryKey: string | string[],
   endpoint: string,
-  method: 'POST' | 'PUT' | 'PATCH' | 'DELETE',
-  options?: {
-    mockResponse?: TData;
-    useMock?: boolean;
-    onSuccessMessage?: string;
-    onErrorMessage?: string;
-  }
-) {
-  const { mockResponse, useMock = false, onSuccessMessage, onErrorMessage } = options || {};
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<TData | null>(null);
+  options: ApiOptions = {}
+) => {
+  const {
+    headers,
+    params,
+    mockData,
+    useMock = false,
+    onSuccess,
+    onError,
+  } = options;
   
-  const mutate = async (variables: TVariables): Promise<TData> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      let result: TData;
+  return useQuery({
+    queryKey: Array.isArray(queryKey) ? queryKey : [queryKey],
+    queryFn: async () => {
+      // Use mock data if specified (for development without API)
+      if (useMock && mockData) {
+        await new Promise(resolve => setTimeout(resolve, 500)); // Fake delay
+        return mockData;
+      }
       
-      if (useMock && mockResponse) {
-        // Simulate API delay with mock response
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        result = mockResponse;
-      } else {
-        // Real API call
-        result = await fetchFromApi<TData>(endpoint, {
-          method,
-          body: JSON.stringify(variables),
+      try {
+        const url = buildUrl(endpoint, params);
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...headers,
+          },
         });
+        
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API request failed:', error);
+        throw error;
       }
-      
-      setData(result);
-      if (onSuccessMessage) {
-        toast.success(onSuccessMessage);
+    },
+    meta: {
+      onSuccess: data => {
+        onSuccess?.(data);
+      },
+      onError: error => {
+        console.error('Query error:', error);
+        onError?.(error);
       }
-      return result;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      setError(err instanceof Error ? err : new Error(errorMessage));
-      
-      if (onErrorMessage) {
-        toast.error(onErrorMessage);
-      } else {
-        toast.error(errorMessage);
-      }
-      throw err;
-    } finally {
-      setIsLoading(false);
     }
-  };
-  
-  return {
-    mutate,
-    isLoading,
-    error,
-    data,
-  };
-}
-
-export function useFetchTools(category?: string, industry?: string, useCase?: string, search?: string) {
-  // This will be replaced with actual API call in production
-  // For now, we're using local data
-  const endpoint = `/tools?${category ? `category=${category}` : ''}${industry ? `&industry=${industry}` : ''}${useCase ? `&useCase=${useCase}` : ''}${search ? `&search=${search}` : ''}`;
-  
-  // Import tools directly for mock data
-  const { tools } = require('@/data/tools');
-  
-  return useApiQuery(['tools', category, industry, useCase, search], endpoint, {
-    mockData: tools,
-    useMock: true, // Set to false when real API is ready
   });
-}
+};
 
-export function useFetchToolDetail(slug: string) {
-  const endpoint = `/tools/${slug}`;
+// Generic POST request using React Query
+export const useApiMutation = (
+  endpoint: string,
+  options: ApiOptions = {}
+) => {
+  const queryClient = useQueryClient();
+  const { headers, mockData, useMock = false, onSuccess, onError } = options;
   
-  // Import tools directly for mock data
+  return useMutation({
+    mutationFn: async (data: any) => {
+      // Use mock response if specified (for development)
+      if (useMock && mockData) {
+        await new Promise(resolve => setTimeout(resolve, 500)); // Fake delay
+        return mockData;
+      }
+      
+      const url = `${API_BASE_URL}${endpoint}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || `API error: ${response.status}`);
+      }
+      
+      return await response.json();
+    },
+    onSuccess: (data, variables) => {
+      onSuccess?.(data);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'An error occurred');
+      onError?.(error);
+    },
+  });
+};
+
+// Pre-configured API hooks for specific endpoints
+export const useTools = (params?: Record<string, string>) => {
+  const { getToolsByCategory, getToolsByIndustry, getToolsByUseCase, tools } = require('@/data/tools');
+  
+  // Process the filter logic similar to what we do in the UI
+  let mockResult = [...tools];
+  
+  if (params?.category) {
+    mockResult = getToolsByCategory(params.category);
+  }
+  
+  if (params?.industry) {
+    const industryTools = getToolsByIndustry(params.industry);
+    mockResult = params?.category 
+      ? mockResult.filter(tool => industryTools.some(t => t.id === tool.id))
+      : industryTools;
+  }
+  
+  if (params?.useCase) {
+    const useCaseTools = getToolsByUseCase(params.useCase);
+    mockResult = mockResult.filter(tool => useCaseTools.some(t => t.id === tool.id));
+  }
+  
+  if (params?.search) {
+    const query = params.search.toLowerCase();
+    mockResult = mockResult.filter(
+      tool => tool.name.toLowerCase().includes(query) || 
+              tool.description.toLowerCase().includes(query)
+    );
+  }
+  
+  return useApiQuery(
+    ['tools', params], 
+    '/tools',
+    {
+      params,
+      mockData: mockResult,
+      useMock: true, // Set to false when real API is ready
+    }
+  );
+};
+
+export const useTool = (slug: string) => {
   const { getToolBySlug } = require('@/data/tools');
   const tool = getToolBySlug(slug);
   
-  return useApiQuery(['tool', slug], endpoint, {
-    mockData: tool,
-    useMock: true, // Set to false when real API is ready
-  });
-}
+  return useApiQuery(
+    ['tool', slug], 
+    `/tools/${slug}`,
+    {
+      mockData: tool,
+      useMock: true, // Set to false when real API is ready
+    }
+  );
+};
 
-export function useCompareTools(slugs: string[]) {
+export const useCompareTools = (slugs: string[]) => {
   const endpoint = `/tools/compare?slugs=${slugs.join(',')}`;
   
-  // Import tools directly for mock data
   const { getToolBySlug } = require('@/data/tools');
   const tools = slugs.map(slug => getToolBySlug(slug)).filter(Boolean);
   
@@ -194,4 +195,44 @@ export function useCompareTools(slugs: string[]) {
     mockData: tools,
     useMock: true, // Set to false when real API is ready
   });
-}
+};
+
+export const useSubmitTool = () => {
+  return useApiMutation('/tools', {
+    useMock: true,
+    mockData: { success: true, message: 'Tool submitted successfully!' },
+    onSuccess: () => {
+      toast.success('Tool submitted successfully!');
+    },
+  });
+};
+
+export const useBookmarkTool = () => {
+  const queryClient = useQueryClient();
+  
+  return useApiMutation('/user/bookmarks', {
+    useMock: true,
+    mockData: { success: true },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user', 'bookmarks'] });
+    },
+  });
+};
+
+// Example of how to use these hooks in components:
+/*
+import { useTools, useTool, useCompareTools, useSubmitTool } from '@/hooks/use-api';
+
+// In a component:
+const { data: tools, isLoading } = useTools({ category: 'ai-writing' });
+const { data: tool } = useTool('some-tool-slug');
+const { data: compareData } = useCompareTools(['tool1-slug', 'tool2-slug']);
+const { mutate: submitTool } = useSubmitTool();
+
+// To submit a tool:
+submitTool({
+  name: 'New Tool',
+  description: 'Tool description',
+  // ...other fields
+});
+*/

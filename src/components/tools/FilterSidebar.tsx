@@ -35,11 +35,15 @@ const FilterSidebar = ({
   const [isOpen, setIsOpen] = useState(!isMobile);
   
   // Handle button clicks without page reload
-  const handleIndustryClick = (industrySlug: string | null) => {
+  const handleIndustryClick = (industrySlug: string | null, e?: React.MouseEvent) => {
+    // Prevent default event handling to avoid page reloads
+    if (e) e.preventDefault();
     onSelectIndustry(industrySlug);
   };
   
-  const handleUseCaseClick = (useCaseSlug: string | null) => {
+  const handleUseCaseClick = (useCaseSlug: string | null, e?: React.MouseEvent) => {
+    // Prevent default event handling to avoid page reloads
+    if (e) e.preventDefault();
     onSelectUseCase(useCaseSlug);
   };
   
@@ -64,13 +68,12 @@ const FilterSidebar = ({
                   <h3 className="text-lg font-medium mb-3">Industries</h3>
                   <div className="space-y-2">
                     <Button
+                      key="all-industries"
                       variant={activeIndustry === null ? "default" : "outline"}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleIndustryClick(null);
-                      }}
+                      onClick={(e) => handleIndustryClick(null, e)}
                       size="sm"
                       className="w-full justify-start"
+                      type="button" // Explicitly set button type to prevent form submission
                     >
                       All Industries
                     </Button>
@@ -78,12 +81,10 @@ const FilterSidebar = ({
                       <Button
                         key={industry.id}
                         variant={activeIndustry === industry.slug ? "default" : "outline"}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleIndustryClick(industry.slug);
-                        }}
+                        onClick={(e) => handleIndustryClick(industry.slug, e)}
                         size="sm"
                         className="w-full justify-start"
+                        type="button" // Explicitly set button type to prevent form submission
                       >
                         {industry.name}
                       </Button>
@@ -96,13 +97,12 @@ const FilterSidebar = ({
                   <h3 className="text-lg font-medium mb-3">Use Cases</h3>
                   <div className="space-y-2">
                     <Button
+                      key="all-usecases"
                       variant={activeUseCase === null ? "default" : "outline"}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleUseCaseClick(null);
-                      }}
+                      onClick={(e) => handleUseCaseClick(null, e)}
                       size="sm"
                       className="w-full justify-start"
+                      type="button" // Explicitly set button type to prevent form submission
                     >
                       All Use Cases
                     </Button>
@@ -110,12 +110,10 @@ const FilterSidebar = ({
                       <Button
                         key={useCase.id}
                         variant={activeUseCase === useCase.slug ? "default" : "outline"}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleUseCaseClick(useCase.slug);
-                        }}
+                        onClick={(e) => handleUseCaseClick(useCase.slug, e)}
                         size="sm"
                         className="w-full justify-start"
+                        type="button" // Explicitly set button type to prevent form submission
                       >
                         {useCase.name}
                       </Button>
@@ -147,13 +145,12 @@ const FilterSidebar = ({
               <h3 className="text-lg font-medium mb-3">Industries</h3>
               <div className="space-y-2">
                 <Button
+                  key="all-industries-desktop"
                   variant={activeIndustry === null ? "default" : "outline"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleIndustryClick(null);
-                  }}
+                  onClick={(e) => handleIndustryClick(null, e)}
                   size="sm"
                   className="w-full justify-start"
+                  type="button" // Explicitly set button type to prevent form submission
                 >
                   All Industries
                 </Button>
@@ -161,12 +158,10 @@ const FilterSidebar = ({
                   <Button
                     key={industry.id}
                     variant={activeIndustry === industry.slug ? "default" : "outline"}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleIndustryClick(industry.slug);
-                    }}
+                    onClick={(e) => handleIndustryClick(industry.slug, e)}
                     size="sm"
                     className="w-full justify-start"
+                    type="button" // Explicitly set button type to prevent form submission
                   >
                     {industry.name}
                   </Button>
@@ -179,13 +174,12 @@ const FilterSidebar = ({
               <h3 className="text-lg font-medium mb-3">Use Cases</h3>
               <div className="space-y-2">
                 <Button
+                  key="all-usecases-desktop"
                   variant={activeUseCase === null ? "default" : "outline"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleUseCaseClick(null);
-                  }}
+                  onClick={(e) => handleUseCaseClick(null, e)}
                   size="sm"
                   className="w-full justify-start"
+                  type="button" // Explicitly set button type to prevent form submission
                 >
                   All Use Cases
                 </Button>
@@ -193,12 +187,10 @@ const FilterSidebar = ({
                   <Button
                     key={useCase.id}
                     variant={activeUseCase === useCase.slug ? "default" : "outline"}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleUseCaseClick(useCase.slug);
-                    }}
+                    onClick={(e) => handleUseCaseClick(useCase.slug, e)}
                     size="sm"
                     className="w-full justify-start"
+                    type="button" // Explicitly set button type to prevent form submission
                   >
                     {useCase.name}
                   </Button>

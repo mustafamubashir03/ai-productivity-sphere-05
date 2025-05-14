@@ -22,9 +22,11 @@ const Navbar = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Tools", path: "/tools" },
+    { name: "Trending", path: "/trending-tools" },
+    { name: "Insights", path: "/insights" },
     { name: "Blog", path: "/blog" },
+    { name: "Submit Tool", path: "/submit-tool" },
     { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
   ];
 
   return (

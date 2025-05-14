@@ -21,6 +21,9 @@ import TermsPage from "./pages/TermsPage";
 import DisclaimerPage from "./pages/DisclaimerPage";
 import NotFound from "./pages/NotFound";
 import CompareToolsPage from "./pages/CompareToolsPage";
+import TrendingToolsPage from "./pages/TrendingToolsPage";
+import SubmitToolPage from "./pages/SubmitToolPage";
+import InsightsPage from "./pages/InsightsPage";
 import ScrollToTop from "./components/common/ScrollToTop";
 
 // Create a new query client for React Query
@@ -53,6 +56,9 @@ const App = () => (
           <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/trending-tools" element={<TrendingToolsPage />} />
+          <Route path="/submit-tool" element={<SubmitToolPage />} />
+          <Route path="/insights" element={<InsightsPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/terms-and-conditions" element={<TermsPage />} />
           <Route path="/disclaimer" element={<DisclaimerPage />} />

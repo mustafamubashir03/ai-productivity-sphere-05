@@ -140,7 +140,7 @@ const ToolsPage = () => {
   // Generate structured data
   const structuredData = [
     {
-      type: "FAQPage",
+      type: "FAQPage" as const,
       data: {
         mainEntity: [
           {

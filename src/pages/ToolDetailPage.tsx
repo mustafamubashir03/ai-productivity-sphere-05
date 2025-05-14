@@ -134,7 +134,7 @@ const ToolDetailPage = () => {
   // Prepare structured data for SEO
   const structuredData = [
     {
-      type: "Product",
+      type: "Product" as const,
       data: {
         name: tool.name,
         description: tool.description,
@@ -158,7 +158,7 @@ const ToolDetailPage = () => {
       }
     },
     {
-      type: "Review",
+      type: "Review" as const,
       data: {
         itemReviewed: {
           "@type": "SoftwareApplication",

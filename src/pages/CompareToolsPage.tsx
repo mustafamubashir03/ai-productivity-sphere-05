@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Check, X } from "lucide-react";
@@ -69,7 +68,7 @@ const CompareToolsPage = () => {
   // Structured data for SEO
   const structuredData = [
     {
-      type: "Article",
+      type: "Article" as const,
       data: {
         headline: `Comparing ${tools.map(t => t.name).join(' vs ')}`,
         description: `Side-by-side comparison of ${tools.map(t => t.name).join(' vs ')}`,

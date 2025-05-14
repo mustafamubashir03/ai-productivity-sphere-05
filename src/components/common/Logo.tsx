@@ -7,61 +7,26 @@ interface LogoProps {
 }
 
 const Logo: React.FC<LogoProps> = ({ size = "medium", className = "" }) => {
-  // Set the dimensions based on the size prop
-  const dimensions = {
-    small: { width: 40, height: 40 },
-    medium: { width: 64, height: 64 },
-    large: { width: 80, height: 80 },
+  // Define size classes
+  const sizeClasses = {
+    small: "w-8 h-8",
+    medium: "w-12 h-12",
+    large: "w-16 h-16"
   };
 
-  const { width, height } = dimensions[size];
-  
   return (
-    <div className={`flex items-center justify-center ${className}`}>
-      <svg 
-        width={width} 
-        height={height} 
-        viewBox="0 0 64 64" 
-        fill="none" 
-        xmlns="http://www.w3.org/2000/svg"
-        className="transition-all duration-300"
-      >
-        {/* Simple circular background */}
-        <circle cx="32" cy="32" r="30" fill="url(#logoGradient)" />
-        
-        {/* Abstract minimalist shape */}
-        <path 
-          d="M20 32C20 25.4 25.4 20 32 20C38.6 20 44 25.4 44 32C44 38.6 38.6 44 32 44" 
-          stroke="#FFFFFF" 
-          strokeWidth="5" 
-          strokeLinecap="round"
-        />
-        
-        {/* Center dot */}
-        <circle cx="32" cy="32" r="4" fill="#FFFFFF" />
-        
-        {/* Simple pulsing ring */}
-        <circle 
-          cx="32" 
-          cy="32" 
-          r="16" 
-          stroke="#FFFFFF" 
-          strokeWidth="2"
-          strokeOpacity="0.7"
-          fill="none"
-        >
-          <animate attributeName="r" values="16;18;16" dur="3s" repeatCount="indefinite" />
-          <animate attributeName="stroke-opacity" values="0.7;0.3;0.7" dur="3s" repeatCount="indefinite" />
-        </circle>
-        
-        {/* Gradient definitions */}
-        <defs>
-          <linearGradient id="logoGradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#8B5CF6" />
-            <stop offset="1" stopColor="#6366F1" />
-          </linearGradient>
-        </defs>
-      </svg>
+    <div className={`relative ${sizeClasses[size]} ${className}`}>
+      {/* Main logo container with gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary to-purple-700 rounded-lg shadow-lg animate-pulse-subtle"></div>
+      
+      {/* Central circle */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 bg-white/90 dark:bg-gray-900/90 rounded-full"></div>
+      
+      {/* Central dot */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/4 h-1/4 bg-primary rounded-full"></div>
+      
+      {/* Pulsing ring */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full border-2 border-white/50 dark:border-gray-300/30 rounded-full animate-ping opacity-75" style={{ animationDuration: '3s' }}></div>
     </div>
   );
 };

@@ -21,7 +21,15 @@ export const tools = [
       "Educational content creation"
     ],
     pricing: "Freemium, starting at $19/month for Pro plan",
-    websiteUrl: "https://example.com/videogpt"
+    websiteUrl: "https://example.com/videogpt",
+    trending: true,
+    rating: 4.8,
+    reviewed: true,
+    industryFit: ["marketers", "freelancers", "educators"],
+    useCase: ["video-creation"],
+    editorVerdict: "VideoGPT stands out for its intuitive natural language commands and impressive automated scene detection. The AI-driven color grading produces professional results even for beginners. While it lacks some advanced customization options, it's an excellent choice for content creators who need high-quality videos quickly.",
+    relatedTools: ["2", "5"],
+    relatedBlogs: ["2"]
   },
   {
     id: "2",
@@ -44,7 +52,14 @@ export const tools = [
       "Social media content creation"
     ],
     pricing: "$12.99/month, $99/year",
-    websiteUrl: "https://example.com/pixelmind"
+    websiteUrl: "https://example.com/pixelmind",
+    rating: 4.6,
+    reviewed: true,
+    industryFit: ["freelancers", "marketers"],
+    useCase: ["image-generation"],
+    editorVerdict: "PixelMind delivers exceptional results for portrait enhancement and background manipulation. Its batch processing feature saves hours of repetitive work while maintaining consistency. The interface is intuitive enough for beginners but offers depth for professionals. The pricing is competitive given the time-saving automation features.",
+    relatedTools: ["1", "3"],
+    relatedBlogs: ["1"]
   },
   {
     id: "3",
@@ -67,7 +82,15 @@ export const tools = [
       "Product descriptions"
     ],
     pricing: "Free tier with 5,000 words/month, Pro plan $29/month",
-    websiteUrl: "https://example.com/copygenius"
+    websiteUrl: "https://example.com/copygenius",
+    trending: true,
+    rating: 4.7,
+    reviewed: true,
+    industryFit: ["marketers", "freelancers", "writers"],
+    useCase: ["content-writing", "seo-optimization"],
+    editorVerdict: "CopyGenius excels at maintaining brand voice consistency across different types of content. Its SEO optimization features are particularly valuable, with smart keyword integration that feels natural. The plagiarism prevention tool saves time and potential legal headaches. The free tier is generous enough for small businesses to get started.",
+    relatedTools: ["4", "6"],
+    relatedBlogs: ["1", "2"]
   },
   {
     id: "4",
@@ -90,7 +113,14 @@ export const tools = [
       "Technical documentation"
     ],
     pricing: "$20/month for individual developers, team plans available",
-    websiteUrl: "https://example.com/codecompanion"
+    websiteUrl: "https://example.com/codecompanion",
+    trending: true,
+    rating: 4.9,
+    industryFit: ["developers", "students"],
+    useCase: ["business-automation"],
+    editorVerdict: "CodeCompanion is a game-changer for developers of all skill levels. The code suggestions are remarkably accurate, especially for complex algorithms. Where it truly shines is in debugging and performance optimization - identifying potential issues before they become problems. The documentation generator saves hours of tedious work and improves team collaboration.",
+    relatedTools: ["5", "6"],
+    relatedBlogs: ["2"]
   },
   {
     id: "5",
@@ -113,7 +143,14 @@ export const tools = [
       "Marketing campaign automation"
     ],
     pricing: "Starts at $49/month for businesses, enterprise plans available",
-    websiteUrl: "https://example.com/workflowwizard"
+    websiteUrl: "https://example.com/workflowwizard",
+    rating: 4.5,
+    reviewed: true,
+    industryFit: ["marketers", "freelancers"],
+    useCase: ["business-automation"],
+    editorVerdict: "WorkflowWizard bridges the gap between complex enterprise automation tools and simple task automators. The AI-suggested workflow improvements are genuinely helpful, often identifying bottlenecks that would otherwise go unnoticed. While the learning curve is steeper than some competitors, the power and flexibility it offers makes it worthwhile for businesses serious about automation.",
+    relatedTools: ["3", "6"],
+    relatedBlogs: ["2"]
   },
   {
     id: "6",
@@ -136,12 +173,18 @@ export const tools = [
       "Meeting scheduling and preparation"
     ],
     pricing: "$9.99/month per user, 14-day free trial",
-    websiteUrl: "https://example.com/autotask"
+    websiteUrl: "https://example.com/autotask",
+    rating: 4.4,
+    industryFit: ["freelancers", "writers", "marketers"],
+    useCase: ["business-automation"],
+    editorVerdict: "AutoTask is the closest thing to having a personal assistant at a fraction of the cost. Its pattern recognition becomes impressively accurate after just a week of use. The email response suggestions are contextually appropriate and time-saving. While it lacks some of the deeper integrations of enterprise tools, it's perfect for individuals and small teams looking to reclaim hours from their week.",
+    relatedTools: ["3", "5"],
+    relatedBlogs: []
   }
 ];
 
 export const getTrendingTools = () => {
-  return tools.slice(0, 3);
+  return tools.filter(tool => tool.trending === true);
 };
 
 export const getToolsByCategory = (categorySlug: string) => {
@@ -150,4 +193,23 @@ export const getToolsByCategory = (categorySlug: string) => {
 
 export const getToolBySlug = (slug: string) => {
   return tools.find(tool => tool.slug === slug);
+};
+
+export const getToolsByIndustry = (industrySlug: string) => {
+  return tools.filter(tool => tool.industryFit && tool.industryFit.includes(industrySlug));
+};
+
+export const getToolsByUseCase = (useCaseSlug: string) => {
+  return tools.filter(tool => tool.useCase && tool.useCase.includes(useCaseSlug));
+};
+
+export const getRelatedTools = (toolId: string) => {
+  const tool = tools.find(t => t.id === toolId);
+  if (!tool || !tool.relatedTools || tool.relatedTools.length === 0) return [];
+  
+  return tools.filter(t => tool.relatedTools.includes(t.id));
+};
+
+export const getTopRatedTools = () => {
+  return [...tools].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 3);
 };

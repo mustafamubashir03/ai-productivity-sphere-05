@@ -1,33 +1,48 @@
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import SEOHead from "@/components/common/SEOHead";
+import { useParams, useSearchParams } from "react-router-dom";
+import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard, { Tool } from "@/components/common/ToolCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Search } from "lucide-react";
-import { tools, getToolsByCategory } from "@/data/tools";
+import { tools, getToolsByCategory, getToolsByIndustry, getToolsByUseCase } from "@/data/tools";
 import { categories } from "@/data/categories";
+import { industries } from "@/data/industries";
+import { useCases } from "@/data/useCases";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
+import IndustryFilter from "@/components/tools/IndustryFilter";
+import UseCaseFilter from "@/components/tools/UseCaseFilter";
+import CompareBar from "@/components/tools/CompareBar";
 
 const TOOLS_PER_PAGE = 9;
 
 const ToolsPage = () => {
   const { categorySlug } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [filteredTools, setFilteredTools] = useState<Tool[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(categorySlug || null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [activeIndustry, setActiveIndustry] = useState<string | null>(searchParams.get("industry") || null);
+  const [activeUseCase, setActiveUseCase] = useState<string | null>(searchParams.get("useCase") || null);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
   const [loading, setLoading] = useState(true);
   
-  // Find category by slug
-  const category = categorySlug 
-    ? categories.find(cat => cat.slug === categorySlug) 
-    : null;
+  // Find category, industry or use case by slug
+  const category = categorySlug ? categories.find(cat => cat.slug === categorySlug) : null;
+  const industry = activeIndustry ? industries.find(ind => ind.slug === activeIndustry) : null;
+  const useCase = activeUseCase ? useCases.find(uc => uc.slug === activeUseCase) : null;
   
   useEffect(() => {
+    // Update URL with filters
+    const params = new URLSearchParams();
+    if (currentPage > 1) params.set("page", String(currentPage));
+    if (activeIndustry) params.set("industry", activeIndustry);
+    if (activeUseCase) params.set("useCase", activeUseCase);
+    setSearchParams(params);
+    
     // Simulate data fetching delay
     const timer = setTimeout(() => {
       let result = [...tools];
@@ -35,6 +50,20 @@ const ToolsPage = () => {
       // Filter by category if provided
       if (activeCategory) {
         result = getToolsByCategory(activeCategory);
+      }
+      
+      // Filter by industry if provided
+      if (activeIndustry) {
+        const industryTools = getToolsByIndustry(activeIndustry);
+        result = activeCategory 
+          ? result.filter(tool => industryTools.some(t => t.id === tool.id))
+          : industryTools;
+      }
+      
+      // Filter by use case if provided
+      if (activeUseCase) {
+        const useCaseTools = getToolsByUseCase(activeUseCase);
+        result = result.filter(tool => useCaseTools.some(t => t.id === tool.id));
       }
       
       // Filter by search query
@@ -48,45 +77,99 @@ const ToolsPage = () => {
       
       setFilteredTools(result);
       setLoading(false);
-    }, 1200);
+    }, 800);
     
     return () => clearTimeout(timer);
-  }, [searchQuery, activeCategory, categorySlug]);
+  }, [searchQuery, activeCategory, activeIndustry, activeUseCase, categorySlug, currentPage]);
   
   useEffect(() => {
     if (categorySlug !== activeCategory) {
       setActiveCategory(categorySlug || null);
+      setCurrentPage(1); // Reset pagination when category changes
       setLoading(true);
     }
   }, [categorySlug]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setCurrentPage(1); // Reset pagination when searching
     // The filtering is already handled by the useEffect
   };
   
   const handleCategoryClick = (slug: string) => {
     setActiveCategory(slug === activeCategory ? null : slug);
+    setCurrentPage(1); // Reset pagination when category changes
+    setLoading(true);
+  };
+  
+  const handleIndustryChange = (industrySlug: string | null) => {
+    setActiveIndustry(industrySlug);
+    setCurrentPage(1); // Reset pagination when industry changes
+    setLoading(true);
+  };
+  
+  const handleUseCaseChange = (useCaseSlug: string | null) => {
+    setActiveUseCase(useCaseSlug);
+    setCurrentPage(1); // Reset pagination when use case changes
     setLoading(true);
   };
   
   // Calculate pagination
-  const totalPages = Math.ceil(filteredTools.length / TOOLS_PER_PAGE);
+  const totalTools = filteredTools.length;
+  const totalPages = Math.ceil(totalTools / TOOLS_PER_PAGE);
   const paginatedTools = filteredTools.slice(
     (currentPage - 1) * TOOLS_PER_PAGE,
     currentPage * TOOLS_PER_PAGE
   );
   
-  const title = category ? `${category.name}` : "All AI Tools";
-  const description = category 
-    ? category.description
-    : "Browse our comprehensive collection of AI productivity tools to find the perfect solutions for your workflow.";
+  // Determine title and description based on active filters
+  let title = "All AI Tools";
+  let description = "Browse our comprehensive collection of AI productivity tools to find the perfect solutions for your workflow.";
+  
+  if (category) {
+    title = category.name;
+    description = category.description;
+  } else if (industry) {
+    title = `AI Tools for ${industry.name}`;
+    description = industry.description;
+  } else if (useCase) {
+    title = `AI Tools for ${useCase.name}`;
+    description = useCase.description;
+  }
+
+  // Generate structured data
+  const structuredData = [
+    {
+      type: "FAQPage",
+      data: {
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: `What are the best ${title.toLowerCase()}?`,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: `We've curated the top-rated ${title.toLowerCase()} for productivity and efficiency. Browse our selection to find the perfect tool for your needs.`
+            }
+          },
+          {
+            "@type": "Question",
+            name: "Are these AI tools free or paid?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Our collection includes both free and paid AI tools. Many offer freemium models, allowing you to test before committing to a paid plan."
+            }
+          }
+        ]
+      }
+    }
+  ];
 
   return (
     <>
-      <SEOHead 
+      <EnhancedSEO 
         title={`${title} - AI Productivity Hub`}
         description={`Discover top ${title.toLowerCase()} to enhance your productivity and workflow efficiency.`}
+        structuredData={structuredData}
       />
       
       <PageHeader title={title} description={description} />
@@ -127,6 +210,12 @@ const ToolsPage = () => {
               </Button>
             ))}
           </div>
+          
+          {/* Industry Filter */}
+          <IndustryFilter onSelectIndustry={handleIndustryChange} activeIndustry={activeIndustry} />
+          
+          {/* Use Case Filter */}
+          <UseCaseFilter onSelectUseCase={handleUseCaseChange} activeUseCase={activeUseCase} />
         </div>
         
         {/* Tools Grid */}
@@ -188,6 +277,9 @@ const ToolsPage = () => {
           </div>
         )}
       </div>
+      
+      {/* Compare Bar */}
+      <CompareBar />
     </>
   );
 };

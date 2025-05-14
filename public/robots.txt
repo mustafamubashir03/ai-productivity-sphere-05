@@ -1,7 +1,15 @@
+
+User-agent: *
+Allow: /
+
+# Allow all search engines to index the site
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
+Allow: /
+
+User-agent: Yandexbot
 Allow: /
 
 User-agent: Twitterbot
@@ -10,5 +18,12 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Prevent media crawlers from crawling high-resolution images
+User-agent: Googlebot-Image
+Disallow: /assets/high-res/
+
+# Allow sitemap
+Sitemap: https://aiproductivityhub.com/sitemap.xml
+
+# Crawl delay for rate limiting
+Crawl-delay: 1

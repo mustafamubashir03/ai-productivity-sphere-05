@@ -19,6 +19,7 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
 import DisclaimerPage from "./pages/DisclaimerPage";
 import NotFound from "./pages/NotFound";
+import CompareToolsPage from "./pages/CompareToolsPage";
 import ScrollToTop from "./components/common/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/tools" element={<ToolsPage />} />
           <Route path="/tools/category/:categorySlug" element={<ToolsPage />} />
           <Route path="/tools/:slug" element={<ToolDetailPage />} />
+          <Route path="/compare/:slugs" element={<CompareToolsPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/bookmarks" element={<BookmarksPage />} />

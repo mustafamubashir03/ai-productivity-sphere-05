@@ -4,13 +4,16 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App.tsx'
 import { BookmarkProvider } from './context/BookmarkContext.tsx'
+import { CompareProvider } from './context/CompareContext.tsx'
 import './index.css'
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <HelmetProvider>
       <BookmarkProvider>
-        <App />
+        <CompareProvider>
+          <App />
+        </CompareProvider>
       </BookmarkProvider>
     </HelmetProvider>
   </BrowserRouter>

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BarChart2, Bookmark, BookmarkCheck, Trending } from "lucide-react";
+import { ArrowRight, BarChart2, Bookmark, BookmarkCheck, TrendingUp } from "lucide-react";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { useCompare } from "@/context/CompareContext";
 import { toast } from "@/components/ui/sonner";
@@ -89,7 +89,7 @@ const ToolCard = ({ tool }: ToolCardProps) => {
               
               {tool.trending && (
                 <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500">
-                  <Trending className="w-3 h-3 mr-1" /> Trending
+                  <TrendingUp className="w-3 h-3 mr-1" /> Trending
                 </span>
               )}
               

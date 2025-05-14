@@ -191,14 +191,14 @@ export const useCompareTools = (slugs: string[]) => {
   const { getToolBySlug } = require('@/data/tools');
   const tools = slugs.map(slug => getToolBySlug(slug)).filter(Boolean);
   
-  // Fixed: Create params object that matches ApiOptions interface expectations
-  const params = {
+  // Fix: Create params object that explicitly matches the ApiOptions interface
+  const queryParams: Record<string, string> = {
     slugs: slugs.join(',')
   };
   
   // Pass the params object to useApiQuery
   return useApiQuery(['tools', 'compare', ...slugs], endpoint, {
-    params,
+    params: queryParams,
     mockData: tools,
     useMock: true, // Set to false when real API is ready
   });

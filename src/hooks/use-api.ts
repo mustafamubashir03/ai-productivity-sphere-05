@@ -185,16 +185,13 @@ export const useTool = (slug: string) => {
 };
 
 export const useCompareTools = (slugs: string[]) => {
-  // Use a simple endpoint without query parameters
   const endpoint = `/tools/compare`;
   
   const { getToolBySlug } = require('@/data/tools');
   const tools = slugs.map(slug => getToolBySlug(slug)).filter(Boolean);
   
-  // Create params object with the joined slugs as a single string value
-  const params: Record<string, string> = { 
-    slugs: slugs.join(',')
-  };
+  // Create a proper params object
+  const params = { slugs: slugs.join(',') };
   
   // Pass the params object to useApiQuery
   return useApiQuery(['tools', 'compare', ...slugs], endpoint, {

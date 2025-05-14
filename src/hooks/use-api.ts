@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/sonner';
 
@@ -190,8 +191,10 @@ export const useCompareTools = (slugs: string[]) => {
   const { getToolBySlug } = require('@/data/tools');
   const tools = slugs.map(slug => getToolBySlug(slug)).filter(Boolean);
   
-  // Create a proper params object
-  const params = { slugs: slugs.join(',') };
+  // Create a properly typed params object - ensure it matches the ApiOptions interface
+  const params: Record<string, string> = { 
+    slugs: slugs.join(',')
+  };
   
   // Pass the params object to useApiQuery
   return useApiQuery(['tools', 'compare', ...slugs], endpoint, {

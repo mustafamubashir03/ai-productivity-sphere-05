@@ -189,7 +189,8 @@ export function useCompareTools(slugs: string[]) {
   const { getToolBySlug } = require('@/data/tools');
   const tools = slugs.map(slug => getToolBySlug(slug)).filter(Boolean);
   
-  return useApiQuery(['tools', 'compare', slugs], endpoint, {
+  // Fix: Convert the array of slugs into a string array for the queryKey
+  return useApiQuery(['tools', 'compare', ...slugs], endpoint, {
     mockData: tools,
     useMock: true, // Set to false when real API is ready
   });

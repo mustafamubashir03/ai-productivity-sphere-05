@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard, { Tool } from "@/components/common/ToolCard";
@@ -10,18 +10,18 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Search } from "lucide-react";
 import { tools, getToolsByCategory, getToolsByIndustry, getToolsByUseCase } from "@/data/tools";
 import { categories } from "@/data/categories";
-import { industries } from "@/data/industries";
-import { useCases } from "@/data/useCases";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
-import IndustryFilter from "@/components/tools/IndustryFilter";
-import UseCaseFilter from "@/components/tools/UseCaseFilter";
 import CompareBar from "@/components/tools/CompareBar";
+import FilterSidebar from "@/components/tools/FilterSidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const TOOLS_PER_PAGE = 9;
 
 const ToolsPage = () => {
   const { categorySlug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [filteredTools, setFilteredTools] = useState<Tool[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(categorySlug || null);
@@ -32,16 +32,14 @@ const ToolsPage = () => {
   
   // Find category, industry or use case by slug
   const category = categorySlug ? categories.find(cat => cat.slug === categorySlug) : null;
-  const industry = activeIndustry ? industries.find(ind => ind.slug === activeIndustry) : null;
-  const useCase = activeUseCase ? useCases.find(uc => uc.slug === activeUseCase) : null;
   
   useEffect(() => {
-    // Update URL with filters
+    // Update URL with filters without page reload
     const params = new URLSearchParams();
     if (currentPage > 1) params.set("page", String(currentPage));
     if (activeIndustry) params.set("industry", activeIndustry);
     if (activeUseCase) params.set("useCase", activeUseCase);
-    setSearchParams(params);
+    setSearchParams(params, { replace: true });
     
     // Simulate data fetching delay
     const timer = setTimeout(() => {
@@ -129,12 +127,6 @@ const ToolsPage = () => {
   if (category) {
     title = category.name;
     description = category.description;
-  } else if (industry) {
-    title = `AI Tools for ${industry.name}`;
-    description = industry.description;
-  } else if (useCase) {
-    title = `AI Tools for ${useCase.name}`;
-    description = useCase.description;
   }
 
   // Generate structured data
@@ -175,9 +167,9 @@ const ToolsPage = () => {
       <PageHeader title={title} description={description} />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Search and Filter */}
-        <div className="mb-10 space-y-6">
-          <form onSubmit={handleSearch} className="max-w-md mx-auto">
+        {/* Search */}
+        <div className="mb-8">
+          <form onSubmit={handleSearch} className="max-w-md mx-auto mb-8">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" />
               <Input
@@ -190,7 +182,8 @@ const ToolsPage = () => {
             </div>
           </form>
           
-          <div className="flex flex-wrap gap-2 justify-center">
+          {/* Category Filters */}
+          <div className="flex flex-wrap gap-2 justify-center mb-8">
             <Button
               key="all"
               variant={activeCategory === null ? "default" : "outline"}
@@ -210,72 +203,79 @@ const ToolsPage = () => {
               </Button>
             ))}
           </div>
-          
-          {/* Industry Filter */}
-          <IndustryFilter onSelectIndustry={handleIndustryChange} activeIndustry={activeIndustry} />
-          
-          {/* Use Case Filter */}
-          <UseCaseFilter onSelectUseCase={handleUseCaseChange} activeUseCase={activeUseCase} />
         </div>
         
-        {/* Tools Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array(6).fill(0).map((_, index) => (
-              <ToolCardSkeleton key={`skeleton-${index}`} />
-            ))}
-          </div>
-        ) : paginatedTools.length > 0 ? (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedTools.map((tool) => (
-                <ToolCard key={tool.id} tool={tool} />
-              ))}
-            </div>
-            
-            {/* Pagination - Only show if we have more than one page */}
-            {totalPages > 1 && (
-              <div className="mt-10">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious 
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                        className={`${currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} dark:text-gray-300 dark:hover:text-white`}
-                      />
-                    </PaginationItem>
-                    
-                    {[...Array(totalPages)].map((_, i) => (
-                      <PaginationItem key={i}>
-                        <PaginationLink
-                          isActive={currentPage === i + 1}
-                          onClick={() => setCurrentPage(i + 1)}
-                          className="cursor-pointer dark:text-gray-300 dark:hover:text-white"
-                        >
-                          {i + 1}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                    
-                    <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                        className={`${currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} dark:text-gray-300 dark:hover:text-white`}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Filters Sidebar */}
+          <FilterSidebar
+            onSelectIndustry={handleIndustryChange}
+            onSelectUseCase={handleUseCaseChange}
+            activeIndustry={activeIndustry}
+            activeUseCase={activeUseCase}
+            isMobile={isMobile}
+          />
+          
+          {/* Tools Grid */}
+          <div className="flex-1">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {Array(6).fill(0).map((_, index) => (
+                  <ToolCardSkeleton key={`skeleton-${index}`} />
+                ))}
+              </div>
+            ) : paginatedTools.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {paginatedTools.map((tool) => (
+                    <ToolCard key={tool.id} tool={tool} />
+                  ))}
+                </div>
+                
+                {/* Pagination - Only show if we have more than one page */}
+                {totalPages > 1 && (
+                  <div className="mt-10">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious 
+                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            className={`${currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} dark:text-gray-300 dark:hover:text-white`}
+                          />
+                        </PaginationItem>
+                        
+                        {[...Array(totalPages)].map((_, i) => (
+                          <PaginationItem key={i}>
+                            <PaginationLink
+                              isActive={currentPage === i + 1}
+                              onClick={() => setCurrentPage(i + 1)}
+                              className="cursor-pointer dark:text-gray-300 dark:hover:text-white"
+                            >
+                              {i + 1}
+                            </PaginationLink>
+                          </PaginationItem>
+                        ))}
+                        
+                        <PaginationItem>
+                          <PaginationNext 
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                            className={`${currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} dark:text-gray-300 dark:hover:text-white`}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-10">
+                <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-white">No tools found</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Try adjusting your search or filters to find what you're looking for.
+                </p>
               </div>
             )}
-          </>
-        ) : (
-          <div className="text-center py-10">
-            <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-white">No tools found</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Try adjusting your search or filters to find what you're looking for.
-            </p>
           </div>
-        )}
+        </div>
       </div>
       
       {/* Compare Bar */}

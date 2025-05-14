@@ -1,5 +1,6 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { Tool } from "@/components/common/ToolCard";
 import { toast } from "@/components/ui/sonner";
 
@@ -9,12 +10,14 @@ interface CompareContextType {
   removeFromCompare: (toolId: string) => void;
   isInCompare: (toolId: string) => boolean;
   clearCompare: () => void;
+  compareTools: () => void;
   maxCompareItems: number;
 }
 
 const CompareContext = createContext<CompareContextType | undefined>(undefined);
 
 export function CompareProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   const [toolsToCompare, setToolsToCompare] = useState<Tool[]>([]);
   const maxCompareItems = 3;
 
@@ -48,6 +51,17 @@ export function CompareProvider({ children }: { children: ReactNode }) {
   const clearCompare = () => {
     setToolsToCompare([]);
   };
+  
+  // New function to handle comparison navigation using React Router
+  const compareTools = () => {
+    if (toolsToCompare.length < 2) {
+      toast.error("Select at least 2 tools to compare");
+      return;
+    }
+    
+    const toolIds = toolsToCompare.map(t => t.slug).join(',');
+    navigate(`/compare/${toolIds}`);
+  };
 
   return (
     <CompareContext.Provider
@@ -57,6 +71,7 @@ export function CompareProvider({ children }: { children: ReactNode }) {
         removeFromCompare,
         isInCompare,
         clearCompare,
+        compareTools,
         maxCompareItems,
       }}
     >

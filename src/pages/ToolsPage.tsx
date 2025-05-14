@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate, Link } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard, { Tool } from "@/components/common/ToolCard";
@@ -95,9 +94,21 @@ const ToolsPage = () => {
     // The filtering is already handled by the useEffect
   };
   
-  const handleCategoryClick = (slug: string) => {
-    setActiveCategory(slug === activeCategory ? null : slug);
-    setCurrentPage(1); // Reset pagination when category changes
+  const handleCategoryClick = (slug: string | null) => {
+    if (slug === activeCategory) {
+      // If clicking the active category, just update params
+      const params = new URLSearchParams(searchParams);
+      params.delete("page");
+      setSearchParams(params);
+      setActiveCategory(null);
+    } else {
+      // Navigate to new category using React Router
+      navigate(slug ? `/tools/${slug}` : '/tools', {
+        replace: true,
+      });
+      setActiveCategory(slug);
+    }
+    setCurrentPage(1);
     setLoading(true);
   };
   
@@ -189,6 +200,7 @@ const ToolsPage = () => {
               key="all"
               variant={activeCategory === null ? "default" : "outline"}
               onClick={() => handleCategoryClick(null)}
+              type="button"
               className={cn(
                 "mb-2 dark:border-gray-700 dark:text-gray-200",
                 "hover:bg-primary/90 transition-colors"
@@ -201,6 +213,7 @@ const ToolsPage = () => {
                 key={cat.id}
                 variant={activeCategory === cat.slug ? "default" : "outline"}
                 onClick={() => handleCategoryClick(cat.slug)}
+                type="button"
                 className={cn(
                   "mb-2 dark:border-gray-700 dark:text-gray-200",
                   "hover:bg-primary/90 transition-colors"
@@ -327,6 +340,7 @@ const ToolsPage = () => {
                   }}
                   variant="outline"
                   className="mt-4"
+                  type="button"
                 >
                   Reset all filters
                 </Button>

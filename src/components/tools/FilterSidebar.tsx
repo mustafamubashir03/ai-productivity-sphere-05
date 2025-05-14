@@ -35,14 +35,12 @@ const FilterSidebar = ({
   const [isOpen, setIsOpen] = useState(!isMobile);
   const classes = getFilterLayoutClasses(isMobile);
   
-  // Handle button clicks without page reload
-  const handleIndustryClick = (industrySlug: string | null, e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
+  // Handle button clicks - ensure they're type="button" to prevent form submission
+  const handleIndustryClick = (industrySlug: string | null) => {
     onSelectIndustry(industrySlug);
   };
   
-  const handleUseCaseClick = (useCaseSlug: string | null, e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
+  const handleUseCaseClick = (useCaseSlug: string | null) => {
     onSelectUseCase(useCaseSlug);
   };
   
@@ -69,7 +67,7 @@ const FilterSidebar = ({
                     <Button
                       key="all-industries"
                       variant={activeIndustry === null ? "default" : "outline"}
-                      onClick={(e) => handleIndustryClick(null, e)}
+                      onClick={() => handleIndustryClick(null)}
                       size="sm"
                       className={classes.button}
                       type="button"
@@ -80,7 +78,7 @@ const FilterSidebar = ({
                       <Button
                         key={industry.id}
                         variant={activeIndustry === industry.slug ? "default" : "outline"}
-                        onClick={(e) => handleIndustryClick(industry.slug, e)}
+                        onClick={() => handleIndustryClick(industry.slug)}
                         size="sm"
                         className={classes.button}
                         type="button"
@@ -98,7 +96,7 @@ const FilterSidebar = ({
                     <Button
                       key="all-usecases"
                       variant={activeUseCase === null ? "default" : "outline"}
-                      onClick={(e) => handleUseCaseClick(null, e)}
+                      onClick={() => handleUseCaseClick(null)}
                       size="sm"
                       className={classes.button}
                       type="button"
@@ -109,7 +107,7 @@ const FilterSidebar = ({
                       <Button
                         key={useCase.id}
                         variant={activeUseCase === useCase.slug ? "default" : "outline"}
-                        onClick={(e) => handleUseCaseClick(useCase.slug, e)}
+                        onClick={() => handleUseCaseClick(useCase.slug)}
                         size="sm"
                         className={classes.button}
                         type="button"
@@ -131,7 +129,7 @@ const FilterSidebar = ({
               <h3 className="font-medium">Filters</h3>
             </div>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="p-1">
+              <Button variant="ghost" size="sm" className="p-1" type="button">
                 <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 <span className="sr-only">Toggle filters</span>
               </Button>
@@ -146,7 +144,7 @@ const FilterSidebar = ({
                 <Button
                   key="all-industries-desktop"
                   variant={activeIndustry === null ? "default" : "outline"}
-                  onClick={(e) => handleIndustryClick(null, e)}
+                  onClick={() => handleIndustryClick(null)}
                   size="sm"
                   className={classes.button}
                   type="button"
@@ -157,7 +155,7 @@ const FilterSidebar = ({
                   <Button
                     key={industry.id}
                     variant={activeIndustry === industry.slug ? "default" : "outline"}
-                    onClick={(e) => handleIndustryClick(industry.slug, e)}
+                    onClick={() => handleIndustryClick(industry.slug)}
                     size="sm"
                     className={classes.button}
                     type="button"
@@ -175,7 +173,7 @@ const FilterSidebar = ({
                 <Button
                   key="all-usecases-desktop"
                   variant={activeUseCase === null ? "default" : "outline"}
-                  onClick={(e) => handleUseCaseClick(null, e)}
+                  onClick={() => handleUseCaseClick(null)}
                   size="sm"
                   className={classes.button}
                   type="button"
@@ -186,7 +184,7 @@ const FilterSidebar = ({
                   <Button
                     key={useCase.id}
                     variant={activeUseCase === useCase.slug ? "default" : "outline"}
-                    onClick={(e) => handleUseCaseClick(useCase.slug, e)}
+                    onClick={() => handleUseCaseClick(useCase.slug)}
                     size="sm"
                     className={classes.button}
                     type="button"

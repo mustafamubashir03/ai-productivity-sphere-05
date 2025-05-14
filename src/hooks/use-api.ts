@@ -185,13 +185,16 @@ export const useTool = (slug: string) => {
 };
 
 export const useCompareTools = (slugs: string[]) => {
-  const endpoint = `/tools/compare?slugs=${slugs.join(',')}`;
+  // Fix: Instead of directly putting the constructed endpoint with params in the API call,
+  // use the params object with the standard endpoint
+  const endpoint = `/tools/compare`;
   
   const { getToolBySlug } = require('@/data/tools');
   const tools = slugs.map(slug => getToolBySlug(slug)).filter(Boolean);
   
   // Fix: Convert the array of slugs into a string array for the queryKey
   return useApiQuery(['tools', 'compare', ...slugs], endpoint, {
+    params: { slugs: slugs.join(',') }, // Use params object instead of URL with query string
     mockData: tools,
     useMock: true, // Set to false when real API is ready
   });

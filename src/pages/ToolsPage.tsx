@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams, useNavigate, Link } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
@@ -7,13 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Search } from "lucide-react";
-import { tools, getToolsByCategory, getToolsByIndustry, getToolsByUseCase } from "@/data/tools";
 import { categories } from "@/data/categories";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import CompareBar from "@/components/tools/CompareBar";
 import FilterSidebar from "@/components/tools/FilterSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useTools } from "@/hooks/use-api";
 
 const TOOLS_PER_PAGE = 9;
 
@@ -22,16 +23,25 @@ const ToolsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [filteredTools, setFilteredTools] = useState<Tool[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(categorySlug || null);
   const [activeIndustry, setActiveIndustry] = useState<string | null>(searchParams.get("industry") || null);
   const [activeUseCase, setActiveUseCase] = useState<string | null>(searchParams.get("useCase") || null);
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
-  const [loading, setLoading] = useState(true);
   
-  // Find category, industry or use case by slug
-  const category = categorySlug ? categories.find(cat => cat.slug === categorySlug) : null;
+  // Create parameters for API request
+  const apiParams: Record<string, string> = {};
+  if (activeCategory) apiParams.category = activeCategory;
+  if (activeIndustry) apiParams.industry = activeIndustry;
+  if (activeUseCase) apiParams.useCase = activeUseCase;
+  if (searchQuery) apiParams.search = searchQuery;
+  
+  // Fetch tools data from API
+  const { data: toolsData, isLoading: loading } = useTools(apiParams);
+  const tools: Tool[] = toolsData || [];
+  
+  // Filter tools client-side if needed (API should handle most filtering)
+  const filteredTools = tools;
   
   useEffect(() => {
     // Update URL with filters without page reload
@@ -40,58 +50,18 @@ const ToolsPage = () => {
     if (activeIndustry) params.set("industry", activeIndustry);
     if (activeUseCase) params.set("useCase", activeUseCase);
     setSearchParams(params, { replace: true });
-    
-    // Simulate data fetching delay
-    const timer = setTimeout(() => {
-      let result = [...tools];
-      
-      // Filter by category if provided
-      if (activeCategory) {
-        result = getToolsByCategory(activeCategory);
-      }
-      
-      // Filter by industry if provided
-      if (activeIndustry) {
-        const industryTools = getToolsByIndustry(activeIndustry);
-        result = activeCategory 
-          ? result.filter(tool => industryTools.some(t => t.id === tool.id))
-          : industryTools;
-      }
-      
-      // Filter by use case if provided
-      if (activeUseCase) {
-        const useCaseTools = getToolsByUseCase(activeUseCase);
-        result = result.filter(tool => useCaseTools.some(t => t.id === tool.id));
-      }
-      
-      // Filter by search query
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        result = result.filter(
-          tool => tool.name.toLowerCase().includes(query) || 
-                 tool.description.toLowerCase().includes(query)
-        );
-      }
-      
-      setFilteredTools(result);
-      setLoading(false);
-    }, 800);
-    
-    return () => clearTimeout(timer);
-  }, [searchQuery, activeCategory, activeIndustry, activeUseCase, categorySlug, currentPage]);
+  }, [currentPage, activeIndustry, activeUseCase]);
   
   useEffect(() => {
     if (categorySlug !== activeCategory) {
       setActiveCategory(categorySlug || null);
       setCurrentPage(1); // Reset pagination when category changes
-      setLoading(true);
     }
   }, [categorySlug]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1); // Reset pagination when searching
-    // The filtering is already handled by the useEffect
   };
   
   const handleCategoryClick = (slug: string | null) => {
@@ -103,25 +73,22 @@ const ToolsPage = () => {
       setActiveCategory(null);
     } else {
       // Navigate to new category using React Router
-      navigate(slug ? `/tools/${slug}` : '/tools', {
+      navigate(slug ? `/tools/category/${slug}` : '/tools', {
         replace: true,
       });
       setActiveCategory(slug);
     }
     setCurrentPage(1);
-    setLoading(true);
   };
   
   const handleIndustryChange = (industrySlug: string | null) => {
     setActiveIndustry(industrySlug);
     setCurrentPage(1); // Reset pagination when industry changes
-    setLoading(true);
   };
   
   const handleUseCaseChange = (useCaseSlug: string | null) => {
     setActiveUseCase(useCaseSlug);
     setCurrentPage(1); // Reset pagination when use case changes
-    setLoading(true);
   };
   
   // Calculate pagination
@@ -136,9 +103,12 @@ const ToolsPage = () => {
   let title = "All AI Tools";
   let description = "Browse our comprehensive collection of AI productivity tools to find the perfect solutions for your workflow.";
   
-  if (category) {
-    title = category.name;
-    description = category.description;
+  if (activeCategory) {
+    const category = categories.find(cat => cat.slug === activeCategory);
+    if (category) {
+      title = category.name;
+      description = category.description;
+    }
   }
 
   // Generate structured data
@@ -247,7 +217,7 @@ const ToolsPage = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                   {paginatedTools.map((tool) => (
-                    <ToolCard key={tool.id} tool={tool} />
+                    <ToolCard key={tool._id} tool={tool} />
                   ))}
                 </div>
                 

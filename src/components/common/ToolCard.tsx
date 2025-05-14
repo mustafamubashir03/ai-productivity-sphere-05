@@ -6,17 +6,33 @@ import { ArrowRight, BarChart2, Bookmark, BookmarkCheck, TrendingUp } from "luci
 import { useBookmarks } from "@/context/BookmarkContext";
 import { useCompare } from "@/context/CompareContext";
 import { toast } from "@/components/ui/sonner";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 export interface Tool {
-  id: string;
-  slug: string;
+  _id: string;
   name: string;
+  slug: string;
   description: string;
   logo: string;
   category: string;
+  features: string[];
+  useCases: string[];
+  pricing: string;
+  websiteUrl: string;
+  createdAt?: string;
+  updatedAt?: string;
   trending?: boolean;
   rating?: number;
   reviewed?: boolean;
+  seo?: {
+    canonicalUrl?: string;
+    imageUrl?: string;
+    structuredData?: any;
+    siteName?: string;
+    twitterHandle?: string;
+    type?: string;
+    noIndex?: boolean;
+  };
 }
 
 interface ToolCardProps {
@@ -41,22 +57,23 @@ const ToolCard = ({ tool }: ToolCardProps) => {
       case "coding-assistants": return "Coding";
       case "no-code-ai-agents": return "No-code AI";
       case "automation-workflow-tools": return "Automation";
+      case "content-creation": return "Content Creation";
       default: return slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
   };
 
   const handleToggleBookmark = () => {
-    if (isBookmarked(tool.id)) {
-      removeBookmark(tool.id);
+    if (isBookmarked(tool._id)) {
+      removeBookmark(tool._id);
     } else {
-      addBookmark(tool.id);
+      addBookmark(tool._id);
       toast.success(`${tool.name} added to bookmarks`);
     }
   };
 
   const handleToggleCompare = () => {
-    if (isInCompare(tool.id)) {
-      removeFromCompare(tool.id);
+    if (isInCompare(tool._id)) {
+      removeFromCompare(tool._id);
     } else {
       addToCompare(tool);
     }
@@ -105,16 +122,16 @@ const ToolCard = ({ tool }: ToolCardProps) => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleToggleBookmark}
-            className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isBookmarked(tool.id) ? 'text-primary' : 'text-gray-400'}`}
-            aria-label={isBookmarked(tool.id) ? "Remove from bookmarks" : "Add to bookmarks"}
+            className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isBookmarked(tool._id) ? 'text-primary' : 'text-gray-400'}`}
+            aria-label={isBookmarked(tool._id) ? "Remove from bookmarks" : "Add to bookmarks"}
           >
-            {isBookmarked(tool.id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+            {isBookmarked(tool._id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
           </button>
           
           <button
             onClick={handleToggleCompare}
-            className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isInCompare(tool.id) ? 'text-primary' : 'text-gray-400'}`}
-            aria-label={isInCompare(tool.id) ? "Remove from comparison" : "Add to comparison"}
+            className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isInCompare(tool._id) ? 'text-primary' : 'text-gray-400'}`}
+            aria-label={isInCompare(tool._id) ? "Remove from comparison" : "Add to comparison"}
           >
             <BarChart2 className="w-4 h-4" />
           </button>
@@ -122,6 +139,20 @@ const ToolCard = ({ tool }: ToolCardProps) => {
       </div>
       
       <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 mt-3">{tool.description}</p>
+      
+      {/* Features */}
+      {tool.features && tool.features.length > 0 && (
+        <div className="mt-3">
+          <p className="text-xs text-gray-500 dark:text-gray-400">Key Features:</p>
+          <div className="flex flex-wrap gap-1 mt-1">
+            {tool.features.slice(0, 3).map((feature, index) => (
+              <span key={index} className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                {feature}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
       
       <div className="mt-4 pt-2">
         <Link to={`/tools/${tool.slug}`}>

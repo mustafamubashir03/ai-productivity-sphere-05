@@ -2,8 +2,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/sonner';
 
-// Default base URL for API requests (replace with your actual API base URL when ready)
-const API_BASE_URL = 'https://api.aiproductivityhub.com';
+// Updated API base URL to use the real API
+const API_BASE_URL = 'https://topratedai.biovasurgicals.com';
 
 // Type definition for API options
 interface ApiOptions {
@@ -129,85 +129,38 @@ export const useApiMutation = (
   });
 };
 
-// Pre-configured API hooks for specific endpoints
+// Updated useTools hook to use real API endpoint
 export const useTools = (params?: Record<string, string>) => {
-  const { getToolsByCategory, getToolsByIndustry, getToolsByUseCase, tools } = require('@/data/tools');
-  
-  // Process the filter logic similar to what we do in the UI
-  let mockResult = [...tools];
-  
-  if (params?.category) {
-    mockResult = getToolsByCategory(params.category);
-  }
-  
-  if (params?.industry) {
-    const industryTools = getToolsByIndustry(params.industry);
-    mockResult = params?.category 
-      ? mockResult.filter(tool => industryTools.some(t => t.id === tool.id))
-      : industryTools;
-  }
-  
-  if (params?.useCase) {
-    const useCaseTools = getToolsByUseCase(params.useCase);
-    mockResult = mockResult.filter(tool => useCaseTools.some(t => t.id === tool.id));
-  }
-  
-  if (params?.search) {
-    const query = params.search.toLowerCase();
-    mockResult = mockResult.filter(
-      tool => tool.name.toLowerCase().includes(query) || 
-              tool.description.toLowerCase().includes(query)
-    );
-  }
-  
   return useApiQuery(
     ['tools', params], 
-    '/tools',
-    {
-      params,
-      mockData: mockResult,
-      useMock: true, // Set to false when real API is ready
-    }
+    '/api/tools',
+    { params }
   );
 };
 
 export const useTool = (slug: string) => {
-  const { getToolBySlug } = require('@/data/tools');
-  const tool = getToolBySlug(slug);
-  
   return useApiQuery(
     ['tool', slug], 
-    `/tools/${slug}`,
-    {
-      mockData: tool,
-      useMock: true, // Set to false when real API is ready
-    }
+    `/api/tools/${slug}`
   );
 };
 
 export const useCompareTools = (slugs: string[]) => {
-  const endpoint = `/tools/compare`;
+  const endpoint = `/api/tools/compare`;
   
-  const { getToolBySlug } = require('@/data/tools');
-  const tools = slugs.map(slug => getToolBySlug(slug)).filter(Boolean);
-  
-  // Fix: Create params object that explicitly matches the ApiOptions interface
-  const queryParams: Record<string, string> = {
+  // Create params object for the API request
+  const params = {
     slugs: slugs.join(',')
   };
   
-  // Pass the params object to useApiQuery
+  // Pass the params to useApiQuery
   return useApiQuery(['tools', 'compare', ...slugs], endpoint, {
-    params: queryParams,
-    mockData: tools,
-    useMock: true, // Set to false when real API is ready
+    params
   });
 };
 
 export const useSubmitTool = () => {
-  return useApiMutation('/tools', {
-    useMock: true,
-    mockData: { success: true, message: 'Tool submitted successfully!' },
+  return useApiMutation('/api/tools', {
     onSuccess: () => {
       toast.success('Tool submitted successfully!');
     },
@@ -217,29 +170,9 @@ export const useSubmitTool = () => {
 export const useBookmarkTool = () => {
   const queryClient = useQueryClient();
   
-  return useApiMutation('/user/bookmarks', {
-    useMock: true,
-    mockData: { success: true },
+  return useApiMutation('/api/user/bookmarks', {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user', 'bookmarks'] });
     },
   });
 };
-
-// Example of how to use these hooks in components:
-/*
-import { useTools, useTool, useCompareTools, useSubmitTool } from '@/hooks/use-api';
-
-// In a component:
-const { data: tools, isLoading } = useTools({ category: 'ai-writing' });
-const { data: tool } = useTool('some-tool-slug');
-const { data: compareData } = useCompareTools(['tool1-slug', 'tool2-slug']);
-const { mutate: submitTool } = useSubmitTool();
-
-// To submit a tool:
-submitTool({
-  name: 'New Tool',
-  description: 'Tool description',
-  // ...other fields
-});
-*/

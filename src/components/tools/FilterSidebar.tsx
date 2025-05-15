@@ -35,14 +35,16 @@ const FilterSidebar = ({
   const [isOpen, setIsOpen] = useState(!isMobile);
   const classes = getFilterLayoutClasses(isMobile);
   
-  // Handle button clicks - ensure they're type="button" to prevent form submission
-  const handleIndustryClick = (e: React.MouseEvent, industrySlug: string | null) => {
-    e.preventDefault(); // Prevent default behavior that might cause reload
+  // Handle button clicks - ensure they're all properly preventing default
+  const handleIndustryClick = (e: React.MouseEvent<HTMLButtonElement>, industrySlug: string | null) => {
+    e.preventDefault(); // Prevent default behavior
+    e.stopPropagation(); // Stop event propagation
     onSelectIndustry(industrySlug);
   };
   
-  const handleUseCaseClick = (e: React.MouseEvent, useCaseSlug: string | null) => {
-    e.preventDefault(); // Prevent default behavior that might cause reload
+  const handleUseCaseClick = (e: React.MouseEvent<HTMLButtonElement>, useCaseSlug: string | null) => {
+    e.preventDefault(); // Prevent default behavior
+    e.stopPropagation(); // Stop event propagation
     onSelectUseCase(useCaseSlug);
   };
   

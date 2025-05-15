@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, BarChart2, Bookmark, BookmarkCheck, ExternalLink, ThumbsUp, ThumbsDown, Star } from "lucide-react";
@@ -11,7 +10,8 @@ import { useCompare } from "@/context/CompareContext";
 import ToolDetailSkeleton from "@/components/skeletons/ToolDetailSkeleton";
 import ToolCard, { Tool } from "@/components/common/ToolCard";
 import CompareBar from "@/components/tools/CompareBar";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "@/components/ui/use-toast";
+import { useTool } from "@/hooks/use-api";
 
 const ToolDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -26,26 +26,51 @@ const ToolDetailPage = () => {
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
   
+  // Use the API hook to fetch tool data
+  const { data: apiToolData, isLoading: apiLoading } = slug ? useTool(slug) : { data: null, isLoading: false };
+  
   useEffect(() => {
     if (slug) {
-      // Simulate data fetching delay
-      const timer = setTimeout(() => {
-        const foundTool = getToolBySlug(slug);
-        setTool(foundTool);
+      // First try to get data from API, then fallback to local data
+      if (apiToolData) {
+        setTool(apiToolData);
+        setLoading(false);
         
-        if (foundTool) {
-          // Get related tools
-          const related = getRelatedTools(foundTool.id);
+        // Get related tools and blog posts
+        if (apiToolData.id) {
+          const related = getRelatedTools(apiToolData.id);
           setRelatedTools(related);
           
-          // Get related blog posts
-          const relatedBlogPosts = getBlogPostsRelatedToTool(foundTool.id);
+          const relatedBlogPosts = getBlogPostsRelatedToTool(apiToolData.id);
+          setRelatedPosts(relatedBlogPosts);
+        }
+        
+        // Get votes from localStorage
+        const savedUpvotes = localStorage.getItem(`tool-${apiToolData.id}-upvotes`);
+        const savedDownvotes = localStorage.getItem(`tool-${apiToolData.id}-downvotes`);
+        const savedUserVote = localStorage.getItem(`tool-${apiToolData.id}-user-vote`);
+        
+        setUpvotes(savedUpvotes ? parseInt(savedUpvotes) : Math.floor(Math.random() * 50) + 20);
+        setDownvotes(savedDownvotes ? parseInt(savedDownvotes) : Math.floor(Math.random() * 10) + 1);
+        setUserVote(savedUserVote as 'up' | 'down' | null);
+      } else if (!apiLoading) {
+        // If API didn't return data and is not loading, try local data
+        const localTool = getToolBySlug(slug);
+        
+        if (localTool) {
+          setTool(localTool);
+          
+          // Get related data
+          const related = getRelatedTools(localTool.id);
+          setRelatedTools(related);
+          
+          const relatedBlogPosts = getBlogPostsRelatedToTool(localTool.id);
           setRelatedPosts(relatedBlogPosts);
           
           // Get votes from localStorage
-          const savedUpvotes = localStorage.getItem(`tool-${foundTool.id}-upvotes`);
-          const savedDownvotes = localStorage.getItem(`tool-${foundTool.id}-downvotes`);
-          const savedUserVote = localStorage.getItem(`tool-${foundTool.id}-user-vote`);
+          const savedUpvotes = localStorage.getItem(`tool-${localTool.id}-upvotes`);
+          const savedDownvotes = localStorage.getItem(`tool-${localTool.id}-downvotes`);
+          const savedUserVote = localStorage.getItem(`tool-${localTool.id}-user-vote`);
           
           setUpvotes(savedUpvotes ? parseInt(savedUpvotes) : Math.floor(Math.random() * 50) + 20);
           setDownvotes(savedDownvotes ? parseInt(savedDownvotes) : Math.floor(Math.random() * 10) + 1);
@@ -53,21 +78,25 @@ const ToolDetailPage = () => {
         }
         
         setLoading(false);
-      }, 800);
-      
-      return () => clearTimeout(timer);
+      }
     }
-  }, [slug]);
+  }, [slug, apiToolData, apiLoading]);
   
   const handleBookmark = () => {
     if (!tool) return;
     
     if (isBookmarked(tool.id)) {
       removeBookmark(tool.id);
-      toast.info(`${tool.name} removed from bookmarks`);
+      toast({
+        title: "Tool removed from bookmarks",
+        description: `${tool.name} has been removed from your bookmarks`
+      });
     } else {
       addBookmark(tool.id);
-      toast.success(`${tool.name} added to bookmarks`);
+      toast({
+        title: "Tool bookmarked",
+        description: `${tool.name} has been added to your bookmarks`
+      });
     }
   };
   
@@ -115,7 +144,7 @@ const ToolDetailPage = () => {
     localStorage.setItem(`tool-${tool.id}-downvotes`, String(voteType === 'down' ? downvotes + 1 : downvotes));
   };
   
-  if (loading) {
+  if (loading || apiLoading) {
     return <ToolDetailSkeleton />;
   }
   
@@ -245,7 +274,7 @@ const ToolDetailPage = () => {
               <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Key Features</h2>
                 <ul className="list-disc pl-5 space-y-1">
-                  {tool.features.map((feature: string, index: number) => (
+                  {tool.features && tool.features.map((feature: string, index: number) => (
                     <li key={index} className="text-gray-700 dark:text-gray-300">{feature}</li>
                   ))}
                 </ul>
@@ -254,7 +283,7 @@ const ToolDetailPage = () => {
               <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Use Cases</h2>
                 <ul className="list-disc pl-5 space-y-1">
-                  {tool.useCases.map((useCase: string, index: number) => (
+                  {tool.useCases && tool.useCases.map((useCase: string, index: number) => (
                     <li key={index} className="text-gray-700 dark:text-gray-300">{useCase}</li>
                   ))}
                 </ul>

@@ -50,33 +50,37 @@ const ToolsPage = () => {
     if (activeIndustry) params.set("industry", activeIndustry);
     if (activeUseCase) params.set("useCase", activeUseCase);
     setSearchParams(params, { replace: true });
-  }, [currentPage, activeIndustry, activeUseCase]);
+  }, [currentPage, activeIndustry, activeUseCase, setSearchParams]);
   
   useEffect(() => {
     if (categorySlug !== activeCategory) {
       setActiveCategory(categorySlug || null);
       setCurrentPage(1); // Reset pagination when category changes
     }
-  }, [categorySlug]);
+  }, [categorySlug, activeCategory]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1); // Reset pagination when searching
   };
   
-  const handleCategoryClick = (slug: string | null) => {
+  const handleCategoryClick = (e: React.MouseEvent, slug: string | null) => {
+    e.preventDefault(); // Prevent default action
+    e.stopPropagation(); // Stop event propagation
+    
     if (slug === activeCategory) {
       // If clicking the active category, just update params
       const params = new URLSearchParams(searchParams);
       params.delete("page");
-      setSearchParams(params);
+      setSearchParams(params, { replace: true });
       setActiveCategory(null);
     } else {
-      // Navigate to new category using React Router
-      navigate(slug ? `/tools/category/${slug}` : '/tools', {
-        replace: true,
-      });
+      // Update state without navigating
       setActiveCategory(slug);
+      
+      // Update the URL without causing a page refresh
+      const path = slug ? `/tools/category/${slug}` : '/tools';
+      navigate(path, { replace: true });
     }
     setCurrentPage(1);
   };
@@ -169,7 +173,7 @@ const ToolsPage = () => {
             <Button
               key="all"
               variant={activeCategory === null ? "default" : "outline"}
-              onClick={() => handleCategoryClick(null)}
+              onClick={(e) => handleCategoryClick(e, null)}
               type="button"
               className={cn(
                 "mb-2 dark:border-gray-700 dark:text-gray-200",
@@ -182,7 +186,7 @@ const ToolsPage = () => {
               <Button
                 key={cat.id}
                 variant={activeCategory === cat.slug ? "default" : "outline"}
-                onClick={() => handleCategoryClick(cat.slug)}
+                onClick={(e) => handleCategoryClick(e, cat.slug)}
                 type="button"
                 className={cn(
                   "mb-2 dark:border-gray-700 dark:text-gray-200",

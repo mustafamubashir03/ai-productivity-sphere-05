@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useSearchParams, useNavigate, Link } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
@@ -15,7 +15,8 @@ import FilterSidebar from "@/components/tools/FilterSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useTools } from "@/hooks/use-api";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/sonner";
+import { Tool } from "@/types/tools";
 
 const TOOLS_PER_PAGE = 9;
 
@@ -29,31 +30,61 @@ const ToolsPage = () => {
   const [activeIndustry, setActiveIndustry] = useState<string | null>(searchParams.get("industry") || null);
   const [activeUseCase, setActiveUseCase] = useState<string | null>(searchParams.get("useCase") || null);
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
+  const [allTools, setAllTools] = useState<Tool[]>([]);
   
-  // Create parameters for API request
-  const apiParams: Record<string, string> = {};
-  if (activeCategory) apiParams.category = activeCategory;
-  if (activeIndustry) apiParams.industry = activeIndustry;
-  if (activeUseCase) apiParams.useCase = activeUseCase;
-  if (searchQuery) apiParams.search = searchQuery;
+  // Fetch all tools initially without filters 
+  // We'll apply filters in memory for better UX
+  const { data: toolsData, isLoading: loading, error } = useTools();
   
-  // Fetch tools data from API with the appropriate query parameters
-  const { data: toolsData, isLoading: loading, error } = useTools(apiParams);
+  // Store all fetched tools in state
+  useEffect(() => {
+    if (toolsData) {
+      setAllTools(toolsData);
+    }
+  }, [toolsData]);
   
   // Show toast error if API request fails
   useEffect(() => {
     if (error) {
-      toast({
-        title: "Error loading tools",
-        description: "There was a problem fetching the tools. Please try again later.",
-        variant: "destructive"
-      });
+      toast.error("Error loading tools. Please try again later.");
       console.error("API error:", error);
     }
   }, [error]);
   
-  // Use the filtered tools directly from the API response
-  const filteredTools = toolsData || [];
+  // Apply filters to tools in memory
+  const filteredTools = useMemo(() => {
+    if (!allTools.length) return [];
+    
+    return allTools.filter(tool => {
+      // Apply category filter
+      if (activeCategory && tool.category !== activeCategory) {
+        return false;
+      }
+      
+      // Apply industry filter
+      if (activeIndustry && (!tool.industryFit || !tool.industryFit.includes(activeIndustry))) {
+        return false;
+      }
+      
+      // Apply use case filter
+      if (activeUseCase && (!tool.useCase || !tool.useCase.includes(activeUseCase))) {
+        return false;
+      }
+      
+      // Apply search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        return (
+          tool.name.toLowerCase().includes(query) ||
+          tool.description.toLowerCase().includes(query) ||
+          (tool.tags && tool.tags.some(tag => tag.toLowerCase().includes(query))) ||
+          (tool.features && tool.features.some(feature => feature.toLowerCase().includes(query)))
+        );
+      }
+      
+      return true;
+    });
+  }, [allTools, activeCategory, activeIndustry, activeUseCase, searchQuery]);
   
   useEffect(() => {
     // Update URL with filters without page reload
@@ -154,6 +185,41 @@ const ToolsPage = () => {
     }
   ];
 
+  // Save filter preferences to localStorage
+  useEffect(() => {
+    // Store user's last filter preferences
+    const filterPreferences = {
+      category: activeCategory,
+      industry: activeIndustry,
+      useCase: activeUseCase,
+      page: currentPage
+    };
+    
+    localStorage.setItem('filterPreferences', JSON.stringify(filterPreferences));
+  }, [activeCategory, activeIndustry, activeUseCase, currentPage]);
+
+  // Load filter preferences from localStorage on initial load
+  useEffect(() => {
+    const savedPreferences = localStorage.getItem('filterPreferences');
+    
+    if (savedPreferences && !activeCategory && !activeIndustry && !activeUseCase) {
+      try {
+        const preferences = JSON.parse(savedPreferences);
+        
+        // Only apply if URL doesn't already have filters
+        if (!categorySlug && !searchParams.get("industry") && !searchParams.get("useCase")) {
+          // Apply saved filters but don't navigate
+          if (preferences.category) setActiveCategory(preferences.category);
+          if (preferences.industry) setActiveIndustry(preferences.industry);
+          if (preferences.useCase) setActiveUseCase(preferences.useCase);
+          if (preferences.page > 1) setCurrentPage(preferences.page);
+        }
+      } catch (e) {
+        console.error("Error parsing saved filter preferences", e);
+      }
+    }
+  }, []);
+
   return (
     <>
       <EnhancedSEO 
@@ -233,7 +299,7 @@ const ToolsPage = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                   {paginatedTools.map((tool) => (
-                    <ToolCard key={tool._id || tool.id} tool={tool} />
+                    <ToolCard key={tool._id} tool={tool} />
                   ))}
                 </div>
                 
@@ -324,6 +390,9 @@ const ToolsPage = () => {
                     setActiveUseCase(null);
                     setCurrentPage(1);
                     navigate('/tools', { replace: true });
+                    
+                    // Also clear localStorage preferences
+                    localStorage.removeItem('filterPreferences');
                   }}
                   variant="outline"
                   className="mt-4"

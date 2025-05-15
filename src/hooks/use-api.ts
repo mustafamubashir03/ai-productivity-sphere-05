@@ -4,7 +4,7 @@ import { toast } from '@/components/ui/sonner';
 import { adaptToolsToInternal } from '@/utils/dataAdapters';
 
 // Updated API base URL to use the real API
-export const API_BASE_URL = 'https://topratedai.biovasurgicals.com';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://topratedai.biovasurgicals.com';
 
 // Type definition for API options
 interface ApiOptions {
@@ -57,6 +57,8 @@ export const useApiQuery = (
       
       try {
         const url = buildUrl(endpoint, params);
+        console.log(`Fetching data from: ${url}`);
+        
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -69,7 +71,9 @@ export const useApiQuery = (
           throw new Error(`API error: ${response.status}`);
         }
         
-        return await response.json();
+        const data = await response.json();
+        console.log(`Data received from ${endpoint}:`, data);
+        return data;
       } catch (error) {
         console.error('API request failed:', error);
         throw error;
@@ -199,4 +203,38 @@ export const useBookmarkTool = () => {
       queryClient.invalidateQueries({ queryKey: ['user', 'bookmarks'] });
     },
   });
+};
+
+// New hook to directly fetch all data needed for the application
+export const useBulkData = () => {
+  // This hook fetches all necessary data at once, reducing multiple API calls
+  const toolsQuery = useApiQuery(['all-tools'], '/api/tools');
+  const categoriesQuery = useApiQuery(['categories'], '/api/categories');
+  const industriesQuery = useApiQuery(['industries'], '/api/industries');
+  const useCasesQuery = useApiQuery(['use-cases'], '/api/use-cases');
+  
+  return {
+    tools: {
+      data: toolsQuery.data ? adaptToolsToInternal(toolsQuery.data) : [],
+      isLoading: toolsQuery.isLoading,
+      error: toolsQuery.error
+    },
+    categories: {
+      data: categoriesQuery.data || [],
+      isLoading: categoriesQuery.isLoading,
+      error: categoriesQuery.error
+    },
+    industries: {
+      data: industriesQuery.data || [],
+      isLoading: industriesQuery.isLoading,
+      error: industriesQuery.error
+    },
+    useCases: {
+      data: useCasesQuery.data || [],
+      isLoading: useCasesQuery.isLoading,
+      error: useCasesQuery.error
+    },
+    isLoading: toolsQuery.isLoading || categoriesQuery.isLoading || industriesQuery.isLoading || useCasesQuery.isLoading,
+    error: toolsQuery.error || categoriesQuery.error || industriesQuery.error || useCasesQuery.error
+  };
 };

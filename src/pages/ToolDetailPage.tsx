@@ -16,7 +16,7 @@ import { useTool } from "@/hooks/use-api";
 
 const ToolDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [tool, setTool] = useState<any>(null);
+  const [tool, setTool] = useState<Tool | null>(null);
   const [relatedTools, setRelatedTools] = useState<Tool[]>([]);
   const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,16 +38,16 @@ const ToolDetailPage = () => {
         setLoading(false);
         
         // Get related tools and blog posts
-        if (apiToolData._id || apiToolData.id) {
-          const related = getRelatedTools(apiToolData._id || apiToolData.id);
+        if (apiToolData._id) {
+          const related = getRelatedTools(apiToolData._id);
           setRelatedTools(related);
           
-          const relatedBlogPosts = getBlogPostsRelatedToTool(apiToolData._id || apiToolData.id);
+          const relatedBlogPosts = getBlogPostsRelatedToTool(apiToolData._id);
           setRelatedPosts(relatedBlogPosts);
         }
         
         // Get votes from localStorage
-        const toolId = apiToolData._id || apiToolData.id;
+        const toolId = apiToolData._id;
         const savedUpvotes = localStorage.getItem(`tool-${toolId}-upvotes`);
         const savedDownvotes = localStorage.getItem(`tool-${toolId}-downvotes`);
         const savedUserVote = localStorage.getItem(`tool-${toolId}-user-vote`);
@@ -63,7 +63,7 @@ const ToolDetailPage = () => {
           setTool(localTool);
           
           // Get related data
-          const toolId = localTool._id || localTool.id;
+          const toolId = localTool._id;
           const related = getRelatedTools(toolId);
           setRelatedTools(related);
           
@@ -85,29 +85,57 @@ const ToolDetailPage = () => {
     }
   }, [slug, apiToolData, apiLoading]);
   
+  // Store recently viewed tools in localStorage
+  useEffect(() => {
+    if (tool) {
+      try {
+        // Get existing recently viewed tools
+        const recentlyViewedJSON = localStorage.getItem('recentlyViewedTools');
+        const recentlyViewed = recentlyViewedJSON ? JSON.parse(recentlyViewedJSON) : [];
+        
+        // Add current tool if not already in the list
+        const exists = recentlyViewed.some((t: any) => t._id === tool._id);
+        
+        if (!exists) {
+          // Add to front of array and keep only last 10
+          const updatedRecentlyViewed = [
+            {
+              _id: tool._id,
+              name: tool.name,
+              slug: tool.slug,
+              logo: tool.logo,
+              category: tool.category,
+              description: tool.description.substring(0, 100) + '...',
+              timestamp: new Date().toISOString(),
+            },
+            ...recentlyViewed
+          ].slice(0, 10);
+          
+          localStorage.setItem('recentlyViewedTools', JSON.stringify(updatedRecentlyViewed));
+        }
+      } catch (error) {
+        console.error("Error updating recently viewed tools:", error);
+      }
+    }
+  }, [tool]);
+  
   const handleBookmark = () => {
     if (!tool) return;
     
-    const toolId = tool._id || tool.id;
+    const toolId = tool._id;
     if (isBookmarked(toolId)) {
       removeBookmark(toolId);
-      toast({
-        title: "Tool removed from bookmarks",
-        description: `${tool.name} has been removed from your bookmarks`
-      });
+      toast.success("Tool removed from bookmarks");
     } else {
       addBookmark(toolId);
-      toast({
-        title: "Tool bookmarked",
-        description: `${tool.name} has been added to your bookmarks`
-      });
+      toast.success("Tool added to bookmarks");
     }
   };
   
   const handleCompare = () => {
     if (!tool) return;
     
-    const toolId = tool._id || tool.id;
+    const toolId = tool._id;
     if (isInCompare(toolId)) {
       removeFromCompare(toolId);
     } else {
@@ -118,7 +146,7 @@ const ToolDetailPage = () => {
   const handleVote = (voteType: 'up' | 'down') => {
     if (!tool) return;
     
-    const toolId = tool._id || tool.id;
+    const toolId = tool._id;
     if (userVote === voteType) {
       // User is un-voting
       if (voteType === 'up') {
@@ -240,6 +268,7 @@ const ToolDetailPage = () => {
                   src={tool.logo}
                   alt={`${tool.name} logo`}
                   className="w-12 h-12 object-contain"
+                  loading="lazy"
                 />
               </div>
               <div>
@@ -295,16 +324,30 @@ const ToolDetailPage = () => {
                 </ul>
               </div>
               
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-8">
-                <img
-                  src="/placeholder.svg"
-                  alt={`${tool.name} screenshot`}
-                  className="w-full h-auto rounded-md shadow-sm mb-4"
-                />
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  {tool.name} interface screenshot
-                </p>
-              </div>
+              {tool.screenshots && tool.screenshots.length > 0 ? (
+                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-8">
+                  <img
+                    src={tool.screenshots[0]}
+                    alt={`${tool.name} screenshot`}
+                    className="w-full h-auto rounded-md shadow-sm mb-4"
+                    loading="lazy"
+                  />
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                    {tool.name} interface screenshot
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-8">
+                  <img
+                    src="/placeholder.svg"
+                    alt={`${tool.name} screenshot placeholder`}
+                    className="w-full h-auto rounded-md shadow-sm mb-4"
+                  />
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                    {tool.name} interface screenshot
+                  </p>
+                </div>
+              )}
               
               {/* User Voting */}
               <div className="flex items-center justify-center space-x-8 py-6 border-t border-b border-gray-200 dark:border-gray-700 mb-8">
@@ -332,7 +375,7 @@ const ToolDetailPage = () => {
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Similar Tools You Might Like</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {relatedTools.map(relatedTool => (
-                    <ToolCard key={relatedTool.id} tool={relatedTool} />
+                    <ToolCard key={relatedTool._id} tool={relatedTool} />
                   ))}
                 </div>
               </div>
@@ -380,7 +423,7 @@ const ToolDetailPage = () => {
                     className="flex-1 dark:border-gray-700"
                     onClick={handleBookmark}
                   >
-                    {isBookmarked(tool.id) ? (
+                    {isBookmarked(tool._id) ? (
                       <>
                         <BookmarkCheck className="mr-2 h-4 w-4" /> Saved
                       </>
@@ -397,7 +440,7 @@ const ToolDetailPage = () => {
                     onClick={handleCompare}
                   >
                     <BarChart2 className="mr-2 h-4 w-4" /> 
-                    {isInCompare(tool.id) ? 'Remove Compare' : 'Compare'}
+                    {isInCompare(tool._id) ? 'Remove Compare' : 'Compare'}
                   </Button>
                 </div>
               </div>

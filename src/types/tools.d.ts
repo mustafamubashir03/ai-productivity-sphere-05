@@ -3,9 +3,9 @@
 
 // Tool interface that supports both id and _id to handle different data formats
 export interface Tool {
-  // Support both id and _id for flexibility
+  // Both _id and id are required to handle all scenarios
+  _id: string;
   id?: string;
-  _id: string; // Making this required to match ToolCard.tsx interface
   name: string;
   slug: string;
   logo: string;

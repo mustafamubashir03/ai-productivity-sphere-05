@@ -89,50 +89,19 @@ export function useToast() {
   };
 }
 
-// Export a singleton for easy use
-export const toast = {
-  success: (options: ToastOptions | string) => {
-    if (typeof window !== 'undefined') {
-      const event = new CustomEvent('toast', {
-        detail: {
-          options: typeof options === 'string' ? { description: options, variant: 'success' } : { ...options, variant: 'success' }
-        }
-      });
-      window.dispatchEvent(event);
-    }
-  },
-  error: (options: ToastOptions | string) => {
-    if (typeof window !== 'undefined') {
-      const event = new CustomEvent('toast', {
-        detail: {
-          options: typeof options === 'string' ? { description: options, variant: 'error' } : { ...options, variant: 'error' }
-        }
-      });
-      window.dispatchEvent(event);
-    }
-  },
-  warning: (options: ToastOptions | string) => {
-    if (typeof window !== 'undefined') {
-      const event = new CustomEvent('toast', {
-        detail: {
-          options: typeof options === 'string' ? { description: options, variant: 'warning' } : { ...options, variant: 'warning' }
-        }
-      });
-      window.dispatchEvent(event);
-    }
-  },
-  info: (options: ToastOptions | string) => {
-    if (typeof window !== 'undefined') {
-      const event = new CustomEvent('toast', {
-        detail: {
-          options: typeof options === 'string' ? { description: options, variant: 'info' } : { ...options, variant: 'info' }
-        }
-      });
-      window.dispatchEvent(event);
-    }
-  },
-  // Default toast - needs a property name
-  default: (options: ToastOptions | string) => {
+// Define the toast function type that includes methods
+type ToastFunction = {
+  (options: ToastOptions | string): void;
+  success: (options: ToastOptions | string) => void;
+  error: (options: ToastOptions | string) => void;
+  warning: (options: ToastOptions | string) => void;
+  info: (options: ToastOptions | string) => void;
+};
+
+// Create and export the singleton toast object
+const createToast = (): ToastFunction => {
+  // Create the base function
+  const fn = ((options: ToastOptions | string) => {
     if (typeof window !== 'undefined') {
       const event = new CustomEvent('toast', {
         detail: {
@@ -141,26 +110,54 @@ export const toast = {
       });
       window.dispatchEvent(event);
     }
-  }
+  }) as ToastFunction;
+  
+  // Add the variant methods
+  fn.success = (options: ToastOptions | string) => {
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('toast', {
+        detail: {
+          options: typeof options === 'string' ? { description: options, variant: 'success' } : { ...options, variant: 'success' }
+        }
+      });
+      window.dispatchEvent(event);
+    }
+  };
+  
+  fn.error = (options: ToastOptions | string) => {
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('toast', {
+        detail: {
+          options: typeof options === 'string' ? { description: options, variant: 'error' } : { ...options, variant: 'error' }
+        }
+      });
+      window.dispatchEvent(event);
+    }
+  };
+  
+  fn.warning = (options: ToastOptions | string) => {
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('toast', {
+        detail: {
+          options: typeof options === 'string' ? { description: options, variant: 'warning' } : { ...options, variant: 'warning' }
+        }
+      });
+      window.dispatchEvent(event);
+    }
+  };
+  
+  fn.info = (options: ToastOptions | string) => {
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('toast', {
+        detail: {
+          options: typeof options === 'string' ? { description: options, variant: 'info' } : { ...options, variant: 'info' }
+        }
+      });
+      window.dispatchEvent(event);
+    }
+  };
+  
+  return fn;
 };
 
-// Make the default function callable directly
-const originalToast = toast.default;
-Object.defineProperty(toast, 'default', {
-  enumerable: true,
-  configurable: true,
-  value: originalToast
-});
-
-// Make toast callable as a function
-const toastFunction = function(options: ToastOptions | string) {
-  return toast.default(options);
-} as typeof toast.default & typeof toast;
-
-// Copy all properties from toast object to the function
-Object.assign(toastFunction, toast);
-
-// Replace toast object with the function
-// @ts-ignore - This is a bit of a hack but common pattern for callable objects
-export { toastFunction as toast };
-
+export const toast = createToast();

@@ -8,9 +8,10 @@ import { getBlogPostsRelatedToTool } from "@/data/blog";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { useCompare } from "@/context/CompareContext";
 import ToolDetailSkeleton from "@/components/skeletons/ToolDetailSkeleton";
-import ToolCard, { Tool } from "@/components/common/ToolCard";
+import ToolCard from "@/components/common/ToolCard";
+import { Tool } from "@/types/tools"; // Import Tool type from our types file
 import CompareBar from "@/components/tools/CompareBar";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/sonner";
 import { useTool } from "@/hooks/use-api";
 
 const ToolDetailPage = () => {
@@ -37,18 +38,19 @@ const ToolDetailPage = () => {
         setLoading(false);
         
         // Get related tools and blog posts
-        if (apiToolData.id) {
-          const related = getRelatedTools(apiToolData.id);
+        if (apiToolData._id || apiToolData.id) {
+          const related = getRelatedTools(apiToolData._id || apiToolData.id);
           setRelatedTools(related);
           
-          const relatedBlogPosts = getBlogPostsRelatedToTool(apiToolData.id);
+          const relatedBlogPosts = getBlogPostsRelatedToTool(apiToolData._id || apiToolData.id);
           setRelatedPosts(relatedBlogPosts);
         }
         
         // Get votes from localStorage
-        const savedUpvotes = localStorage.getItem(`tool-${apiToolData.id}-upvotes`);
-        const savedDownvotes = localStorage.getItem(`tool-${apiToolData.id}-downvotes`);
-        const savedUserVote = localStorage.getItem(`tool-${apiToolData.id}-user-vote`);
+        const toolId = apiToolData._id || apiToolData.id;
+        const savedUpvotes = localStorage.getItem(`tool-${toolId}-upvotes`);
+        const savedDownvotes = localStorage.getItem(`tool-${toolId}-downvotes`);
+        const savedUserVote = localStorage.getItem(`tool-${toolId}-user-vote`);
         
         setUpvotes(savedUpvotes ? parseInt(savedUpvotes) : Math.floor(Math.random() * 50) + 20);
         setDownvotes(savedDownvotes ? parseInt(savedDownvotes) : Math.floor(Math.random() * 10) + 1);
@@ -61,16 +63,17 @@ const ToolDetailPage = () => {
           setTool(localTool);
           
           // Get related data
-          const related = getRelatedTools(localTool.id);
+          const toolId = localTool._id || localTool.id;
+          const related = getRelatedTools(toolId);
           setRelatedTools(related);
           
-          const relatedBlogPosts = getBlogPostsRelatedToTool(localTool.id);
+          const relatedBlogPosts = getBlogPostsRelatedToTool(toolId);
           setRelatedPosts(relatedBlogPosts);
           
           // Get votes from localStorage
-          const savedUpvotes = localStorage.getItem(`tool-${localTool.id}-upvotes`);
-          const savedDownvotes = localStorage.getItem(`tool-${localTool.id}-downvotes`);
-          const savedUserVote = localStorage.getItem(`tool-${localTool.id}-user-vote`);
+          const savedUpvotes = localStorage.getItem(`tool-${toolId}-upvotes`);
+          const savedDownvotes = localStorage.getItem(`tool-${toolId}-downvotes`);
+          const savedUserVote = localStorage.getItem(`tool-${toolId}-user-vote`);
           
           setUpvotes(savedUpvotes ? parseInt(savedUpvotes) : Math.floor(Math.random() * 50) + 20);
           setDownvotes(savedDownvotes ? parseInt(savedDownvotes) : Math.floor(Math.random() * 10) + 1);
@@ -85,14 +88,15 @@ const ToolDetailPage = () => {
   const handleBookmark = () => {
     if (!tool) return;
     
-    if (isBookmarked(tool.id)) {
-      removeBookmark(tool.id);
+    const toolId = tool._id || tool.id;
+    if (isBookmarked(toolId)) {
+      removeBookmark(toolId);
       toast({
         title: "Tool removed from bookmarks",
         description: `${tool.name} has been removed from your bookmarks`
       });
     } else {
-      addBookmark(tool.id);
+      addBookmark(toolId);
       toast({
         title: "Tool bookmarked",
         description: `${tool.name} has been added to your bookmarks`
@@ -103,8 +107,9 @@ const ToolDetailPage = () => {
   const handleCompare = () => {
     if (!tool) return;
     
-    if (isInCompare(tool.id)) {
-      removeFromCompare(tool.id);
+    const toolId = tool._id || tool.id;
+    if (isInCompare(toolId)) {
+      removeFromCompare(toolId);
     } else {
       addToCompare(tool);
     }
@@ -113,6 +118,7 @@ const ToolDetailPage = () => {
   const handleVote = (voteType: 'up' | 'down') => {
     if (!tool) return;
     
+    const toolId = tool._id || tool.id;
     if (userVote === voteType) {
       // User is un-voting
       if (voteType === 'up') {
@@ -121,7 +127,7 @@ const ToolDetailPage = () => {
         setDownvotes(prev => prev - 1);
       }
       setUserVote(null);
-      localStorage.removeItem(`tool-${tool.id}-user-vote`);
+      localStorage.removeItem(`tool-${toolId}-user-vote`);
     } else {
       // User is voting or changing vote
       if (userVote === 'up' && voteType === 'down') {
@@ -136,12 +142,12 @@ const ToolDetailPage = () => {
         setDownvotes(prev => prev + 1);
       }
       setUserVote(voteType);
-      localStorage.setItem(`tool-${tool.id}-user-vote`, voteType);
+      localStorage.setItem(`tool-${toolId}-user-vote`, voteType);
     }
     
     // Save votes to localStorage
-    localStorage.setItem(`tool-${tool.id}-upvotes`, String(voteType === 'up' ? upvotes + 1 : upvotes));
-    localStorage.setItem(`tool-${tool.id}-downvotes`, String(voteType === 'down' ? downvotes + 1 : downvotes));
+    localStorage.setItem(`tool-${toolId}-upvotes`, String(voteType === 'up' ? upvotes + 1 : upvotes));
+    localStorage.setItem(`tool-${toolId}-downvotes`, String(voteType === 'down' ? downvotes + 1 : downvotes));
   };
   
   if (loading || apiLoading) {
@@ -165,19 +171,19 @@ const ToolDetailPage = () => {
     {
       type: "Product" as const,
       data: {
-        name: tool.name,
-        description: tool.description,
-        image: tool.logo || "/placeholder.svg",
+        name: tool?.name,
+        description: tool?.description,
+        image: tool?.logo || "/placeholder.svg",
         brand: {
           "@type": "Brand",
           name: "AI Productivity Hub"
         },
         offers: {
           "@type": "Offer",
-          price: tool.pricing || "Various pricing options available",
+          price: tool?.pricing || "Various pricing options available",
           url: window.location.href
         },
-        aggregateRating: tool.rating ? {
+        aggregateRating: tool?.rating ? {
           "@type": "AggregateRating",
           ratingValue: tool.rating,
           reviewCount: upvotes + downvotes,
@@ -191,18 +197,18 @@ const ToolDetailPage = () => {
       data: {
         itemReviewed: {
           "@type": "SoftwareApplication",
-          name: tool.name,
+          name: tool?.name,
         },
         reviewRating: {
           "@type": "Rating",
-          ratingValue: tool.rating || "4.5",
+          ratingValue: tool?.rating || "4.5",
           bestRating: "5"
         },
         author: {
           "@type": "Organization",
           name: "AI Productivity Hub"
         },
-        reviewBody: tool.editorVerdict || tool.description
+        reviewBody: tool?.editorVerdict || tool?.description
       }
     }
   ];

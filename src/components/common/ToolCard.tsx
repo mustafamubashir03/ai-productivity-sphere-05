@@ -7,33 +7,9 @@ import { useBookmarks } from "@/context/BookmarkContext";
 import { useCompare } from "@/context/CompareContext";
 import { toast } from "@/components/ui/sonner";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Tool as ToolType } from "@/types/tools"; // Import the Tool type from types
 
-export interface Tool {
-  _id: string;
-  name: string;
-  slug: string;
-  description: string;
-  logo: string;
-  category: string;
-  features: string[];
-  useCases: string[];
-  pricing: string;
-  websiteUrl: string;
-  createdAt?: string;
-  updatedAt?: string;
-  trending?: boolean;
-  rating?: number;
-  reviewed?: boolean;
-  seo?: {
-    canonicalUrl?: string;
-    imageUrl?: string;
-    structuredData?: any;
-    siteName?: string;
-    twitterHandle?: string;
-    type?: string;
-    noIndex?: boolean;
-  };
-}
+export type Tool = ToolType; // Re-export for compatibility with existing code
 
 interface ToolCardProps {
   tool: Tool;
@@ -63,17 +39,19 @@ const ToolCard = ({ tool }: ToolCardProps) => {
   };
 
   const handleToggleBookmark = () => {
-    if (isBookmarked(tool._id)) {
-      removeBookmark(tool._id);
+    const toolId = tool._id || tool.id;
+    if (isBookmarked(toolId)) {
+      removeBookmark(toolId);
     } else {
-      addBookmark(tool._id);
+      addBookmark(toolId);
       toast.success(`${tool.name} added to bookmarks`);
     }
   };
 
   const handleToggleCompare = () => {
-    if (isInCompare(tool._id)) {
-      removeFromCompare(tool._id);
+    const toolId = tool._id || tool.id;
+    if (isInCompare(toolId)) {
+      removeFromCompare(toolId);
     } else {
       addToCompare(tool);
     }
@@ -122,16 +100,16 @@ const ToolCard = ({ tool }: ToolCardProps) => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleToggleBookmark}
-            className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isBookmarked(tool._id) ? 'text-primary' : 'text-gray-400'}`}
-            aria-label={isBookmarked(tool._id) ? "Remove from bookmarks" : "Add to bookmarks"}
+            className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isBookmarked(tool._id || tool.id) ? 'text-primary' : 'text-gray-400'}`}
+            aria-label={isBookmarked(tool._id || tool.id) ? "Remove from bookmarks" : "Add to bookmarks"}
           >
-            {isBookmarked(tool._id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+            {isBookmarked(tool._id || tool.id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
           </button>
           
           <button
             onClick={handleToggleCompare}
-            className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isInCompare(tool._id) ? 'text-primary' : 'text-gray-400'}`}
-            aria-label={isInCompare(tool._id) ? "Remove from comparison" : "Add to comparison"}
+            className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isInCompare(tool._id || tool.id) ? 'text-primary' : 'text-gray-400'}`}
+            aria-label={isInCompare(tool._id || tool.id) ? "Remove from comparison" : "Add to comparison"}
           >
             <BarChart2 className="w-4 h-4" />
           </button>

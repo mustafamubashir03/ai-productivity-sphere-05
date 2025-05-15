@@ -5,7 +5,7 @@
 export interface Tool {
   // Support both id and _id for flexibility
   id?: string;
-  _id?: string;
+  _id: string; // Making this required to match ToolCard.tsx interface
   name: string;
   slug: string;
   logo: string;

@@ -4,7 +4,8 @@ import { ArrowRight, Pencil, Film, Image, Terminal, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/common/SEOHead";
 import CategoryCard from "@/components/common/CategoryCard";
-import ToolCard, { Tool } from "@/components/common/ToolCard";
+import ToolCard from "@/components/common/ToolCard";
+import { Tool } from "@/types/tools"; // Import Tool type from our types file
 import { categories } from "@/data/categories";
 import { getTrendingTools } from "@/data/tools";
 import { blogPosts } from "@/data/blog";
@@ -184,7 +185,7 @@ const HomePage = () => {
               ))
             ) : (
               trendingTools.map((tool) => (
-                <ToolCard key={tool.id} tool={tool} />
+                <ToolCard key={tool._id} tool={tool} />
               ))
             )}
           </div>

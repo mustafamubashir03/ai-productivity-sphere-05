@@ -7,7 +7,7 @@ export function adaptToolToInternal(tool: any): any {
   
   return {
     ...tool,
-    _id: tool.id || tool._id,
+    _id: tool.id || tool._id || '', // Ensure _id is always present with a fallback
   };
 }
 

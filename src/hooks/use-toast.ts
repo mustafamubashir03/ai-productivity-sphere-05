@@ -131,8 +131,8 @@ export const toast = {
       window.dispatchEvent(event);
     }
   },
-  // Default toast
-  (options: ToastOptions | string) => {
+  // Default toast - needs a property name
+  default: (options: ToastOptions | string) => {
     if (typeof window !== 'undefined') {
       const event = new CustomEvent('toast', {
         detail: {
@@ -143,3 +143,24 @@ export const toast = {
     }
   }
 };
+
+// Make the default function callable directly
+const originalToast = toast.default;
+Object.defineProperty(toast, 'default', {
+  enumerable: true,
+  configurable: true,
+  value: originalToast
+});
+
+// Make toast callable as a function
+const toastFunction = function(options: ToastOptions | string) {
+  return toast.default(options);
+} as typeof toast.default & typeof toast;
+
+// Copy all properties from toast object to the function
+Object.assign(toastFunction, toast);
+
+// Replace toast object with the function
+// @ts-ignore - This is a bit of a hack but common pattern for callable objects
+export { toastFunction as toast };
+

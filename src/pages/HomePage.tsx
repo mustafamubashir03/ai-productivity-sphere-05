@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Pencil, Film, Image, Terminal, Bot } from "lucide-react";
@@ -5,53 +6,68 @@ import { Button } from "@/components/ui/button";
 import SEOHead from "@/components/common/SEOHead";
 import CategoryCard from "@/components/common/CategoryCard";
 import ToolCard from "@/components/common/ToolCard";
-import { Tool } from "@/types/tools"; // Import Tool type from our types file
 import { categories } from "@/data/categories";
-import { getTrendingTools } from "@/data/tools";
-import { blogPosts } from "@/data/blog";
 import NewsletterSignup from "@/components/layout/NewsletterSignup";
 import CategoryCardSkeleton from "@/components/skeletons/CategoryCardSkeleton";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
 import Logo from "@/components/common/Logo";
+import { useTools, useBlogs } from "@/hooks/use-api";
+import { Tool } from "@/types/tools";
 
 const HomePage = () => {
-  const [trendingTools, setTrendingTools] = useState<Tool[]>([]);
-  const [featuredPosts, setFeaturedPosts] = useState([]);
-  const [loadingTools, setLoadingTools] = useState(true);
-  const [loadingCategories, setLoadingCategories] = useState(true);
-  const [loadingPosts, setLoadingPosts] = useState(true);
   const [displayedCategories, setDisplayedCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  
+  // Fetch trending tools from the API
+  const { 
+    data: toolsData, 
+    isLoading: loadingTools, 
+    error: toolsError 
+  } = useTools({ trending: "true", limit: "3" });
+  
+  // Fetch blog posts from the API
+  const { 
+    data: blogPosts, 
+    isLoading: loadingPosts, 
+    error: blogError 
+  } = useBlogs({ limit: "2", featured: "true" });
   
   useEffect(() => {
-    // Simulate data fetching delay for trending tools
-    const toolsTimer = setTimeout(() => {
-      setTrendingTools(getTrendingTools());
-      setLoadingTools(false);
-    }, 1200);
-    
     // Simulate data fetching delay for categories
     const categoriesTimer = setTimeout(() => {
       setDisplayedCategories(categories);
       setLoadingCategories(false);
     }, 800);
     
-    // Simulate data fetching delay for blog posts
-    const postsTimer = setTimeout(() => {
-      setFeaturedPosts(blogPosts.slice(0, 2));
-      setLoadingPosts(false);
-    }, 1500);
-    
     return () => {
-      clearTimeout(toolsTimer);
       clearTimeout(categoriesTimer);
-      clearTimeout(postsTimer);
     };
   }, []);
 
   const scrollToTools = () => {
     document.getElementById('tools-section')?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Format blog data for display
+  const formatBlogData = (blogs) => {
+    if (!blogs || !blogs.length) return [];
+    
+    return blogs.map(blog => ({
+      id: blog._id,
+      title: blog.title,
+      slug: blog.slug,
+      excerpt: blog.excerpt,
+      image: blog.image || "/placeholder.svg",
+      date: new Date(blog.date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    }));
+  };
+
+  const featuredPosts = formatBlogData(blogPosts);
 
   return (
     <>
@@ -179,14 +195,18 @@ const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loadingTools ? (
+            {loadingTools || !toolsData ? (
               Array(3).fill(0).map((_, index) => (
                 <ToolCardSkeleton key={`tool-skeleton-${index}`} />
               ))
-            ) : (
-              trendingTools.map((tool) => (
+            ) : toolsData.length > 0 ? (
+              toolsData.map((tool) => (
                 <ToolCard key={tool._id} tool={tool} />
               ))
+            ) : (
+              <div className="col-span-3 text-center py-10">
+                <p className="text-gray-500 dark:text-gray-400">No trending tools found</p>
+              </div>
             )}
           </div>
         </div>
@@ -206,11 +226,11 @@ const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {loadingPosts ? (
+            {loadingPosts || !blogPosts ? (
               Array(2).fill(0).map((_, index) => (
                 <BlogCardSkeleton key={`blog-skeleton-${index}`} />
               ))
-            ) : (
+            ) : featuredPosts.length > 0 ? (
               featuredPosts.map((post) => (
                 <div key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover border border-gray-100 dark:border-gray-700">
                   <img 
@@ -238,6 +258,10 @@ const HomePage = () => {
                   </div>
                 </div>
               ))
+            ) : (
+              <div className="col-span-2 text-center py-10">
+                <p className="text-gray-500 dark:text-gray-400">No blog posts found</p>
+              </div>
             )}
           </div>
         </div>

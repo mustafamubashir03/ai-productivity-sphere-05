@@ -2,24 +2,26 @@
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
-import { getTrendingTools } from "@/data/tools";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import { useState, useEffect } from "react";
+import { useTools } from "@/hooks/use-api";
+import { toast } from "@/components/ui/sonner";
 
 const TrendingToolsPage = () => {
-  const [loading, setLoading] = useState(true);
-  const [trendingTools, setTrendingTools] = useState([]);
+  // Fetch trending tools from the API
+  const { 
+    data: trendingTools,
+    isLoading: loading,
+    error
+  } = useTools({ trending: "true", limit: "12" });
   
+  // Show error toast if API request fails
   useEffect(() => {
-    // Simulate API fetch delay
-    const timer = setTimeout(() => {
-      const tools = getTrendingTools();
-      setTrendingTools(tools);
-      setLoading(false);
-    }, 800);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    if (error) {
+      toast.error("Error loading trending tools. Please try again later.");
+      console.error("API error:", error);
+    }
+  }, [error]);
 
   return (
     <>
@@ -40,10 +42,10 @@ const TrendingToolsPage = () => {
               <ToolCardSkeleton key={`skeleton-${index}`} />
             ))}
           </div>
-        ) : trendingTools.length > 0 ? (
+        ) : trendingTools && trendingTools.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {trendingTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} />
+              <ToolCard key={tool._id} tool={tool} />
             ))}
           </div>
         ) : (

@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
@@ -22,18 +22,18 @@ const TOOLS_PER_PAGE = 9;
 
 const ToolsPage = () => {
   const { categorySlug } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  
+  // State for filters and pagination
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(categorySlug || null);
-  const [activeIndustry, setActiveIndustry] = useState<string | null>(searchParams.get("industry") || null);
-  const [activeUseCase, setActiveUseCase] = useState<string | null>(searchParams.get("useCase") || null);
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
+  const [activeIndustry, setActiveIndustry] = useState<string | null>(null);
+  const [activeUseCase, setActiveUseCase] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [allTools, setAllTools] = useState<Tool[]>([]);
   
-  // Fetch all tools initially without filters 
-  // We'll apply filters in memory for better UX
+  // Fetch all tools initially without filters
   const { data: toolsData, isLoading: loading, error } = useTools();
   
   // Store all fetched tools in state
@@ -86,15 +86,7 @@ const ToolsPage = () => {
     });
   }, [allTools, activeCategory, activeIndustry, activeUseCase, searchQuery]);
   
-  useEffect(() => {
-    // Update URL with filters without page reload
-    const params = new URLSearchParams();
-    if (currentPage > 1) params.set("page", String(currentPage));
-    if (activeIndustry) params.set("industry", activeIndustry);
-    if (activeUseCase) params.set("useCase", activeUseCase);
-    setSearchParams(params, { replace: true });
-  }, [currentPage, activeIndustry, activeUseCase, setSearchParams]);
-  
+  // Update URL when category changes (without page reload)
   useEffect(() => {
     if (categorySlug !== activeCategory) {
       setActiveCategory(categorySlug || null);
@@ -111,21 +103,12 @@ const ToolsPage = () => {
     e.preventDefault(); // Prevent default action
     e.stopPropagation(); // Stop event propagation
     
-    if (slug === activeCategory) {
-      // If clicking the active category, just update params
-      const params = new URLSearchParams(searchParams);
-      params.delete("page");
-      setSearchParams(params, { replace: true });
-      setActiveCategory(null);
-    } else {
-      // Update state without navigating
-      setActiveCategory(slug);
-      
-      // Update the URL without causing a page refresh
-      const path = slug ? `/tools/category/${slug}` : '/tools';
-      navigate(path, { replace: true });
-    }
-    setCurrentPage(1);
+    setActiveCategory(slug);
+    setCurrentPage(1); // Reset pagination when category changes
+    
+    // Update the URL without causing a page refresh
+    const path = slug ? `/tools/category/${slug}` : '/tools';
+    navigate(path, { replace: true });
   };
   
   const handleIndustryChange = (industrySlug: string | null) => {
@@ -202,13 +185,13 @@ const ToolsPage = () => {
   useEffect(() => {
     const savedPreferences = localStorage.getItem('filterPreferences');
     
-    if (savedPreferences && !activeCategory && !activeIndustry && !activeUseCase) {
+    if (savedPreferences && !categorySlug) {
       try {
         const preferences = JSON.parse(savedPreferences);
         
-        // Only apply if URL doesn't already have filters
-        if (!categorySlug && !searchParams.get("industry") && !searchParams.get("useCase")) {
-          // Apply saved filters but don't navigate
+        // Only apply if URL doesn't already have a category
+        if (!categorySlug) {
+          // Apply saved filters
           if (preferences.category) setActiveCategory(preferences.category);
           if (preferences.industry) setActiveIndustry(preferences.industry);
           if (preferences.useCase) setActiveUseCase(preferences.useCase);
@@ -218,7 +201,7 @@ const ToolsPage = () => {
         console.error("Error parsing saved filter preferences", e);
       }
     }
-  }, []);
+  }, [categorySlug]);
 
   return (
     <>

@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/sonner';
 import { adaptToolsToInternal } from '@/utils/dataAdapters';
@@ -134,7 +133,7 @@ export const useApiMutation = (
   });
 };
 
-// Updated useTools hook to use real API endpoint
+// Updated useTools hook to use real API endpoint with filtering parameters
 export const useTools = (params?: Record<string, string>) => {
   return useApiQuery(
     ['tools', JSON.stringify(params)], 

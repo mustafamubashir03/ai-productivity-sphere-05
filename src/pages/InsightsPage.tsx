@@ -5,88 +5,51 @@ import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 import { Clock, ArrowRight } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-
-// Mock data for insights/guides
-const insightsData = [
-  {
-    id: "1",
-    title: "Top 10 Free AI Tools for Students in 2025",
-    slug: "free-ai-tools-students-2025",
-    excerpt: "Discover the best free AI tools that can help students with research, writing, and learning.",
-    coverImage: "/placeholder.svg",
-    date: "May 10, 2025",
-    readTime: "5 min read",
-    category: "Guides"
-  },
-  {
-    id: "2",
-    title: "How to Choose the Right AI Writing Assistant",
-    slug: "choose-right-ai-writing-assistant",
-    excerpt: "A comprehensive comparison of popular AI writing tools and how to select the one that fits your needs.",
-    coverImage: "/placeholder.svg",
-    date: "May 5, 2025",
-    readTime: "8 min read",
-    category: "Comparisons"
-  },
-  {
-    id: "3",
-    title: "The Future of AI in Content Creation",
-    slug: "future-ai-content-creation",
-    excerpt: "Exploring how AI is transforming the content creation landscape and what to expect in the coming years.",
-    coverImage: "/placeholder.svg",
-    date: "April 28, 2025",
-    readTime: "6 min read",
-    category: "Trends"
-  },
-  {
-    id: "4",
-    title: "Best AI Tools Using GPT-4 Technology",
-    slug: "best-gpt4-ai-tools",
-    excerpt: "A curated selection of the most powerful AI tools powered by OpenAI's GPT-4 language model.",
-    coverImage: "/placeholder.svg",
-    date: "April 20, 2025",
-    readTime: "7 min read",
-    category: "Guides"
-  },
-  {
-    id: "5",
-    title: "AI Productivity Tools for Remote Teams",
-    slug: "ai-productivity-tools-remote-teams",
-    excerpt: "How to leverage AI tools to boost productivity and collaboration in distributed teams.",
-    coverImage: "/placeholder.svg",
-    date: "April 15, 2025",
-    readTime: "9 min read", 
-    category: "Guides"
-  },
-  {
-    id: "6",
-    title: "Ethical Considerations When Using AI Tools",
-    slug: "ethical-considerations-ai-tools",
-    excerpt: "Understanding the ethical implications of AI and how to use these tools responsibly.",
-    coverImage: "/placeholder.svg",
-    date: "April 8, 2025",
-    readTime: "10 min read",
-    category: "Insights"
-  }
-];
+import { useBlogs } from "@/hooks/use-api";
+import { toast } from "@/components/ui/sonner";
 
 const CATEGORIES = ["All", "Guides", "Comparisons", "Trends", "Insights"];
 
 const InsightsPage = () => {
-  const [loading, setLoading] = useState(true);
-  const [insights, setInsights] = useState([]);
   const [activeCategory, setActiveCategory] = useState("All");
   
-  useEffect(() => {
-    // Simulate API fetch delay
-    const timer = setTimeout(() => {
-      setInsights(insightsData);
-      setLoading(false);
-    }, 800);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  const { 
+    data: insightsData,
+    isLoading: loading,
+    error
+  } = useBlogs();
   
+  // Show error toast if API request fails
+  useEffect(() => {
+    if (error) {
+      toast.error("Error loading insights. Please try again later.");
+      console.error("API error:", error);
+    }
+  }, [error]);
+  
+  // Format blog data to match our UI requirements
+  const formatInsights = (blogs) => {
+    if (!blogs || !blogs.length) return [];
+    
+    return blogs.map(blog => ({
+      id: blog._id,
+      title: blog.title,
+      slug: blog.slug,
+      excerpt: blog.excerpt || "Read this insight for valuable information on AI tools.",
+      coverImage: blog.image || "/placeholder.svg",
+      date: new Date(blog.date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }),
+      readTime: blog.readTime || `${Math.ceil((blog.content?.length || 0) / 1500)} min read`,
+      category: blog.category || "Guides" // Default to Guides if category is missing
+    }));
+  };
+  
+  const insights = formatInsights(insightsData);
+  
+  // Client-side category filtering
   const filteredInsights = activeCategory === "All" 
     ? insights 
     : insights.filter(insight => insight.category === activeCategory);

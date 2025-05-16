@@ -6,7 +6,6 @@ import PageHeader from "@/components/common/PageHeader";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { toast } from "@/components/ui/sonner";
 import { API_BASE_URL } from "@/hooks/use-api";
-import { formatDate } from "@/utils/formatters";
 
 const BookmarksPage = () => {
   const { blogBookmarks, removeBlogBookmark } = useBookmarks();
@@ -20,10 +19,18 @@ const BookmarksPage = () => {
   // Format image URL
   const getImageUrl = (imagePath: string) => {
     if (!imagePath) return '/placeholder.svg';
-    return imagePath.startsWith('/') && !imagePath.startsWith('http') 
-      ? `${API_BASE_URL}${imagePath}` 
-      : imagePath;
+    
+    if (imagePath.startsWith('http')) {
+      return imagePath; // Already a full URL (e.g., Cloudinary)
+    } else if (imagePath.startsWith('/')) {
+      return `${API_BASE_URL}${imagePath}`; // Relative path to API
+    }
+    
+    return imagePath; // Return as is if none of the above
   };
+
+  // For debugging
+  console.log("Blog bookmarks:", blogBookmarks);
 
   return (
     <>
@@ -76,7 +83,11 @@ const BookmarksPage = () => {
                   <div className="md:w-3/5 lg:w-2/3 p-5 flex flex-col">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatDate(post.date)}
+                        {new Date(post.date).toLocaleDateString('en-US', { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric' 
+                        })}
                       </span>
                       <button 
                         className="text-primary hover:text-primary-dark" 

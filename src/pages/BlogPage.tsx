@@ -1,4 +1,3 @@
-
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, Clock, Bookmark, BookmarkCheck, Calendar } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
@@ -44,12 +43,12 @@ interface Blog {
 const BlogPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { addToolBookmark, removeToolBookmark, isToolBookmarked } = useBookmarks();
+  const { addBlogBookmark, removeBlogBookmark, isBlogBookmarked } = useBookmarks();
   
   // For backward compatibility
-  const addBookmark = addToolBookmark;
-  const removeBookmark = removeToolBookmark;
-  const isBookmarked = isToolBookmarked;
+  const addBookmark = addBlogBookmark;
+  const removeBookmark = removeBlogBookmark;
+  const isBookmarked = isBlogBookmarked;
   
   // Get current page from URL query or default to 1
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
@@ -112,28 +111,34 @@ const BlogPage = () => {
   };
 
   // Toggle bookmark
-  const handleToggleBookmark = (blogId: string, title: string) => {
+  const handleToggleBookmark = (blogId: string, title: string, slug: string, excerpt: string, date: string, image: string) => {
     if (isBookmarked(blogId)) {
       removeBookmark(blogId);
       toast.success(`"${title}" removed from bookmarks`);
     } else {
-      // Fix: Remove the 'type' property since it doesn't exist in the Tool interface
-      // Instead, use the properties that are expected by the Tool interface
       addBookmark({
-        _id: blogId, 
-        id: blogId, 
-        name: title,
-        slug: '', // Required by Tool interface
-        logo: '', // Required by Tool interface
-        category: '', // Required by Tool interface
-        description: '', // Required by Tool interface
-        websiteUrl: '', // Required by Tool interface
-        pricing: '', // Required by Tool interface
-        features: [], // Required by Tool interface
-        useCases: [] // Required by Tool interface
+        _id: blogId,
+        title: title,
+        slug: slug,
+        excerpt: excerpt,
+        date: date,
+        image: image,
       });
       toast.success(`"${title}" added to bookmarks`);
     }
+  };
+
+  // Format image URL
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return '/placeholder.svg';
+    
+    if (imagePath.startsWith('http')) {
+      return imagePath; // Already a full URL (e.g., Cloudinary)
+    } else if (imagePath.startsWith('/')) {
+      return `${API_BASE_URL}${imagePath}`; // Relative path to API
+    }
+    
+    return imagePath; // Return as is if none of the above
   };
 
   // Generate page numbers
@@ -192,6 +197,10 @@ const BlogPage = () => {
     );
   }
 
+  // For debugging
+  console.log("Current blog posts:", currentPosts);
+  console.log("Blog bookmarks:", isBookmarked);
+
   return (
     <>
       <SEOHead 
@@ -230,7 +239,7 @@ const BlogPage = () => {
                 >
                   <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
                     <img 
-                      src={post.coverImage || post.image || "/placeholder.svg"} 
+                      src={getImageUrl(post.coverImage || post.image || '')} 
                       alt={post.title} 
                       className="w-full h-48 md:h-full object-cover"
                       onError={(e) => {
@@ -246,7 +255,14 @@ const BlogPage = () => {
                       </span>
                       <button 
                         className={`${isBookmarked(post._id) ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
-                        onClick={() => handleToggleBookmark(post._id, post.title)}
+                        onClick={() => handleToggleBookmark(
+                          post._id, 
+                          post.title,
+                          post.slug,
+                          post.excerpt,
+                          post.publishedAt || post.createdAt,
+                          post.coverImage || post.image || ''
+                        )}
                         aria-label={isBookmarked(post._id) ? "Remove bookmark" : "Add bookmark"}
                       >
                         {isBookmarked(post._id) ? (
@@ -266,7 +282,7 @@ const BlogPage = () => {
                     </h2>
                     <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-3">
                       <Clock className="h-3 w-3 mr-1" />
-                      <span>{getReadTime(post.content, post.readTime)} min read</span>
+                      <span>{post.readTime || getReadTime(post.content)} min read</span>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                       {post.excerpt}

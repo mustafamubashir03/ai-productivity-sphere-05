@@ -11,7 +11,12 @@ import { useBlog, useTool, API_BASE_URL } from "@/hooks/use-api";
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { addBlogBookmark, removeBlogBookmark, isBlogBookmarked } = useBookmarks();
+  
+  // For backward compatibility
+  const addBookmark = addBlogBookmark;
+  const removeBookmark = removeBlogBookmark;
+  const isBookmarked = isBlogBookmarked;
   
   // Fetch blog post from API
   const { data: post, isLoading: isPostLoading, error } = useBlog(slug || '');
@@ -46,7 +51,14 @@ const BlogPostPage = () => {
       removeBookmark(post._id);
       toast.success(`"${post.title}" removed from bookmarks`);
     } else {
-      addBookmark(post._id);
+      addBookmark({
+        _id: post._id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt || '',
+        date: post.publishedAt || post.createdAt || new Date().toISOString(),
+        image: post.coverImage || post.image || '',
+      });
       toast.success(`"${post.title}" added to bookmarks`);
     }
   };
@@ -76,10 +88,24 @@ const BlogPostPage = () => {
   // Format image URL
   const getImageUrl = (imagePath: string) => {
     if (!imagePath) return '/placeholder.svg';
-    return imagePath.startsWith('/') && !imagePath.startsWith('http') 
-      ? `${API_BASE_URL}${imagePath}` 
-      : imagePath;
+    
+    if (imagePath.startsWith('http')) {
+      return imagePath; // Already a full URL (e.g., Cloudinary)
+    } else if (imagePath.startsWith('/')) {
+      return `${API_BASE_URL}${imagePath}`; // Relative path to API
+    }
+    
+    return imagePath; // Return as is if none of the above
   };
+
+  // For debugging
+  useEffect(() => {
+    if (post) {
+      console.log("Blog post data:", post);
+      console.log("Image URL:", post.coverImage || post.image);
+      console.log("Formatted image URL:", getImageUrl(post.coverImage || post.image || ''));
+    }
+  }, [post]);
 
   if (isPostLoading) {
     return <BlogDetailSkeleton />;
@@ -104,10 +130,10 @@ const BlogPostPage = () => {
       data: {
         headline: post.title,
         description: post.excerpt,
-        image: getImageUrl(post.seo?.imageUrl || post.image),
+        image: getImageUrl(post.coverImage || post.image || ''),
         author: {
           "@type": "Person",
-          name: "AI Productivity Hub Team"
+          name: post.author?.name || "AI Productivity Hub Team"
         },
         publisher: {
           "@type": "Organization",
@@ -117,7 +143,7 @@ const BlogPostPage = () => {
             url: window.location.origin + "/favicon.svg"
           }
         },
-        datePublished: post.date,
+        datePublished: post.publishedAt || post.createdAt,
         articleSection: post.category || "Technology",
         mainEntityOfPage: {
           "@type": "WebPage",
@@ -132,7 +158,7 @@ const BlogPostPage = () => {
       <EnhancedSEO 
         title={`${post.title} - AI Productivity Hub`}
         description={post.excerpt}
-        image={getImageUrl(post.image)}
+        image={getImageUrl(post.coverImage || post.image || '')}
         canonicalUrl={post.seo?.canonicalUrl || window.location.href}
         structuredData={structuredData}
       />
@@ -175,7 +201,7 @@ const BlogPostPage = () => {
         {/* Featured Image */}
         <div className="mb-8 relative">
           <img
-            src={getImageUrl(post.image)}
+            src={getImageUrl(post.coverImage || post.image || '')}
             alt={post.title}
             className="w-full h-64 md:h-96 object-cover rounded-lg shadow-md"
             onError={(e) => {
@@ -208,12 +234,12 @@ const BlogPostPage = () => {
           <div className="flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1" />
-              <time dateTime={post.date}>{formatDate(post.date)}</time>
+              <time dateTime={post.publishedAt || post.createdAt}>{formatDate(post.publishedAt || post.createdAt)}</time>
             </div>
             
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
-              <span>{getReadTime(post.content)} min read</span>
+              <span>{post.readTime || getReadTime(post.content)} min read</span>
             </div>
           </div>
         </div>

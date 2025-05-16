@@ -12,7 +12,8 @@ import CategoryCardSkeleton from "@/components/skeletons/CategoryCardSkeleton";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
 import Logo from "@/components/common/Logo";
-import { useTools, useBlogs } from "@/hooks/use-api";
+import { useTools, useBlogs, adaptToolsResponse, adaptBlogsResponse } from "@/hooks/use-api";
+import { formatToolsData } from "@/utils/formatters";
 import { Tool } from "@/types/tools";
 
 const HomePage = () => {
@@ -28,7 +29,7 @@ const HomePage = () => {
   
   // Fetch blog posts from the API
   const { 
-    data: blogPosts, 
+    data: blogData, 
     isLoading: loadingPosts, 
     error: blogError 
   } = useBlogs({ limit: "2", featured: "true" });
@@ -45,6 +46,12 @@ const HomePage = () => {
     };
   }, []);
 
+  // Extract and format tools data
+  const trendingTools = toolsData ? formatToolsData(adaptToolsResponse(toolsData)) : [];
+
+  // Extract and format blog data
+  const blogPosts = blogData ? adaptBlogsResponse(blogData) : [];
+
   const scrollToTools = () => {
     document.getElementById('tools-section')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -58,8 +65,8 @@ const HomePage = () => {
       title: blog.title,
       slug: blog.slug,
       excerpt: blog.excerpt,
-      image: blog.image || "/placeholder.svg",
-      date: new Date(blog.date).toLocaleDateString('en-US', {
+      image: blog.coverImage || blog.image || "/placeholder.svg",
+      date: new Date(blog.publishedAt || blog.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -68,6 +75,18 @@ const HomePage = () => {
   };
 
   const featuredPosts = formatBlogData(blogPosts);
+
+  // Log data for debugging
+  useEffect(() => {
+    if (toolsData) {
+      console.log("HomePage - Tools data:", toolsData);
+      console.log("HomePage - Processed tools:", trendingTools);
+    }
+    if (blogData) {
+      console.log("HomePage - Blog data:", blogData);
+      console.log("HomePage - Processed blogs:", featuredPosts);
+    }
+  }, [toolsData, blogData]);
 
   return (
     <>
@@ -195,12 +214,12 @@ const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loadingTools || !toolsData ? (
+            {loadingTools ? (
               Array(3).fill(0).map((_, index) => (
                 <ToolCardSkeleton key={`tool-skeleton-${index}`} />
               ))
-            ) : toolsData.length > 0 ? (
-              toolsData.map((tool) => (
+            ) : trendingTools.length > 0 ? (
+              trendingTools.map((tool) => (
                 <ToolCard key={tool._id} tool={tool} />
               ))
             ) : (
@@ -226,7 +245,7 @@ const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {loadingPosts || !blogPosts ? (
+            {loadingPosts ? (
               Array(2).fill(0).map((_, index) => (
                 <BlogCardSkeleton key={`blog-skeleton-${index}`} />
               ))
@@ -237,6 +256,10 @@ const HomePage = () => {
                     src={post.image} 
                     alt={post.title} 
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "/placeholder.svg";
+                    }}
                   />
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2 dark:text-white">

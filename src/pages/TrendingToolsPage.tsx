@@ -4,10 +4,14 @@ import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import { useState, useEffect } from "react";
-import { useTools } from "@/hooks/use-api";
+import { useTools, adaptToolsResponse } from "@/hooks/use-api";
+import { formatToolsData } from "@/utils/formatters";
 import { toast } from "@/components/ui/sonner";
 
 const TrendingToolsPage = () => {
+  // State to store formatted tools
+  const [formattedTools, setFormattedTools] = useState([]);
+
   // Fetch trending tools from the API
   const { 
     data: trendingToolsResponse,
@@ -15,7 +19,16 @@ const TrendingToolsPage = () => {
     error
   } = useTools({ trending: "true", limit: "12" });
   
-  const trendingTools = trendingToolsResponse?.tools || [];
+  // Process and format tools data when it arrives
+  useEffect(() => {
+    if (trendingToolsResponse) {
+      console.log("Trending tools response:", trendingToolsResponse);
+      const toolsArray = adaptToolsResponse(trendingToolsResponse);
+      const formatted = formatToolsData(toolsArray);
+      console.log("Formatted trending tools:", formatted);
+      setFormattedTools(formatted);
+    }
+  }, [trendingToolsResponse]);
   
   // Show error toast if API request fails
   useEffect(() => {
@@ -44,9 +57,9 @@ const TrendingToolsPage = () => {
               <ToolCardSkeleton key={`skeleton-${index}`} />
             ))}
           </div>
-        ) : trendingTools && trendingTools.length > 0 ? (
+        ) : formattedTools && formattedTools.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trendingTools.map((tool) => (
+            {formattedTools.map((tool) => (
               <ToolCard key={tool._id} tool={tool} />
             ))}
           </div>

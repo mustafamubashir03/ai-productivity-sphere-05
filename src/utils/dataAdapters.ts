@@ -9,7 +9,19 @@ export function adaptToolToInternal(tool: any): any {
     ...tool,
     _id: tool._id || tool.id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     // Keep id for backward compatibility
-    id: tool.id || tool._id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    id: tool.id || tool._id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    // Ensure other required fields have default values
+    logo: tool.logo || "/placeholder.svg",
+    shortDescription: tool.shortDescription || tool.description?.substring(0, 100) + "...",
+    features: tool.features || [],
+    useCases: tool.useCases || [],
+    tags: tool.tags || [],
+    industryFit: tool.industryFit || [],
+    platforms: tool.platforms || [],
+    rating: tool.rating || 0,
+    trending: tool.trending || false,
+    featured: tool.featured || false,
+    reviewed: tool.reviewed || false,
   };
 }
 
@@ -70,4 +82,52 @@ export function optimizeImage(url: string, options: { width?: number, height?: n
   ].filter(Boolean).join(',');
   
   return `${baseUrl}upload/${optimizations}/${transformations || ''}`;
+}
+
+// Extract blog data for consistent format
+export function adaptBlogToInternal(blog: any): any {
+  if (!blog) return null;
+  
+  return {
+    ...blog,
+    _id: blog._id || blog.id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: blog.id || blog._id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    image: blog.coverImage || blog.image || "/placeholder.svg",
+    excerpt: blog.excerpt || blog.description || "Read more about this topic...",
+    date: blog.publishedAt || blog.createdAt,
+    formattedDate: formatDate(blog.publishedAt || blog.createdAt),
+    category: blog.category || "General"
+  };
+}
+
+// Batch convert blogs array
+export function adaptBlogsToInternal(blogs: any[]): any[] {
+  if (!blogs || !Array.isArray(blogs)) return [];
+  return blogs.map(adaptBlogToInternal);
+}
+
+// Format date helper
+function formatDate(dateString: string): string {
+  if (!dateString) return '';
+  
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+// Function to help extract tools or blogs from paginated responses
+export function extractItemsFromResponse(response: any, itemType: 'tools' | 'blogs'): any[] {
+  if (!response) return [];
+  
+  if (Array.isArray(response)) {
+    return response;
+  }
+  
+  if (response[itemType] && Array.isArray(response[itemType])) {
+    return response[itemType];
+  }
+  
+  return [];
 }

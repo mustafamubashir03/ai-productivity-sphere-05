@@ -1,3 +1,4 @@
+
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, Clock, Bookmark, BookmarkCheck, Calendar } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
@@ -14,7 +15,8 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from "@/components/ui/pagination";
-import { useBlogs, API_BASE_URL } from "@/hooks/use-api";
+import { useBlogs, API_BASE_URL, adaptBlogsResponse } from "@/hooks/use-api";
+import { formatBlogData } from "@/utils/formatters";
 
 // Define the Blog type based on the API response
 interface Blog {
@@ -22,34 +24,50 @@ interface Blog {
   title: string;
   slug: string;
   excerpt: string;
-  image: string;
   content: string;
-  date: string;
+  coverImage?: string;
+  image?: string;
+  publishedAt?: string;
   createdAt: string;
   updatedAt: string;
-  seo?: {
-    canonicalUrl?: string;
-    imageUrl?: string;
-    siteName?: string;
-    twitterHandle?: string;
-    type?: string;
-    publishedTime?: string;
-    updatedTime?: string;
-    noIndex?: boolean;
+  category?: string;
+  tags?: string[];
+  author?: {
+    name: string;
+    bio?: string;
+    avatarUrl?: string;
   };
+  readTime?: number;
+  wordCount?: number;
 }
 
 const BlogPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { addToolBookmark, removeToolBookmark, isToolBookmarked } = useBookmarks();
+  
+  // For backward compatibility
+  const addBookmark = addToolBookmark;
+  const removeBookmark = removeToolBookmark;
+  const isBookmarked = isToolBookmarked;
   
   // Get current page from URL query or default to 1
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const postsPerPage = 6;
   
   // Use the blogs API hook
-  const { data: blogs, isLoading, error } = useBlogs();
+  const { data: blogsData, isLoading, error } = useBlogs();
+
+  // Process blog data
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+
+  useEffect(() => {
+    if (blogsData) {
+      console.log("Blog data:", blogsData);
+      const blogsArray = adaptBlogsResponse(blogsData);
+      setBlogs(blogsArray);
+    }
+  }, [blogsData]);
   
   // Calculate pagination values
   const totalPosts = blogs?.length || 0;
@@ -68,11 +86,13 @@ const BlogPage = () => {
   const currentPosts = blogs ? blogs.slice(indexOfFirstPost, indexOfLastPost) : [];
 
   // Get read time (simple estimation based on content length)
-  const getReadTime = (content: string) => {
+  const getReadTime = (content: string, readTime?: number) => {
+    if (readTime) return readTime;
+    
     // Average reading speed: 200 words per minute
     const wordCount = content.split(/\s+/).length;
-    const readTime = Math.ceil(wordCount / 200);
-    return readTime < 1 ? 1 : readTime;
+    const calculatedReadTime = Math.ceil(wordCount / 200);
+    return calculatedReadTime < 1 ? 1 : calculatedReadTime;
   };
 
   // Format date to readable format
@@ -97,7 +117,7 @@ const BlogPage = () => {
       removeBookmark(blogId);
       toast.success(`"${title}" removed from bookmarks`);
     } else {
-      addBookmark(blogId);
+      addBookmark({_id: blogId, id: blogId, name: title, type: 'blog'});
       toast.success(`"${title}" added to bookmarks`);
     }
   };
@@ -196,9 +216,7 @@ const BlogPage = () => {
                 >
                   <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
                     <img 
-                      src={post.image.startsWith('/') && !post.image.startsWith('http') 
-                        ? `${API_BASE_URL}${post.image}` 
-                        : post.image} 
+                      src={post.coverImage || post.image || "/placeholder.svg"} 
                       alt={post.title} 
                       className="w-full h-48 md:h-full object-cover"
                       onError={(e) => {
@@ -210,7 +228,7 @@ const BlogPage = () => {
                   <div className="md:w-3/5 lg:w-2/3 p-5 flex flex-col">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatDate(post.date)}
+                        {formatDate(post.publishedAt || post.createdAt)}
                       </span>
                       <button 
                         className={`${isBookmarked(post._id) ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
@@ -234,7 +252,7 @@ const BlogPage = () => {
                     </h2>
                     <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-3">
                       <Clock className="h-3 w-3 mr-1" />
-                      <span>{getReadTime(post.content)} min read</span>
+                      <span>{getReadTime(post.content, post.readTime)} min read</span>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                       {post.excerpt}

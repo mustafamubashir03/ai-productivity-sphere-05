@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
 import { useTools } from "@/hooks/use-api";
 import { toast } from "@/components/ui/sonner";
 import { Tool } from "@/types/tools";
+import { adaptToolsResponse } from "@/hooks/use-api";
+import { formatToolsData } from "@/utils/formatters";
 
 const TOOLS_PER_PAGE = 9;
 
@@ -36,10 +38,15 @@ const ToolsPage = () => {
   // Fetch all tools initially without filters
   const { data: toolsData, isLoading: loading, error } = useTools();
   
-  // Store all fetched tools in state
+  // Store all fetched tools in state after formatting
   useEffect(() => {
     if (toolsData) {
-      setAllTools(toolsData);
+      console.log("Tools data:", toolsData);
+      // Extract tools array from response and format it
+      const toolsArray = adaptToolsResponse(toolsData);
+      const formattedTools = formatToolsData(toolsArray);
+      console.log("Formatted tools:", formattedTools);
+      setAllTools(formattedTools);
     }
   }, [toolsData]);
   

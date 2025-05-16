@@ -133,7 +133,7 @@ export const useApiMutation = (
   });
 };
 
-// Updated useTools hook to use real API endpoint with filtering parameters
+// Updated useTools hook to handle the new response format with tools array
 export const useTools = (params?: Record<string, string>) => {
   return useApiQuery(
     ['tools', JSON.stringify(params)], 
@@ -199,25 +199,34 @@ export const useBookmarkTool = () => {
 };
 
 // Helper function to adapt API response for tools
-export const adaptToolsToInternal = (data: any): any[] => {
+export const adaptToolsResponse = (data: any): any[] => {
   if (!data) return [];
   
   // If the data is already an array of tools
   if (Array.isArray(data)) {
-    return data.map(tool => ({
-      ...tool,
-      _id: tool._id || tool.id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      id: tool.id || tool._id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-    }));
+    return data;
   }
   
   // If the data is a paginated response with a tools array
   if (data.tools && Array.isArray(data.tools)) {
-    return data.tools.map(tool => ({
-      ...tool,
-      _id: tool._id || tool.id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      id: tool.id || tool._id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-    }));
+    return data.tools;
+  }
+  
+  return [];
+};
+
+// Helper function to adapt API response for blogs
+export const adaptBlogsResponse = (data: any): any[] => {
+  if (!data) return [];
+  
+  // If the data is already an array of blogs
+  if (Array.isArray(data)) {
+    return data;
+  }
+  
+  // If the data is a paginated response with a blogs array
+  if (data.blogs && Array.isArray(data.blogs)) {
+    return data.blogs;
   }
   
   return [];

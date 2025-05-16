@@ -11,12 +11,16 @@ export interface Tool {
   logo: string;
   category: string;
   description: string;
+  shortDescription?: string;
   features: string[];
   useCases: string[];
   pricing: string;
+  pricingModel?: string;
   websiteUrl: string;
   trending?: boolean;
+  featured?: boolean;
   rating?: number;
+  reviewCount?: number;
   reviewed?: boolean;
   industryFit?: string[];
   useCase?: string[];
@@ -30,6 +34,16 @@ export interface Tool {
   integratedWith?: string[];
   testimonials?: Testimonial[];
   screenshots?: string[];
+  platforms?: string[];
+  languagesSupported?: string[];
+  subcategories?: string[];
+  seo?: SeoData;
+}
+
+export interface SeoData {
+  canonicalUrl?: string;
+  structuredData?: any;
+  noIndex?: boolean;
 }
 
 export interface Testimonial {
@@ -39,7 +53,5 @@ export interface Testimonial {
 }
 
 export interface Bookmark extends Tool {
-  date: string;
-  excerpt: string;
-  image: string;
+  bookmarkedAt: string;
 }

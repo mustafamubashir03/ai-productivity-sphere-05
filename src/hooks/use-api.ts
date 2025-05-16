@@ -1,6 +1,6 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/sonner';
-import { adaptToolsToInternal } from '@/utils/dataAdapters';
 
 // Updated API base URL to use the real API
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://topratedai.biovasurgicals.com';
@@ -138,13 +138,7 @@ export const useTools = (params?: Record<string, string>) => {
   return useApiQuery(
     ['tools', JSON.stringify(params)], 
     '/api/tools',
-    { 
-      params,
-      // Transform data to ensure consistent format
-      onSuccess: (data) => {
-        return adaptToolsToInternal(data);
-      }
-    }
+    { params }
   );
 };
 
@@ -204,36 +198,27 @@ export const useBookmarkTool = () => {
   });
 };
 
-// New hook to directly fetch all data needed for the application
-export const useBulkData = () => {
-  // This hook fetches all necessary data at once, reducing multiple API calls
-  const toolsQuery = useApiQuery(['all-tools'], '/api/tools');
-  const categoriesQuery = useApiQuery(['categories'], '/api/categories');
-  const industriesQuery = useApiQuery(['industries'], '/api/industries');
-  const useCasesQuery = useApiQuery(['use-cases'], '/api/use-cases');
+// Helper function to adapt API response for tools
+export const adaptToolsToInternal = (data: any): any[] => {
+  if (!data) return [];
   
-  return {
-    tools: {
-      data: toolsQuery.data ? adaptToolsToInternal(toolsQuery.data) : [],
-      isLoading: toolsQuery.isLoading,
-      error: toolsQuery.error
-    },
-    categories: {
-      data: categoriesQuery.data || [],
-      isLoading: categoriesQuery.isLoading,
-      error: categoriesQuery.error
-    },
-    industries: {
-      data: industriesQuery.data || [],
-      isLoading: industriesQuery.isLoading,
-      error: industriesQuery.error
-    },
-    useCases: {
-      data: useCasesQuery.data || [],
-      isLoading: useCasesQuery.isLoading,
-      error: useCasesQuery.error
-    },
-    isLoading: toolsQuery.isLoading || categoriesQuery.isLoading || industriesQuery.isLoading || useCasesQuery.isLoading,
-    error: toolsQuery.error || categoriesQuery.error || industriesQuery.error || useCasesQuery.error
-  };
+  // If the data is already an array of tools
+  if (Array.isArray(data)) {
+    return data.map(tool => ({
+      ...tool,
+      _id: tool._id || tool.id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: tool.id || tool._id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    }));
+  }
+  
+  // If the data is a paginated response with a tools array
+  if (data.tools && Array.isArray(data.tools)) {
+    return data.tools.map(tool => ({
+      ...tool,
+      _id: tool._id || tool.id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: tool.id || tool._id || `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    }));
+  }
+  
+  return [];
 };

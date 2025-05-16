@@ -6,25 +6,15 @@ import PageHeader from "@/components/common/PageHeader";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { toast } from "@/components/ui/sonner";
 import { API_BASE_URL } from "@/hooks/use-api";
-import { getToolId } from "@/utils/dataAdapters";
+import { formatDate } from "@/utils/formatters";
 
 const BookmarksPage = () => {
-  const { bookmarks, removeBookmark } = useBookmarks();
+  const { blogBookmarks, removeBlogBookmark } = useBookmarks();
 
   const handleRemoveBookmark = (id: string, title: string) => {
-    removeBookmark(id);
-    toast.success(`"${title}" has been removed from bookmarks`);
-  };
-
-  // Format date to readable format
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
+    if (removeBlogBookmark(id)) {
+      toast.success(`"${title}" has been removed from bookmarks`);
+    }
   };
 
   // Format image URL
@@ -49,7 +39,7 @@ const BookmarksPage = () => {
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="max-w-3xl mx-auto">
-          {bookmarks.length === 0 ? (
+          {blogBookmarks.length === 0 ? (
             <div className="text-center py-10">
               <div className="mb-4">
                 <Bookmark className="h-16 w-16 mx-auto text-gray-300 dark:text-gray-600" />
@@ -67,9 +57,9 @@ const BookmarksPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-8">
-              {bookmarks.map((post) => (
+              {blogBookmarks.map((post) => (
                 <div 
-                  key={getToolId(post)}
+                  key={post._id}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row"
                 >
                   <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
@@ -90,7 +80,7 @@ const BookmarksPage = () => {
                       </span>
                       <button 
                         className="text-primary hover:text-primary-dark" 
-                        onClick={() => handleRemoveBookmark(getToolId(post), post.title)}
+                        onClick={() => handleRemoveBookmark(post._id, post.title)}
                         aria-label="Remove bookmark"
                       >
                         <Bookmark className="h-4 w-4 fill-current" />

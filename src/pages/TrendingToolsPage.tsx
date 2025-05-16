@@ -10,10 +10,12 @@ import { toast } from "@/components/ui/sonner";
 const TrendingToolsPage = () => {
   // Fetch trending tools from the API
   const { 
-    data: trendingTools,
+    data: trendingToolsResponse,
     isLoading: loading,
     error
   } = useTools({ trending: "true", limit: "12" });
+  
+  const trendingTools = trendingToolsResponse?.tools || [];
   
   // Show error toast if API request fails
   useEffect(() => {

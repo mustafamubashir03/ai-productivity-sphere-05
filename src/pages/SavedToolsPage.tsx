@@ -8,42 +8,29 @@ import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
 import { toast } from "@/components/ui/sonner";
+import { useBookmarks } from "@/context/BookmarkContext";
 
 const SavedToolsPage = () => {
-  const [savedTools, setSavedTools] = useState<any[]>([]);
+  const { toolBookmarks } = useBookmarks();
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    // Simulate fetching saved tools from local storage or API
-    const fetchSavedTools = () => {
-      setLoading(true);
-      
-      setTimeout(() => {
-        try {
-          const storedTools = localStorage.getItem('savedTools');
-          if (storedTools) {
-            setSavedTools(JSON.parse(storedTools));
-          }
-        } catch (error) {
-          console.error('Failed to load saved tools', error);
-          toast.error('Failed to load your saved tools');
-        } finally {
-          setLoading(false);
-        }
-      }, 800);
-    };
+    // Short timeout to simulate loading state
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 300);
     
-    fetchSavedTools();
+    return () => clearTimeout(timer);
   }, []);
   
   // Filter saved tools by search query
   const filteredTools = searchQuery
-    ? savedTools.filter(tool => 
+    ? toolBookmarks.filter(tool => 
         tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         tool.description.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : savedTools;
+    : toolBookmarks;
 
   // SEO data
   const structuredData = [
@@ -109,7 +96,7 @@ const SavedToolsPage = () => {
         ) : filteredTools.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} />
+              <ToolCard key={tool._id} tool={tool} />
             ))}
           </div>
         ) : (

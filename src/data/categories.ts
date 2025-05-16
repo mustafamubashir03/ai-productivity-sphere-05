@@ -1,5 +1,5 @@
 
-import { Video, Image, Pencil, Code, Bot, Workflow } from "lucide-react";
+import { Video, Image, Pencil, Code, Bot, Workflow, MessageSquare } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
 
 export interface CategoryWithIcon {
@@ -46,6 +46,14 @@ export const categories: CategoryWithIcon[] = [
   },
   {
     id: "5",
+    name: "AI Chatbots",
+    slug: "ai-chatbots",
+    icon: "/icons/chatbots.svg", // Add icon path for consistency
+    description: "Intelligent conversational agents powered by large language models.",
+    LucideIcon: MessageSquare
+  },
+  {
+    id: "6",
     name: "No-code AI Agents",
     slug: "no-code-ai-agents",
     icon: "/icons/no-code.svg", // Keep static icon path for backward compatibility
@@ -53,7 +61,7 @@ export const categories: CategoryWithIcon[] = [
     LucideIcon: Bot
   },
   {
-    id: "6",
+    id: "7",
     name: "Automation & Workflow",
     slug: "automation-workflow-tools",
     icon: "/icons/automation.svg", // Keep static icon path for backward compatibility
@@ -61,3 +69,30 @@ export const categories: CategoryWithIcon[] = [
     LucideIcon: Workflow
   }
 ];
+
+// Helper function to get a category by slug
+export const getCategoryBySlug = (slug: string): CategoryWithIcon | undefined => {
+  return categories.find(category => 
+    category.slug === slug || 
+    category.slug === slug.toLowerCase() || 
+    category.name === slug
+  );
+};
+
+// Helper function to match category from API to our local categories
+export const matchCategory = (categoryValue: string): CategoryWithIcon | undefined => {
+  // Direct match
+  const directMatch = getCategoryBySlug(categoryValue);
+  if (directMatch) return directMatch;
+  
+  // Try to normalize the string
+  const normalized = categoryValue
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/&/g, 'and');
+  
+  return categories.find(category => 
+    category.slug.includes(normalized) || 
+    normalized.includes(category.slug)
+  );
+};

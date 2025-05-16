@@ -1,6 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/sonner';
+import { ApiResponse, ToolsApiResponse } from '@/types/tools';
 
 // Updated API base URL to use the real API
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://topratedai.biovasurgicals.com';

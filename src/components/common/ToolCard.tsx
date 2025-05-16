@@ -26,14 +26,28 @@ const ToolCard = ({ tool }: ToolCardProps) => {
   // Get category display name from slug
   const getCategoryName = (slug: string) => {
     switch(slug) {
-      case "video-editing-tools": return "Video Editing";
-      case "photo-editing-tools": return "Photo Editing";
-      case "copywriting-blogging-tools": return "Copywriting";
-      case "coding-assistants": return "Coding";
-      case "ai-chatbots": return "AI Chatbot";
-      case "no-code-ai-agents": return "No-code AI";
-      case "automation-workflow-tools": return "Automation";
-      case "content-creation": return "Content Creation";
+      case "video-editing-tools":
+      case "Video Editing Tools":
+        return "Video Editing";
+      case "photo-editing-tools":
+      case "Photo Editing Tools":
+        return "Photo Editing";
+      case "copywriting-blogging-tools":
+      case "Copywriting & Blogging":
+        return "Copywriting";
+      case "coding-assistants":
+      case "Coding Assistants":
+        return "Coding";
+      case "ai-chatbots":
+        return "AI Chatbot";
+      case "no-code-ai-agents":
+      case "No-code AI Agents":
+        return "No-code AI";
+      case "automation-workflow-tools":
+      case "Automation & Workflow":
+        return "Automation";
+      case "content-creation":
+        return "Content Creation";
       default: return slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
   };
@@ -56,6 +70,28 @@ const ToolCard = ({ tool }: ToolCardProps) => {
     } else {
       addToCompare(tool);
     }
+  };
+
+  // Get pricing model badge
+  const getPricingBadge = () => {
+    if (!tool.pricingModel) return null;
+    
+    const badgeClasses = {
+      free: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500",
+      freemium: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500",
+      subscription: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-500",
+      "one-time": "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-500"
+    };
+    
+    const pricingModel = tool.pricingModel as keyof typeof badgeClasses;
+    const badgeClass = badgeClasses[pricingModel] || "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+    
+    return (
+      <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${badgeClass}`}>
+        {pricingModel === "one-time" ? "One-time" : 
+          pricingModel.charAt(0).toUpperCase() + pricingModel.slice(1)}
+      </span>
+    );
   };
 
   return (
@@ -120,6 +156,13 @@ const ToolCard = ({ tool }: ToolCardProps) => {
       <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 mt-3">
         {tool.shortDescription || tool.description}
       </p>
+      
+      {/* Pricing model badge */}
+      {tool.pricingModel && (
+        <div className="mt-2">
+          {getPricingBadge()}
+        </div>
+      )}
       
       {/* Features */}
       {tool.features && tool.features.length > 0 && (

@@ -1,13 +1,14 @@
 
 import { Link } from "react-router-dom";
 import { Folder } from "lucide-react"; // Import Lucide icon for fallback
-import { CategoryWithIcon } from "@/data/categories";
+import { CategoryWithIcon, matchCategory } from "@/data/categories";
 
 interface CategoryCardProps {
   category: CategoryWithIcon;
 }
 
 const CategoryCard = ({ category }: CategoryCardProps) => {
+  // Get the icon component from the category or fallback to Folder
   const IconComponent = category.LucideIcon || Folder;
   
   return (

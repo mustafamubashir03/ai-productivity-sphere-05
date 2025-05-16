@@ -1,3 +1,4 @@
+
 // Utility functions to adapt between different data structures
 
 // Convert API tool format (with id) to internal Tool format (with _id)
@@ -18,6 +19,7 @@ export function adaptToolToInternal(tool: any): any {
     tags: tool.tags || [],
     industryFit: tool.industryFit || [],
     platforms: tool.platforms || [],
+    subcategories: tool.subcategories || [],
     rating: tool.rating || 0,
     trending: tool.trending || false,
     featured: tool.featured || false,

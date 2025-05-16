@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
@@ -16,7 +16,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useTools } from "@/hooks/use-api";
 import { toast } from "@/components/ui/sonner";
-import { Tool } from "@/types/tools";
+import { Tool, ToolsApiResponse } from "@/types/tools";
 import { adaptToolsResponse } from "@/hooks/use-api";
 import { formatToolsData } from "@/utils/formatters";
 
@@ -30,23 +30,68 @@ const ToolsPage = () => {
   // State for filters and pagination
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(categorySlug || null);
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
   const [activeIndustry, setActiveIndustry] = useState<string | null>(null);
   const [activeUseCase, setActiveUseCase] = useState<string | null>(null);
+  const [activePricingModel, setActivePricingModel] = useState<string | null>(null);
+  const [activePlatform, setActivePlatform] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [allTools, setAllTools] = useState<Tool[]>([]);
+  const [paginationInfo, setPaginationInfo] = useState({
+    totalItems: 0,
+    totalPages: 1,
+    currentPage: 1
+  });
   
-  // Fetch all tools initially without filters
-  const { data: toolsData, isLoading: loading, error } = useTools();
+  // Prepare API params based on filters
+  const apiParams = useMemo(() => {
+    const params: Record<string, string> = {};
+    if (activeCategory) params.category = activeCategory;
+    if (activeIndustry) params.industry = activeIndustry;
+    if (activeUseCase) params.useCase = activeUseCase;
+    if (activePricingModel) params.pricingModel = activePricingModel;
+    if (activePlatform) params.platform = activePlatform;
+    if (searchQuery) params.search = searchQuery;
+    
+    // Handle pagination for server-side pagination
+    params.page = String(currentPage - 1); // API uses 0-based indexing
+    params.limit = String(TOOLS_PER_PAGE);
+    
+    return params;
+  }, [activeCategory, activeIndustry, activeUseCase, activePricingModel, activePlatform, searchQuery, currentPage]);
+  
+  // Fetch tools based on filters
+  const { data: toolsData, isLoading: loading, error } = useTools(apiParams);
   
   // Store all fetched tools in state after formatting
   useEffect(() => {
     if (toolsData) {
       console.log("Tools data:", toolsData);
-      // Extract tools array from response and format it
-      const toolsArray = adaptToolsResponse(toolsData);
-      const formattedTools = formatToolsData(toolsArray);
-      console.log("Formatted tools:", formattedTools);
-      setAllTools(formattedTools);
+      
+      // Check if data follows the new API response format
+      if ('tools' in toolsData && Array.isArray(toolsData.tools)) {
+        // New API format (paginated response)
+        const apiResponse = toolsData as ToolsApiResponse;
+        const formattedTools = formatToolsData(apiResponse.tools);
+        
+        setAllTools(formattedTools);
+        setPaginationInfo({
+          totalItems: apiResponse.totalItems || 0,
+          totalPages: apiResponse.totalPages || 1,
+          currentPage: (apiResponse.currentPage || 0) + 1 // Convert from 0-based to 1-based
+        });
+      } else {
+        // Legacy format or direct array
+        const toolsArray = adaptToolsResponse(toolsData);
+        const formattedTools = formatToolsData(toolsArray);
+        
+        setAllTools(formattedTools);
+        setPaginationInfo({
+          totalItems: formattedTools.length,
+          totalPages: Math.ceil(formattedTools.length / TOOLS_PER_PAGE),
+          currentPage: 1
+        });
+      }
     }
   }, [toolsData]);
   
@@ -58,40 +103,19 @@ const ToolsPage = () => {
     }
   }, [error]);
   
-  // Apply filters to tools in memory
+  // Client-side filtering for subcategories (since they're not directly filterable via API)
   const filteredTools = useMemo(() => {
     if (!allTools.length) return [];
     
-    return allTools.filter(tool => {
-      // Apply category filter
-      if (activeCategory && tool.category !== activeCategory) {
-        return false;
-      }
-      
-      // Apply industry filter
-      if (activeIndustry && (!tool.industryFit || !tool.industryFit.includes(activeIndustry))) {
-        return false;
-      }
-      
-      // Apply use case filter
-      if (activeUseCase && (!tool.useCase || !tool.useCase.includes(activeUseCase))) {
-        return false;
-      }
-      
-      // Apply search filter
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        return (
-          tool.name.toLowerCase().includes(query) ||
-          tool.description.toLowerCase().includes(query) ||
-          (tool.tags && tool.tags.some(tag => tag.toLowerCase().includes(query))) ||
-          (tool.features && tool.features.some(feature => feature.toLowerCase().includes(query)))
-        );
-      }
-      
-      return true;
-    });
-  }, [allTools, activeCategory, activeIndustry, activeUseCase, searchQuery]);
+    if (activeSubcategory) {
+      return allTools.filter(tool => 
+        tool.subcategories && 
+        tool.subcategories.includes(activeSubcategory)
+      );
+    }
+    
+    return allTools;
+  }, [allTools, activeSubcategory]);
   
   // Update URL when category changes (without page reload)
   useEffect(() => {
@@ -111,6 +135,7 @@ const ToolsPage = () => {
     e.stopPropagation(); // Stop event propagation
     
     setActiveCategory(slug);
+    setActiveSubcategory(null); // Reset subcategory when category changes
     setCurrentPage(1); // Reset pagination when category changes
     
     // Update the URL without causing a page refresh
@@ -127,14 +152,65 @@ const ToolsPage = () => {
     setActiveUseCase(useCaseSlug);
     setCurrentPage(1); // Reset pagination when use case changes
   };
+
+  const handlePricingModelChange = (pricingModel: string | null) => {
+    setActivePricingModel(pricingModel);
+    setCurrentPage(1);
+  };
+
+  const handlePlatformChange = (platform: string | null) => {
+    setActivePlatform(platform);
+    setCurrentPage(1);
+  };
+
+  const handleSubcategoryChange = (subcategory: string | null) => {
+    setActiveSubcategory(subcategory);
+    setCurrentPage(1);
+  };
   
-  // Calculate pagination
-  const totalTools = filteredTools.length;
-  const totalPages = Math.ceil(totalTools / TOOLS_PER_PAGE);
-  const paginatedTools = filteredTools.slice(
-    (currentPage - 1) * TOOLS_PER_PAGE,
-    currentPage * TOOLS_PER_PAGE
-  );
+  // Get unique subcategories, pricing models, and platforms from tools for filters
+  const uniqueSubcategories = useMemo(() => {
+    const subcategories = new Set<string>();
+    
+    allTools.forEach(tool => {
+      if (tool.subcategories && Array.isArray(tool.subcategories)) {
+        tool.subcategories.forEach(subcategory => subcategories.add(subcategory));
+      }
+    });
+    
+    return Array.from(subcategories);
+  }, [allTools]);
+  
+  const uniquePricingModels = useMemo(() => {
+    const pricingModels = new Set<string>();
+    
+    allTools.forEach(tool => {
+      if (tool.pricingModel) {
+        pricingModels.add(tool.pricingModel);
+      }
+    });
+    
+    return Array.from(pricingModels);
+  }, [allTools]);
+  
+  const uniquePlatforms = useMemo(() => {
+    const platforms = new Set<string>();
+    
+    allTools.forEach(tool => {
+      if (tool.platforms && Array.isArray(tool.platforms)) {
+        tool.platforms.forEach(platform => platforms.add(platform));
+      }
+    });
+    
+    return Array.from(platforms);
+  }, [allTools]);
+  
+  // Calculate pagination (use server-side pagination if available)
+  const totalTools = paginationInfo.totalItems;
+  const totalPages = paginationInfo.totalPages || 1;
+  
+  // Use server-side pagination or client-side pagination depending on API
+  const paginatedTools = filteredTools;
   
   // Determine title and description based on active filters
   let title = "All AI Tools";
@@ -180,13 +256,16 @@ const ToolsPage = () => {
     // Store user's last filter preferences
     const filterPreferences = {
       category: activeCategory,
+      subcategory: activeSubcategory,
       industry: activeIndustry,
       useCase: activeUseCase,
+      pricingModel: activePricingModel,
+      platform: activePlatform,
       page: currentPage
     };
     
     localStorage.setItem('filterPreferences', JSON.stringify(filterPreferences));
-  }, [activeCategory, activeIndustry, activeUseCase, currentPage]);
+  }, [activeCategory, activeSubcategory, activeIndustry, activeUseCase, activePricingModel, activePlatform, currentPage]);
 
   // Load filter preferences from localStorage on initial load
   useEffect(() => {
@@ -200,8 +279,11 @@ const ToolsPage = () => {
         if (!categorySlug) {
           // Apply saved filters
           if (preferences.category) setActiveCategory(preferences.category);
+          if (preferences.subcategory) setActiveSubcategory(preferences.subcategory);
           if (preferences.industry) setActiveIndustry(preferences.industry);
           if (preferences.useCase) setActiveUseCase(preferences.useCase);
+          if (preferences.pricingModel) setActivePricingModel(preferences.pricingModel);
+          if (preferences.platform) setActivePlatform(preferences.platform);
           if (preferences.page > 1) setCurrentPage(preferences.page);
         }
       } catch (e) {
@@ -272,8 +354,17 @@ const ToolsPage = () => {
           <FilterSidebar
             onSelectIndustry={handleIndustryChange}
             onSelectUseCase={handleUseCaseChange}
+            onSelectPricingModel={handlePricingModelChange}
+            onSelectPlatform={handlePlatformChange}
+            onSelectSubcategory={handleSubcategoryChange}
             activeIndustry={activeIndustry}
             activeUseCase={activeUseCase}
+            activePricingModel={activePricingModel}
+            activePlatform={activePlatform}
+            activeSubcategory={activeSubcategory}
+            subcategories={uniqueSubcategories}
+            pricingModels={uniquePricingModels}
+            platforms={uniquePlatforms}
             isMobile={isMobile}
           />
           
@@ -376,8 +467,11 @@ const ToolsPage = () => {
                   onClick={() => {
                     setSearchQuery("");
                     setActiveCategory(null);
+                    setActiveSubcategory(null);
                     setActiveIndustry(null);
                     setActiveUseCase(null);
+                    setActivePricingModel(null);
+                    setActivePlatform(null);
                     setCurrentPage(1);
                     navigate('/tools', { replace: true });
                     

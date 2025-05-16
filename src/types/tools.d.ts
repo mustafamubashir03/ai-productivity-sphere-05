@@ -1,45 +1,6 @@
 
 // Type definitions for tool-related data structures
 
-// Tool interface that supports both id and _id to handle different data formats
-export interface Tool {
-  // Both _id and id are required to handle all scenarios
-  _id: string;
-  id?: string;
-  name: string;
-  slug: string;
-  logo: string;
-  category: string;
-  description: string;
-  shortDescription?: string;
-  features: string[];
-  useCases: string[];
-  pricing: string;
-  pricingModel?: string;
-  websiteUrl: string;
-  trending?: boolean;
-  featured?: boolean;
-  rating?: number;
-  reviewCount?: number;
-  reviewed?: boolean;
-  industryFit?: string[];
-  useCase?: string[];
-  editorVerdict?: string;
-  relatedTools?: string[];
-  relatedBlogs?: string[];
-  tags?: string[];
-  lastUpdated?: string;
-  systemRequirements?: string;
-  apiAvailable?: boolean;
-  integratedWith?: string[];
-  testimonials?: Testimonial[];
-  screenshots?: string[];
-  platforms?: string[];
-  languagesSupported?: string[];
-  subcategories?: string[];
-  seo?: SeoData;
-}
-
 export interface SeoData {
   canonicalUrl?: string;
   structuredData?: any;
@@ -50,6 +11,88 @@ export interface Testimonial {
   name: string;
   company?: string;
   comment: string;
+}
+
+// Tool interface that supports both id and _id to handle different data formats
+export interface Tool {
+  // Core identifiers
+  _id: string;
+  id?: string;
+  
+  // Basic info
+  name: string;
+  slug: string;
+  logo: string;
+  description: string;
+  shortDescription?: string;
+  category: string;
+  subcategories?: string[];
+  
+  // Features and details
+  features: string[];
+  useCases: string[];
+  tags?: string[];
+  platforms?: string[];
+  languagesSupported?: string[];
+  
+  // Marketing and display
+  trending?: boolean;
+  featured?: boolean;
+  rating?: number;
+  reviewCount?: number;
+  reviewed?: boolean;
+  
+  // Target audience
+  industryFit?: string[];
+  
+  // Business info
+  pricing?: string;
+  pricingModel?: 'free' | 'freemium' | 'subscription' | 'one-time' | string;
+  websiteUrl: string;
+  
+  // Technical details
+  apiAvailable?: boolean;
+  integratedWith?: string[];
+  
+  // Related content
+  editorVerdict?: string;
+  relatedTools?: string[];
+  relatedBlogs?: string[];
+  
+  // Media
+  screenshots?: string[];
+  testimonials?: Testimonial[];
+  
+  // Pros and cons
+  pros?: string[];
+  cons?: string[];
+  alternatives?: string[];
+  
+  // SEO
+  seo?: SeoData;
+  
+  // Analytics
+  viewCount?: number;
+  clickCount?: number;
+  popularityScore?: number;
+  conversionRate?: number;
+  
+  // Dates
+  lastUpdated?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ApiResponse<T> {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  tools?: T[];
+  blogs?: T[];
+}
+
+export interface ToolsApiResponse extends ApiResponse<Tool> {
+  tools: Tool[];
 }
 
 export interface Bookmark extends Tool {

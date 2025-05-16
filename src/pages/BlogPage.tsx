@@ -117,7 +117,21 @@ const BlogPage = () => {
       removeBookmark(blogId);
       toast.success(`"${title}" removed from bookmarks`);
     } else {
-      addBookmark({_id: blogId, id: blogId, name: title, type: 'blog'});
+      // Fix: Remove the 'type' property since it doesn't exist in the Tool interface
+      // Instead, use the properties that are expected by the Tool interface
+      addBookmark({
+        _id: blogId, 
+        id: blogId, 
+        name: title,
+        slug: '', // Required by Tool interface
+        logo: '', // Required by Tool interface
+        category: '', // Required by Tool interface
+        description: '', // Required by Tool interface
+        websiteUrl: '', // Required by Tool interface
+        pricing: '', // Required by Tool interface
+        features: [], // Required by Tool interface
+        useCases: [] // Required by Tool interface
+      });
       toast.success(`"${title}" added to bookmarks`);
     }
   };

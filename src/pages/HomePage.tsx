@@ -219,7 +219,7 @@ const HomePage = () => {
                 <ToolCardSkeleton key={`tool-skeleton-${index}`} />
               ))
             ) : trendingTools.length > 0 ? (
-              trendingTools.map((tool) => (
+              trendingTools.filter(tool => tool.trending).slice(0,3).map((tool) => (
                 <ToolCard key={tool._id} tool={tool} />
               ))
             ) : (
@@ -250,7 +250,7 @@ const HomePage = () => {
                 <BlogCardSkeleton key={`blog-skeleton-${index}`} />
               ))
             ) : featuredPosts.length > 0 ? (
-              featuredPosts.map((post) => (
+              featuredPosts.slice(0,2).map((post) => (
                 <div key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover border border-gray-100 dark:border-gray-700">
                   <img 
                     src={post.image} 

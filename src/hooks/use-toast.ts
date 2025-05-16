@@ -1,12 +1,12 @@
 
 import { useState, useCallback } from 'react';
 
-type ToastType = 'default' | 'success' | 'error' | 'warning' | 'info';
+type ToastVariant = 'default' | 'destructive' | 'success' | 'error' | 'warning' | 'info';
 
 interface ToastOptions {
   title?: string;
   description?: string;
-  variant?: ToastType;
+  variant?: ToastVariant;
   duration?: number;
   action?: React.ReactNode;
   onDismiss?: () => void;
@@ -53,35 +53,6 @@ export function useToast() {
     setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
   }, [setToasts]);
 
-  // Add common toast variants
-  toast.success = (options: ToastOptions | string) => {
-    const toastOptions = typeof options === 'string' 
-      ? { description: options, variant: 'success' as ToastType }
-      : { ...options, variant: 'success' as ToastType };
-    return toast(toastOptions);
-  };
-  
-  toast.error = (options: ToastOptions | string) => {
-    const toastOptions = typeof options === 'string' 
-      ? { description: options, variant: 'error' as ToastType }
-      : { ...options, variant: 'error' as ToastType };
-    return toast(toastOptions);
-  };
-  
-  toast.warning = (options: ToastOptions | string) => {
-    const toastOptions = typeof options === 'string' 
-      ? { description: options, variant: 'warning' as ToastType }
-      : { ...options, variant: 'warning' as ToastType };
-    return toast(toastOptions);
-  };
-  
-  toast.info = (options: ToastOptions | string) => {
-    const toastOptions = typeof options === 'string' 
-      ? { description: options, variant: 'info' as ToastType }
-      : { ...options, variant: 'info' as ToastType };
-    return toast(toastOptions);
-  };
-
   return {
     toasts,
     toast,
@@ -89,14 +60,14 @@ export function useToast() {
   };
 }
 
-// Define the toast function type that includes methods
-type ToastFunction = {
-  (options: ToastOptions | string): void;
-  success: (options: ToastOptions | string) => void;
-  error: (options: ToastOptions | string) => void;
-  warning: (options: ToastOptions | string) => void;
-  info: (options: ToastOptions | string) => void;
-};
+// Define the toast function type
+interface ToastFunction {
+  (options: ToastOptions | string): string;
+  success: (options: ToastOptions | string) => string;
+  error: (options: ToastOptions | string) => string;
+  warning: (options: ToastOptions | string) => string;
+  info: (options: ToastOptions | string) => string;
+}
 
 // Create and export the singleton toast object
 const createToast = (): ToastFunction => {
@@ -109,7 +80,9 @@ const createToast = (): ToastFunction => {
         }
       });
       window.dispatchEvent(event);
+      return '';
     }
+    return '';
   }) as ToastFunction;
   
   // Add the variant methods
@@ -122,6 +95,7 @@ const createToast = (): ToastFunction => {
       });
       window.dispatchEvent(event);
     }
+    return '';
   };
   
   fn.error = (options: ToastOptions | string) => {
@@ -133,6 +107,7 @@ const createToast = (): ToastFunction => {
       });
       window.dispatchEvent(event);
     }
+    return '';
   };
   
   fn.warning = (options: ToastOptions | string) => {
@@ -144,6 +119,7 @@ const createToast = (): ToastFunction => {
       });
       window.dispatchEvent(event);
     }
+    return '';
   };
   
   fn.info = (options: ToastOptions | string) => {
@@ -155,6 +131,7 @@ const createToast = (): ToastFunction => {
       });
       window.dispatchEvent(event);
     }
+    return '';
   };
   
   return fn;

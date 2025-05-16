@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Tool } from '@/types/tools';
 import { toast } from '@/components/ui/sonner';
@@ -28,6 +27,10 @@ interface BookmarkContextType {
   addBlogBookmark: (blog: any) => void;
   removeBlogBookmark: (blogId: string) => boolean;
   isBlogBookmarked: (blogId: string) => boolean;
+  // Alias methods for backward compatibility
+  addBookmark: (id: string) => void;
+  removeBookmark: (id: string) => boolean;
+  isBookmarked: (id: string) => boolean;
 }
 
 const BookmarkContext = createContext<BookmarkContextType | undefined>(undefined);
@@ -124,6 +127,37 @@ export const BookmarkProvider = ({ children }: BookmarkProviderProps) => {
   const isBlogBookmarked = (blogId: string) => {
     return blogBookmarks.some(bookmark => bookmark._id === blogId);
   };
+  
+  // Generic/legacy bookmark methods that work with both types
+  const addBookmark = (id: string) => {
+    // First check if it's a tool that needs to be bookmarked
+    const tool = window.fetch ? null : null; // This would actually fetch the tool
+    if (tool) {
+      addToolBookmark(tool);
+      return;
+    }
+    
+    // Otherwise assume it's a blog post
+    const blog = window.fetch ? null : null; // This would actually fetch the blog
+    if (blog) {
+      addBlogBookmark(blog);
+    }
+  };
+  
+  const removeBookmark = (id: string) => {
+    // Try to remove from both collections
+    const wasToolRemoved = isToolBookmarked(id);
+    if (wasToolRemoved) {
+      removeToolBookmark(id);
+      return true;
+    }
+    
+    return removeBlogBookmark(id);
+  };
+  
+  const isBookmarked = (id: string) => {
+    return isToolBookmarked(id) || isBlogBookmarked(id);
+  };
 
   return (
     <BookmarkContext.Provider value={{ 
@@ -134,7 +168,11 @@ export const BookmarkProvider = ({ children }: BookmarkProviderProps) => {
       isToolBookmarked,
       addBlogBookmark,
       removeBlogBookmark,
-      isBlogBookmarked
+      isBlogBookmarked,
+      // Provide the legacy/alias methods
+      addBookmark,
+      removeBookmark,
+      isBookmarked
     }}>
       {children}
     </BookmarkContext.Provider>

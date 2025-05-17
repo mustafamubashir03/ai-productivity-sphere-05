@@ -5,13 +5,13 @@ const PrivacyPolicyPage = () => {
   return (
     <>
       <SEOHead 
-        title="Privacy Policy - AI Productivity Hub"
-        description="Learn how AI Productivity Hub collects, uses, and protects your personal information in compliance with privacy laws and Google AdSense requirements."
+        title="Privacy Policy - Top AI Tools"
+        description="Learn how Top AI Tools collects, uses, and protects your personal information in compliance with privacy laws and Google AdSense requirements."
       />
       
       <PageHeader 
         title="Privacy Policy"
-        description="Last Updated: May 9, 2025"
+        description="Last Updated: May 17, 2025"
       />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -19,7 +19,7 @@ const PrivacyPolicyPage = () => {
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">1. Introduction</h2>
             <p className="mb-4">
-              AI Productivity Hub ("we," "our," or "us") operates https://aiproductivityhub.com (the "Site"). We are committed to protecting your privacy and handling your personal information with transparency.
+              Top AI Tools ("we," "our," or "us") operates https://topaitools.com (the "Site"). We are committed to protecting your privacy and handling your personal information with transparency.
             </p>
             <p>
               This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our Site. By using our Site, you consent to the data practices described in this policy. If you do not agree, please discontinue use of our Site.
@@ -134,7 +134,7 @@ const PrivacyPolicyPage = () => {
               <li>Opt-out of marketing communications</li>
             </ul>
             <p>
-              To exercise these rights, contact us at <a href="mailto:privacy@aiproductivityhub.com" className="text-blue-600 hover:underline">privacy@aiproductivityhub.com</a>.
+              To exercise these rights, contact us at <a href="mailto:privacy@topaitools.com" className="text-blue-600 hover:underline">privacy@topaitools.com</a>.
             </p>
           </div>
 
@@ -184,14 +184,14 @@ const PrivacyPolicyPage = () => {
               For privacy-related inquiries, please contact our Data Protection Officer at:
             </p>
             <address className="not-italic">
-              <p>Email: <a href="mailto:privacy@aiproductivityhub.com" className="text-blue-600 hover:underline">privacy@aiproductivityhub.com</a></p>
+              <p>Email: <a href="mailto:privacy@topaitools.com" className="text-blue-600 hover:underline">privacy@topaitools.com</a></p>
               <p>Postal Address: 123 Tech Lane, Suite 100, San Francisco, CA 94107</p>
             </address>
           </div>
 
           <div className="mt-12 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-500">
-              This Privacy Policy is effective as of May 9, 2025 and supersedes all previous versions.
+              This Privacy Policy is effective as of May 17, 2025 and supersedes all previous versions.
             </p>
           </div>
         </div>

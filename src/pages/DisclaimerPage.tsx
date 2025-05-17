@@ -5,8 +5,8 @@ const DisclaimerPage = () => {
   return (
     <>
       <SEOHead 
-        title="Disclaimer - AI Productivity Hub"
-        description="Read our comprehensive disclaimer covering affiliate disclosures, advertising, content accuracy, and terms of use for AI Productivity Hub."
+        title="Disclaimer - Top AI Tools"
+        description="Read our comprehensive disclaimer covering affiliate disclosures, advertising, content accuracy, and terms of use for Top AI Tools."
       />
       
       <PageHeader 
@@ -15,12 +15,12 @@ const DisclaimerPage = () => {
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="max-w-3xl mx-auto prose prose-lg">
-          <p className="text-gray-600 font-medium">Last Updated: May 9, 2025</p>
+          <p className="text-gray-600 font-medium">Last Updated: May 17, 2025</p>
           
           <div className="my-8">
             <h2 className="text-2xl font-bold mb-4">1. General Information</h2>
             <p className="mb-4">
-              The information provided by AI Productivity Hub ("we," "our," or "us") on https://aiproductivityhub.com (the "Site") is for general informational purposes only. All information on the Site is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the Site.
+              The information provided by Top AI Tools ("we," "our," or "us") on https://topaitools.com (the "Site") is for general informational purposes only. All information on the Site is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the Site.
             </p>
           </div>
           
@@ -61,7 +61,7 @@ const DisclaimerPage = () => {
           <div className="my-8">
             <h2 className="text-2xl font-bold mb-4">5. No Professional Advice</h2>
             <p>
-              The information contained on this Site is not intended as, and shall not be understood or construed as, professional advice. Your use of the Site does not create any professional-client relationship between you and AI Productivity Hub.
+              The information contained on this Site is not intended as, and shall not be understood or construed as, professional advice. Your use of the Site does not create any professional-client relationship between you and Top AI Tools.
             </p>
           </div>
           
@@ -78,7 +78,7 @@ const DisclaimerPage = () => {
           <div className="my-8">
             <h2 className="text-2xl font-bold mb-4">7. Limitation of Liability</h2>
             <p>
-              In no event shall AI Productivity Hub, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Site.
+              In no event shall Top AI Tools, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Site.
             </p>
           </div>
           
@@ -88,14 +88,14 @@ const DisclaimerPage = () => {
               For any questions regarding this disclaimer, please contact us at:
             </p>
             <address className="not-italic">
-              <p>Email: <a href="mailto:disclaimer@aiproductivityhub.com" className="text-blue-600 hover:underline">disclaimer@aiproductivityhub.com</a></p>
+              <p>Email: <a href="mailto:disclaimer@topaitools.com" className="text-blue-600 hover:underline">disclaimer@topaitools.com</a></p>
               <p>Postal Address: 123 Tech Lane, Suite 100, San Francisco, CA 94107</p>
             </address>
           </div>
           
           <div className="mt-12 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-500">
-              This disclaimer was last updated on May 9, 2025 and may be amended from time to time without notice.
+              This disclaimer was last updated on May 17, 2025 and may be amended from time to time without notice.
             </p>
           </div>
         </div>

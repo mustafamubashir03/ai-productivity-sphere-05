@@ -303,6 +303,39 @@ export const getToolsByUseCase = (useCaseSlug: string) => {
   return tools.filter(tool => tool.useCase && tool.useCase.includes(useCaseSlug));
 };
 
+// Find similar tools based on category and tags
+export const getSimilarTools = (currentTool: Tool, limit = 3): Tool[] => {
+  // Filter out the current tool and get tools with the same category or common tags
+  const similarTools = tools.filter(tool => {
+    // Skip the current tool
+    if (tool.id === currentTool.id) return false;
+    
+    // Same category is a strong indicator of similarity
+    if (tool.category === currentTool.category) return true;
+    
+    // Check for tag overlap if the tool has tags
+    if (currentTool.tags?.length && tool.tags?.length) {
+      const commonTags = tool.tags.filter(tag => 
+        currentTool.tags?.includes(tag)
+      );
+      if (commonTags.length > 0) return true;
+    }
+    
+    // Check for use case overlap
+    if (currentTool.useCases?.length && tool.useCases?.length) {
+      const commonUseCases = tool.useCases.filter(useCase => 
+        currentTool.useCases?.includes(useCase)
+      );
+      if (commonUseCases.length > 0) return true;
+    }
+    
+    return false;
+  });
+  
+  // Sort by similarity and return the top N
+  return similarTools.slice(0, limit);
+};
+
 export const getRelatedTools = (toolId: string) => {
   const tool = tools.find(t => t._id === toolId || t.id === toolId);
   if (!tool || !tool.relatedTools || tool.relatedTools.length === 0) return [];

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Check, X } from "lucide-react";
@@ -25,6 +26,8 @@ const CompareToolsPage = () => {
       }, 800);
       
       return () => clearTimeout(timer);
+    } else {
+      setLoading(false);
     }
   }, [slugs]);
   
@@ -47,7 +50,7 @@ const CompareToolsPage = () => {
     return (
       <div className="container mx-auto px-4 py-10 text-center min-h-[60vh]">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">No Tools to Compare</h2>
-        <p className="mb-6 dark:text-gray-300">Please select at least two tools to compare.</p>
+        <p className="mb-6 dark:text-gray-300">Please select at least two tools to compare from our tools collection.</p>
         <Link to="/tools">
           <Button>Browse Tools</Button>
         </Link>

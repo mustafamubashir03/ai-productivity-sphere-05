@@ -8,6 +8,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useBlogs } from "@/hooks/use-api";
 import { toast } from "@/components/ui/sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { dummyInsights } from "@/data/dummy";
 
 const CATEGORIES = ["All", "Guides", "Comparisons", "Trends", "Insights"];
 
@@ -30,7 +31,7 @@ const InsightsPage = () => {
   
   // Format blog data to match our UI requirements
   const formatInsights = (blogs) => {
-    if (!blogs || !blogs.length) return [];
+    if (!blogs || !blogs.length) return dummyInsights; // Use dummy insights if no data
     
     return blogs.map(blog => ({
       id: blog._id,
@@ -58,7 +59,7 @@ const InsightsPage = () => {
   return (
     <>
       <SEOHead 
-        title="AI Tools Insights & Guides - AI Productivity Hub"
+        title="AI Tools Insights & Guides - Top AI Tools"
         description="Expert guides, comparisons, and insights on how to leverage AI tools for productivity and workflow optimization."
       />
       

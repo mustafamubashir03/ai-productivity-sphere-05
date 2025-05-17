@@ -40,7 +40,7 @@ const Navbar = () => {
               ) : (
                 <div className="flex items-center gap-3">
                   <Logo size="small" />
-                  <span className="text-primary font-bold text-xl dark:text-white">Top Rated AI</span>
+                  <span className="text-primary font-bold text-xl dark:text-white">Top AI Tools</span>
                 </div>
               )}
             </NavLink>

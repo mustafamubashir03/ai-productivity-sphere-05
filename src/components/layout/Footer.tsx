@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-8">
           {/* About section */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">AI Productivity Hub</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">Top AI Tools</h3>
             <p className="text-gray-300 text-sm">
               Your trusted resource for discovering the best AI tools to enhance productivity, 
               streamline workflows, and boost efficiency.
@@ -92,11 +92,11 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-400">
-            © {currentYear} AI Productivity Hub. All rights reserved.
+            © {currentYear} Top AI Tools. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0">
-            <a href="mailto:contact@aiproductivityhub.com" className="text-sm text-gray-400 hover:text-primary transition-colors">
-              contact@aiproductivityhub.com
+            <a href="mailto:contact@topaitools.com" className="text-sm text-gray-400 hover:text-primary transition-colors">
+              contact@topaitools.com
             </a>
           </div>
         </div>

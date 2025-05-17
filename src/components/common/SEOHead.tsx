@@ -8,9 +8,11 @@ interface SEOHeadProps {
 }
 
 const SEOHead = ({ title, description, canonicalUrl }: SEOHeadProps) => {
+  const siteTitle = title.includes("Top AI Tools") ? title : `${title} - Top AI Tools`;
+  
   return (
     <Helmet>
-      <title>{title}</title>
+      <title>{siteTitle}</title>
       <meta name="description" content={description} />
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     </Helmet>

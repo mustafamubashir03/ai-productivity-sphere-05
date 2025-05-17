@@ -67,8 +67,10 @@ const ToolCard = ({ tool }: ToolCardProps) => {
     const toolId = tool._id || tool.id || '';
     if (isInCompare(toolId)) {
       removeFromCompare(toolId);
+      toast.success(`${tool.name} removed from comparison`);
     } else {
       addToCompare(tool);
+      toast.success(`${tool.name} added to comparison`);
     }
   };
 

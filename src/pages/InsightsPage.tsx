@@ -86,7 +86,7 @@ const InsightsPage = () => {
           {CATEGORIES.map((category) => (
             <TabsContent key={category} value={category} className="mt-0">
               {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {Array(6).fill(0).map((_, index) => (
                     <div key={index} className="animate-pulse">
                       <div className="aspect-w-16 aspect-h-9 mb-4">
@@ -105,7 +105,7 @@ const InsightsPage = () => {
                   {category === "All" ? (
                     // Show all insights
                     insights.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {insights.map((insight) => (
                           <InsightCard key={insight.id} insight={insight} />
                         ))}
@@ -121,7 +121,7 @@ const InsightsPage = () => {
                       );
                       
                       return filteredInsights.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                           {filteredInsights.map((insight) => (
                             <InsightCard key={insight.id} insight={insight} />
                           ))}
@@ -143,24 +143,22 @@ const InsightsPage = () => {
 
 // Extracted InsightCard component for better readability
 const InsightCard = ({ insight }) => (
-  <article className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-    <Link to={`/insights/${insight.slug}`}>
-      <div className="w-full h-48">
-        <AspectRatio ratio={16 / 9}>
-          <img 
-            src={insight.coverImage} 
-            alt={insight.title} 
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "/placeholder.svg";
-            }}
-          />
-        </AspectRatio>
-      </div>
+  <article className="flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <Link to={`/insights/${insight.slug}`} className="block">
+      <AspectRatio ratio={16 / 9} className="w-full">
+        <img 
+          src={insight.coverImage} 
+          alt={insight.title} 
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = "/placeholder.svg";
+          }}
+        />
+      </AspectRatio>
     </Link>
     
-    <div className="p-5">
+    <div className="flex-1 p-5 flex flex-col">
       <div className="flex justify-between items-center mb-2">
         <span className="text-xs text-primary font-semibold px-2 py-1 rounded-full bg-primary/10">
           {insight.category}
@@ -177,11 +175,11 @@ const InsightCard = ({ insight }) => (
         </Link>
       </h2>
       
-      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 flex-grow">
         {insight.excerpt}
       </p>
       
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-auto pt-3 border-t border-gray-100 dark:border-gray-700">
         <span className="text-xs text-gray-500 dark:text-gray-400">{insight.date}</span>
         <Link 
           to={`/insights/${insight.slug}`} 

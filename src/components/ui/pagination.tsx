@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
@@ -52,6 +53,7 @@ const PaginationLink = ({
         variant: isActive ? "outline" : "ghost",
         size,
       }),
+      isActive && "pointer-events-none",
       className
     )}
     {...props}
@@ -106,6 +108,107 @@ const PaginationEllipsis = ({
 )
 PaginationEllipsis.displayName = "PaginationEllipsis"
 
+/**
+ * Enhanced pagination component for Blog page
+ */
+type PaginationControlsProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  siblingCount?: number;
+}
+
+const PaginationControls = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  siblingCount = 1,
+}: PaginationControlsProps) => {
+  // Generate page numbers
+  const generatePagination = () => {
+    const pages = [];
+    
+    // Always include first page and last page
+    if (totalPages <= 5) {
+      // Less than 5 pages, show all
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push({ type: 'page', number: i });
+      }
+    } else {
+      // Always add first page
+      pages.push({ type: 'page', number: 1 });
+      
+      // Calculate start and end of the middle section
+      const startPage = Math.max(2, currentPage - siblingCount);
+      const endPage = Math.min(totalPages - 1, currentPage + siblingCount);
+      
+      // Add ellipsis if needed before middle section
+      if (startPage > 2) {
+        pages.push({ type: 'ellipsis' });
+      } else if (startPage === 2) {
+        pages.push({ type: 'page', number: 2 });
+      }
+      
+      // Add middle pages
+      for (let i = Math.max(2, startPage); i <= Math.min(totalPages - 1, endPage); i++) {
+        pages.push({ type: 'page', number: i });
+      }
+      
+      // Add ellipsis if needed after middle section
+      if (endPage < totalPages - 1) {
+        pages.push({ type: 'ellipsis' });
+      } else if (endPage === totalPages - 1) {
+        pages.push({ type: 'page', number: totalPages - 1 });
+      }
+      
+      // Always add last page
+      if (totalPages > 1) {
+        pages.push({ type: 'page', number: totalPages });
+      }
+    }
+    
+    return pages;
+  };
+  
+  const pages = generatePagination();
+  
+  return (
+    <Pagination className="mt-8">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious 
+            onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+            className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} 
+          />
+        </PaginationItem>
+        
+        {pages.map((page, i) => (
+          <PaginationItem key={`${page.type}-${i}`}>
+            {page.type === 'ellipsis' ? (
+              <PaginationEllipsis />
+            ) : (
+              <PaginationLink 
+                isActive={currentPage === page.number}
+                onClick={() => onPageChange(page.number)}
+                className="cursor-pointer"
+              >
+                {page.number}
+              </PaginationLink>
+            )}
+          </PaginationItem>
+        ))}
+        
+        <PaginationItem>
+          <PaginationNext 
+            onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+            className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} 
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+};
+
 export {
   Pagination,
   PaginationContent,
@@ -114,4 +217,5 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationControls, // Exporting the new enhanced component
 }

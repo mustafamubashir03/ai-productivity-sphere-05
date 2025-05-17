@@ -1,19 +1,13 @@
+
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Clock, Bookmark, BookmarkCheck, Calendar } from "lucide-react";
+import { ArrowRight, Clock, Bookmark, BookmarkCheck } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 import { useEffect, useState } from "react";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { toast } from "@/components/ui/sonner";
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from "@/components/ui/pagination";
+import { PaginationControls } from "@/components/ui/pagination";
 import { useBlogs, API_BASE_URL, adaptBlogsResponse } from "@/hooks/use-api";
 import { formatBlogData } from "@/utils/formatters";
 
@@ -52,7 +46,7 @@ const BlogPage = () => {
   
   // Get current page from URL query or default to 1
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const postsPerPage = 6;
+  const postsPerPage = 8; // Show 8 posts per page
   
   // Use the blogs API hook
   const { data: blogsData, isLoading, error } = useBlogs();
@@ -70,7 +64,7 @@ const BlogPage = () => {
   
   // Calculate pagination values
   const totalPosts = blogs?.length || 0;
-  const totalPages = Math.ceil(totalPosts / postsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalPosts / postsPerPage));
   
   // Ensure current page is valid
   useEffect(() => {
@@ -141,44 +135,6 @@ const BlogPage = () => {
     return imagePath; // Return as is if none of the above
   };
 
-  // Generate page numbers
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxPagesToShow = 5;
-    
-    if (totalPages <= maxPagesToShow) {
-      // Show all pages if total is less than max to show
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      // Always include first page, last page, current page, and some adjacent pages
-      if (currentPage <= 3) {
-        for (let i = 1; i <= 4; i++) {
-          pageNumbers.push(i);
-        }
-        pageNumbers.push('ellipsis');
-        pageNumbers.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pageNumbers.push(1);
-        pageNumbers.push('ellipsis');
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pageNumbers.push(i);
-        }
-      } else {
-        pageNumbers.push(1);
-        pageNumbers.push('ellipsis');
-        pageNumbers.push(currentPage - 1);
-        pageNumbers.push(currentPage);
-        pageNumbers.push(currentPage + 1);
-        pageNumbers.push('ellipsis');
-        pageNumbers.push(totalPages);
-      }
-    }
-    
-    return pageNumbers;
-  };
-
   // Handle error state
   if (error) {
     return (
@@ -197,14 +153,10 @@ const BlogPage = () => {
     );
   }
 
-  // For debugging
-  console.log("Current blog posts:", currentPosts);
-  console.log("Blog bookmarks:", isBookmarked);
-
   return (
     <>
       <SEOHead 
-        title="Blog - AI Productivity Hub"
+        title="Blog - Top AI Tools"
         description="Learn about AI productivity tips, tool comparisons, and industry insights to improve your workflow and efficiency."
       />
       
@@ -227,7 +179,7 @@ const BlogPage = () => {
           <div className="grid grid-cols-1 gap-8">
             {isLoading ? (
               // Show skeletons while loading
-              Array(6).fill(0).map((_, index) => (
+              Array(postsPerPage).fill(0).map((_, index) => (
                 <BlogCardSkeleton key={`skeleton-${index}`} />
               ))
             ) : blogs && blogs.length > 0 ? (
@@ -304,44 +256,13 @@ const BlogPage = () => {
             )}
           </div>
 
-          {/* Pagination */}
+          {/* Enhanced Pagination */}
           {!isLoading && totalPages > 1 && (
-            <div className="mt-10">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                      className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
-                    />
-                  </PaginationItem>
-                  
-                  {getPageNumbers().map((pageNumber, index) => (
-                    pageNumber === 'ellipsis' ? (
-                      <PaginationItem key={`ellipsis-${index}`}>
-                        <span className="px-4 py-2">...</span>
-                      </PaginationItem>
-                    ) : (
-                      <PaginationItem key={`page-${pageNumber}`}>
-                        <PaginationLink 
-                          isActive={currentPage === pageNumber}
-                          onClick={() => handlePageChange(pageNumber as number)}
-                        >
-                          {pageNumber}
-                        </PaginationLink>
-                      </PaginationItem>
-                    )
-                  ))}
-                  
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-                      className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+            <PaginationControls 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           )}
 
           {/* Minimal newsletter signup at bottom */}

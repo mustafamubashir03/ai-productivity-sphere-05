@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import CompareBar from "@/components/tools/CompareBar";
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ const Layout = ({ children }: LayoutProps) => {
       <Navbar />
       <main className="flex-grow pt-16">{children}</main>
       <Footer />
+      <CompareBar />
     </div>
   );
 };

@@ -53,7 +53,7 @@ export function CompareProvider({ children }: { children: ReactNode }) {
     setToolsToCompare([]);
   };
   
-  // New function to handle comparison navigation using React Router
+  // Function to handle comparison navigation using React Router
   const compareTools = () => {
     if (toolsToCompare.length < 2) {
       toast.error("Select at least 2 tools to compare");

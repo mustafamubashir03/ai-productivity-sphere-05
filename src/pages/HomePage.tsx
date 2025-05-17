@@ -91,7 +91,7 @@ const HomePage = () => {
   return (
     <>
       <SEOHead
-        title="AI Productivity Hub - Best AI Tools for Productivity"
+        title="Top AI Tools - Best AI Tools for Productivity"
         description="Curated tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity."
       />
       

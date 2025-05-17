@@ -50,7 +50,8 @@ const FilterSidebar = ({
   platforms = [],
   isMobile
 }: FilterSidebarProps) => {
-  const [isOpen, setIsOpen] = useState(!isMobile);
+  // Initialize as closed for both mobile and desktop for better UX
+  const [isOpen, setIsOpen] = useState(false);
   const classes = getFilterLayoutClasses(isMobile);
   
   // Format display names for raw values

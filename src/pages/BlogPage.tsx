@@ -157,12 +157,12 @@ const BlogPage = () => {
     <>
       <SEOHead 
         title="Blog - Top AI Tools"
-        description="Learn about AI productivity tips, tool comparisons, and industry insights to improve your workflow and efficiency."
+        description="Learn about AI productivity tips, top AI tools comparisons, and industry insights to improve your workflow and efficiency."
       />
       
       <PageHeader 
-        title="AI Productivity Blog"
-        description="Insights, guides, and tips on using AI tools to enhance productivity and streamline your workflow."
+        title="AI Productivity Blog - Top AI Tools"
+        description="Insights, guides, and tips on using top AI tools to enhance productivity and streamline your workflow."
       />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -256,7 +256,7 @@ const BlogPage = () => {
             )}
           </div>
 
-          {/* Enhanced Pagination */}
+          {/* Pagination Controls */}
           {!isLoading && totalPages > 1 && (
             <PaginationControls 
               currentPage={currentPage}
@@ -268,10 +268,10 @@ const BlogPage = () => {
           {/* Minimal newsletter signup at bottom */}
           <div className="mt-16 border-t border-gray-200 dark:border-gray-700 pt-8 text-center">
             <h3 className="text-lg font-medium mb-3 text-gray-800 dark:text-white">
-              Get productivity insights delivered
+              Get productivity insights on top AI tools delivered
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Join our occasional newsletter for the latest AI productivity tips
+              Join our occasional newsletter for the latest top AI productivity tips
             </p>
             <div className="flex max-w-md mx-auto">
               <input 

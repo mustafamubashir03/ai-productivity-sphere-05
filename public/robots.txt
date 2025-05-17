@@ -1,4 +1,5 @@
 
+# robots.txt for Top AI Tools - AI Productivity Hub
 User-agent: *
 Allow: /
 
@@ -12,10 +13,17 @@ Allow: /
 User-agent: Yandexbot
 Allow: /
 
+User-agent: DuckDuckBot
+Allow: /
+
+# Allow social media crawlers
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
 Allow: /
 
 # Prevent media crawlers from crawling high-resolution images

@@ -5,11 +5,14 @@ import { ArrowLeft, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import { getToolBySlug } from "@/data/tools";
+import { useCompare } from "@/context/CompareContext";
+import { Tool } from "@/types/tools";
 
 const CompareToolsPage = () => {
   const { slugs } = useParams<{ slugs: string }>();
-  const [tools, setTools] = useState<any[]>([]);
+  const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toolsToCompare } = useCompare();
   
   useEffect(() => {
     if (slugs) {
@@ -17,11 +20,17 @@ const CompareToolsPage = () => {
       
       // Simulate data fetching delay
       const timer = setTimeout(() => {
-        const fetchedTools = toolSlugs
-          .map(slug => getToolBySlug(slug))
-          .filter(Boolean);
-        
-        setTools(fetchedTools);
+        // First check if there are tools already in compare context
+        if (toolsToCompare.length >= 2) {
+          setTools(toolsToCompare);
+        } else {
+          // Fall back to fetching by slug if needed
+          const fetchedTools = toolSlugs
+            .map(slug => getToolBySlug(slug))
+            .filter(Boolean) as Tool[];
+          
+          setTools(fetchedTools);
+        }
         setLoading(false);
       }, 800);
       
@@ -29,7 +38,7 @@ const CompareToolsPage = () => {
     } else {
       setLoading(false);
     }
-  }, [slugs]);
+  }, [slugs, toolsToCompare]);
   
   if (loading) {
     return (
@@ -60,12 +69,12 @@ const CompareToolsPage = () => {
   
   // Get all unique features across tools
   const allFeatures = Array.from(
-    new Set(tools.flatMap(tool => tool.features))
+    new Set(tools.flatMap(tool => tool.features || []))
   );
   
   // Get all unique use cases across tools
   const allUseCases = Array.from(
-    new Set(tools.flatMap(tool => tool.useCases))
+    new Set(tools.flatMap(tool => tool.useCases || []))
   );
   
   // Structured data for SEO
@@ -77,11 +86,11 @@ const CompareToolsPage = () => {
         description: `Side-by-side comparison of ${tools.map(t => t.name).join(' vs ')}`,
         author: {
           "@type": "Organization",
-          name: "AI Productivity Hub"
+          name: "Top AI Tools"
         },
         publisher: {
           "@type": "Organization",
-          name: "AI Productivity Hub",
+          name: "Top AI Tools",
           logo: {
             "@type": "ImageObject",
             url: window.location.origin + "/favicon.svg"
@@ -95,7 +104,7 @@ const CompareToolsPage = () => {
   return (
     <>
       <EnhancedSEO 
-        title={`Compare: ${tools.map(t => t.name).join(' vs ')} - AI Productivity Hub`}
+        title={`Compare: ${tools.map(t => t.name).join(' vs ')} - Top AI Tools`}
         description={`Side by side comparison of ${tools.map(t => t.name).join(', ')} with features, pricing, and ratings.`}
         structuredData={structuredData}
       />
@@ -116,12 +125,16 @@ const CompareToolsPage = () => {
               <tr className="bg-gray-50 dark:bg-gray-800">
                 <th className="p-4 text-left text-gray-600 dark:text-gray-300 font-medium min-w-[200px]">Tool</th>
                 {tools.map(tool => (
-                  <th key={tool.id} className="p-4 text-center min-w-[250px]">
+                  <th key={tool.id || tool._id} className="p-4 text-center min-w-[250px]">
                     <div className="flex flex-col items-center">
                       <img 
                         src={tool.logo} 
                         alt={`${tool.name} logo`} 
                         className="w-12 h-12 object-contain mb-2 bg-white dark:bg-gray-700 rounded-md p-1"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/placeholder.svg";
+                        }}
                       />
                       <h2 className="text-xl font-bold text-gray-800 dark:text-white">{tool.name}</h2>
                     </div>
@@ -134,7 +147,7 @@ const CompareToolsPage = () => {
               <tr className="border-b border-gray-200 dark:border-gray-700">
                 <td className="p-4 text-gray-800 dark:text-white font-medium">Rating</td>
                 {tools.map(tool => (
-                  <td key={`rating-${tool.id}`} className="p-4 text-center">
+                  <td key={`rating-${tool.id || tool._id}`} className="p-4 text-center">
                     <div className="flex items-center justify-center">
                       <div className="font-bold text-xl text-primary">{tool.rating || '-'}</div>
                       <div className="text-sm text-gray-500 dark:text-gray-400 ml-1">/5</div>
@@ -147,7 +160,7 @@ const CompareToolsPage = () => {
               <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 <td className="p-4 text-gray-800 dark:text-white font-medium">Pricing</td>
                 {tools.map(tool => (
-                  <td key={`pricing-${tool.id}`} className="p-4 text-center text-gray-700 dark:text-gray-300">{tool.pricing}</td>
+                  <td key={`pricing-${tool.id || tool._id}`} className="p-4 text-center text-gray-700 dark:text-gray-300">{tool.pricing}</td>
                 ))}
               </tr>
               
@@ -155,7 +168,7 @@ const CompareToolsPage = () => {
               <tr className="border-b border-gray-200 dark:border-gray-700">
                 <td className="p-4 text-gray-800 dark:text-white font-medium">Description</td>
                 {tools.map(tool => (
-                  <td key={`desc-${tool.id}`} className="p-4 text-center text-gray-700 dark:text-gray-300">{tool.description}</td>
+                  <td key={`desc-${tool.id || tool._id}`} className="p-4 text-center text-gray-700 dark:text-gray-300">{tool.shortDescription || tool.description}</td>
                 ))}
               </tr>
               
@@ -163,9 +176,9 @@ const CompareToolsPage = () => {
               <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 <td className="p-4 text-gray-800 dark:text-white font-medium">Features</td>
                 {tools.map(tool => (
-                  <td key={`features-${tool.id}`} className="p-4">
+                  <td key={`features-${tool.id || tool._id}`} className="p-4">
                     <ul className="space-y-2">
-                      {tool.features.map((feature, index) => (
+                      {(tool.features || []).map((feature, index) => (
                         <li key={index} className="flex items-start">
                           <Check className="h-4 w-4 text-green-500 mr-2 mt-1 flex-shrink-0" />
                           <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
@@ -177,54 +190,62 @@ const CompareToolsPage = () => {
               </tr>
               
               {/* Feature comparison */}
-              <tr className="border-b-2 border-gray-300 dark:border-gray-600 bg-primary/5 dark:bg-primary/10">
-                <td colSpan={tools.length + 1} className="p-4">
-                  <h3 className="font-bold text-lg text-gray-800 dark:text-white">Feature-by-Feature Comparison</h3>
-                </td>
-              </tr>
-              
-              {allFeatures.map((feature, index) => (
-                <tr key={index} className={`border-b border-gray-200 dark:border-gray-700 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : ''}`}>
-                  <td className="p-4 text-gray-800 dark:text-white">{feature}</td>
-                  {tools.map(tool => (
-                    <td key={`${tool.id}-${index}`} className="p-4 text-center">
-                      {tool.features.includes(feature) ? (
-                        <Check className="h-5 w-5 text-green-500 mx-auto" />
-                      ) : (
-                        <X className="h-5 w-5 text-red-500 mx-auto" />
-                      )}
+              {allFeatures.length > 0 && (
+                <>
+                  <tr className="border-b-2 border-gray-300 dark:border-gray-600 bg-primary/5 dark:bg-primary/10">
+                    <td colSpan={tools.length + 1} className="p-4">
+                      <h3 className="font-bold text-lg text-gray-800 dark:text-white">Feature-by-Feature Comparison</h3>
                     </td>
+                  </tr>
+                  
+                  {allFeatures.map((feature, index) => (
+                    <tr key={index} className={`border-b border-gray-200 dark:border-gray-700 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : ''}`}>
+                      <td className="p-4 text-gray-800 dark:text-white">{feature}</td>
+                      {tools.map(tool => (
+                        <td key={`${tool.id || tool._id}-${index}`} className="p-4 text-center">
+                          {(tool.features || []).includes(feature) ? (
+                            <Check className="h-5 w-5 text-green-500 mx-auto" />
+                          ) : (
+                            <X className="h-5 w-5 text-red-500 mx-auto" />
+                          )}
+                        </td>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
+                </>
+              )}
               
               {/* Use Cases */}
-              <tr className="border-b-2 border-gray-300 dark:border-gray-600 bg-primary/5 dark:bg-primary/10">
-                <td colSpan={tools.length + 1} className="p-4">
-                  <h3 className="font-bold text-lg text-gray-800 dark:text-white">Use Cases Comparison</h3>
-                </td>
-              </tr>
-              
-              {allUseCases.map((useCase, index) => (
-                <tr key={index} className={`border-b border-gray-200 dark:border-gray-700 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : ''}`}>
-                  <td className="p-4 text-gray-800 dark:text-white">{useCase}</td>
-                  {tools.map(tool => (
-                    <td key={`${tool.id}-${index}`} className="p-4 text-center">
-                      {tool.useCases.includes(useCase) ? (
-                        <Check className="h-5 w-5 text-green-500 mx-auto" />
-                      ) : (
-                        <X className="h-5 w-5 text-red-500 mx-auto" />
-                      )}
+              {allUseCases.length > 0 && (
+                <>
+                  <tr className="border-b-2 border-gray-300 dark:border-gray-600 bg-primary/5 dark:bg-primary/10">
+                    <td colSpan={tools.length + 1} className="p-4">
+                      <h3 className="font-bold text-lg text-gray-800 dark:text-white">Use Cases Comparison</h3>
                     </td>
+                  </tr>
+                  
+                  {allUseCases.map((useCase, index) => (
+                    <tr key={index} className={`border-b border-gray-200 dark:border-gray-700 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : ''}`}>
+                      <td className="p-4 text-gray-800 dark:text-white">{useCase}</td>
+                      {tools.map(tool => (
+                        <td key={`${tool.id || tool._id}-${index}`} className="p-4 text-center">
+                          {(tool.useCases || []).includes(useCase) ? (
+                            <Check className="h-5 w-5 text-green-500 mx-auto" />
+                          ) : (
+                            <X className="h-5 w-5 text-red-500 mx-auto" />
+                          )}
+                        </td>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
+                </>
+              )}
               
               {/* CTA */}
               <tr className="bg-gray-50 dark:bg-gray-800">
                 <td className="p-4 text-gray-800 dark:text-white font-medium">Visit</td>
                 {tools.map(tool => (
-                  <td key={`cta-${tool.id}`} className="p-4 text-center">
+                  <td key={`cta-${tool.id || tool._id}`} className="p-4 text-center">
                     <a
                       href={tool.websiteUrl}
                       target="_blank"

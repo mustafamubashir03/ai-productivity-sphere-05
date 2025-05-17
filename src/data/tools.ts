@@ -300,7 +300,7 @@ export const getToolsByIndustry = (industrySlug: string) => {
 };
 
 export const getToolsByUseCase = (useCaseSlug: string) => {
-  return tools.filter(tool => tool.useCase && tool.useCase.includes(useCaseSlug));
+  return tools.filter(tool => tool.useCases && tool.useCases.includes(useCaseSlug));
 };
 
 // Find similar tools based on category and tags

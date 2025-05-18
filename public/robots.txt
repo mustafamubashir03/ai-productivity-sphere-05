@@ -1,19 +1,37 @@
 
-# Allow all web crawlers
+# robots.txt for Top AI Tools - AI Productivity Hub
 User-agent: *
 Allow: /
 
-# Sitemap - replace with your actual sitemap URL when you have one
-Sitemap: https://alltopaitools.com/sitemap.xml
+# Allow all search engines to index the site
+User-agent: Googlebot
+Allow: /
 
-# Define crawlable paths
-Allow: /tools/
-Allow: /blog/
-Allow: /compare/
-Allow: /categories/
-Allow: /about/
-Allow: /contact/
+User-agent: Bingbot
+Allow: /
 
-# Don't crawl admin or private areas
-Disallow: /admin/
-Disallow: /private/
+User-agent: Yandexbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Allow social media crawlers
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Prevent media crawlers from crawling high-resolution images
+User-agent: Googlebot-Image
+Disallow: /assets/high-res/
+
+# Allow sitemap
+Sitemap: https://aiproductivityhub.com/sitemap.xml
+
+# Crawl delay for rate limiting
+Crawl-delay: 1

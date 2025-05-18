@@ -92,7 +92,7 @@ const HomePage = () => {
     <>
       <SEOHead
         title="Top AI Tools - Best AI Tools for Productivity"
-        description="Curated tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity."
+        description="Curated AI tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity at Top AI Tools."
       />
       
       {/* Hero Section */}
@@ -297,7 +297,7 @@ const HomePage = () => {
             <div className="text-center mb-8">
               <h2 className="section-title">Stay Ahead with the Latest AI Tools</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Subscribe to receive top tool updates, guides, and productivity insights delivered to your inbox.
+                Subscribe to receive top AI tool updates, guides, and productivity insights delivered to your inbox.
               </p>
             </div>
             <NewsletterSignup />
@@ -310,7 +310,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Supercharge Your Productivity?</h2>
           <p className="text-lg max-w-2xl mx-auto mb-8">
-            Start exploring our collection of AI productivity tools today and find the perfect solutions for your workflow.
+            Start exploring our collection of top AI productivity tools today and find the perfect solutions for your workflow.
           </p>
           <Link to="/tools">
             <Button variant="secondary" size="lg">

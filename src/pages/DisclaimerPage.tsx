@@ -1,3 +1,4 @@
+
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 
@@ -20,7 +21,7 @@ const DisclaimerPage = () => {
           <div className="my-8">
             <h2 className="text-2xl font-bold mb-4">1. General Information</h2>
             <p className="mb-4">
-              The information provided by Top AI Tools ("we," "our," or "us") on https://topaitools.com (the "Site") is for general informational purposes only. All information on the Site is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the Site.
+              The information provided by Top AI Tools ("we," "our," or "us") on https://alltopaitools.com (the "Site") is for general informational purposes only. All information on the Site is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the Site.
             </p>
           </div>
           
@@ -88,7 +89,7 @@ const DisclaimerPage = () => {
               For any questions regarding this disclaimer, please contact us at:
             </p>
             <address className="not-italic">
-              <p>Email: <a href="mailto:disclaimer@topaitools.com" className="text-blue-600 hover:underline">disclaimer@topaitools.com</a></p>
+              <p>Email: <a href="mailto:disclaimer@alltopaitools.com" className="text-blue-600 hover:underline">disclaimer@alltopaitools.com</a></p>
               <p>Postal Address: 123 Tech Lane, Suite 100, San Francisco, CA 94107</p>
             </address>
           </div>

@@ -35,8 +35,8 @@ const BookmarksPage = () => {
   return (
     <>
       <SEOHead 
-        title="Bookmarks - AI Productivity Hub"
-        description="Your saved articles and blog posts from AI Productivity Hub."
+        title="Bookmarks - Top AI Tools"
+        description="Your saved articles and blog posts from Top AI Tools. Access your bookmarked content about AI productivity tools in one place."
       />
       
       <PageHeader 

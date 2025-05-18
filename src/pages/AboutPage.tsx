@@ -1,3 +1,4 @@
+
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 
@@ -5,12 +6,12 @@ const AboutPage = () => {
   return (
     <>
       <SEOHead 
-        title="About Us - AI Productivity Hub | Trusted AI Tools Resource"
-        description="AI Productivity Hub provides independent reviews and guides on AI tools to boost your productivity. Learn about our mission, values, and editorial process."
+        title="About Us - Top AI Tools | Trusted AI Tools Resource"
+        description="Top AI Tools provides independent reviews and guides on AI tools to boost your productivity. Learn about our mission, values, and editorial process."
       />
       
       <PageHeader 
-        title="About AI Productivity Hub"
+        title="About Top AI Tools"
         description="Your trusted resource for AI-powered productivity solutions"
       />
       
@@ -19,14 +20,14 @@ const AboutPage = () => {
           {/* AdSense Compliance Notice */}
           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-8 text-sm">
             <p className="text-blue-700 dark:text-blue-300">
-              <strong>Advertising Disclosure:</strong> AI Productivity Hub participates in various affiliate programs, including the Amazon Services LLC Associates Program. We may earn commissions from qualifying purchases made through links on our site, at no extra cost to you. These partnerships help support our research and content creation.
+              <strong>Advertising Disclosure:</strong> Top AI Tools participates in various affiliate programs, including the Amazon Services LLC Associates Program. We may earn commissions from qualifying purchases made through links on our site, at no extra cost to you. These partnerships help support our research and content creation.
             </p>
           </div>
           
           <section className="mb-12">
             <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Our Mission</h2>
             <p className="mb-4">
-              Founded in 2023, AI Productivity Hub is dedicated to helping individuals and businesses navigate the complex landscape of AI productivity tools. Our team of technology experts and productivity specialists rigorously tests and evaluates tools to provide honest, practical recommendations.
+              Founded in 2023, Top AI Tools is dedicated to helping individuals and businesses navigate the complex landscape of AI productivity tools. Our team of technology experts and productivity specialists rigorously tests and evaluates tools to provide honest, practical recommendations.
             </p>
             <p>
               We believe AI should be accessible and beneficial to everyone, not just tech experts. That's why we focus on clear, actionable advice that helps you work smarter, not harder.
@@ -93,7 +94,7 @@ const AboutPage = () => {
           <section className="mb-12">
             <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Our Team</h2>
             <p className="mb-4">
-              AI Productivity Hub was founded by a team of productivity consultants, software engineers, and AI researchers who saw firsthand how AI could transform workflows. Today, our team includes:
+              Top AI Tools was founded by a team of productivity consultants, software engineers, and AI researchers who saw firsthand how AI could transform workflows. Today, our team includes:
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li><strong>Technology Experts</strong> with hands-on AI implementation experience</li>
@@ -105,7 +106,7 @@ const AboutPage = () => {
           <section className="mb-12">
             <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Advertising & Affiliate Disclosure</h2>
             <p className="mb-4">
-              To support our operations, AI Productivity Hub participates in various affiliate programs. This means we may earn commissions when you purchase through our links, at no additional cost to you.
+              To support our operations, Top AI Tools participates in various affiliate programs. This means we may earn commissions when you purchase through our links, at no additional cost to you.
             </p>
             <p className="mb-4">
               We maintain strict editorial independence:
@@ -126,7 +127,7 @@ const AboutPage = () => {
               We welcome your questions, suggestions, and tool recommendations. Please reach us at:
             </p>
             <p className="mb-2">
-              <strong>Email:</strong> <a href="mailto:contact@aiproductivityhub.com" className="text-primary hover:underline">contact@aiproductivityhub.com</a>
+              <strong>Email:</strong> <a href="mailto:contact@alltopaitools.com" className="text-primary hover:underline">contact@alltopaitools.com</a>
             </p>
             <p>
               <strong>Mailing Address:</strong> 123 Tech Lane, Suite 100, San Francisco, CA 94107

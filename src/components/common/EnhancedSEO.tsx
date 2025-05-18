@@ -22,6 +22,8 @@ const EnhancedSEO = ({
   structuredData 
 }: EnhancedSEOProps) => {
   
+  const siteTitle = title.includes("Top AI Tools") ? title : `${title} - Top AI Tools`;
+  
   // Generate structured data as string
   const generateStructuredData = () => {
     if (!structuredData || structuredData.length === 0) return null;
@@ -65,22 +67,28 @@ const EnhancedSEO = ({
     });
   };
 
+  // Format canonical URL with domain
+  const fullCanonicalUrl = canonicalUrl 
+    ? `https://alltopaitools.com${canonicalUrl.startsWith('/') ? canonicalUrl : `/${canonicalUrl}`}`
+    : "https://alltopaitools.com";
+
   return (
     <Helmet>
-      <title>{title}</title>
+      <title>{siteTitle}</title>
       <meta name="description" content={description} />
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      <link rel="canonical" href={fullCanonicalUrl} />
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
-      <meta property="og:title" content={title} />
+      <meta property="og:title" content={siteTitle} />
       <meta property="og:description" content={description} />
       {image && <meta property="og:image" content={image} />}
-      {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+      <meta property="og:url" content={fullCanonicalUrl} />
+      <meta property="og:site_name" content="Top AI Tools" />
       
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:title" content={title} />
+      <meta property="twitter:title" content={siteTitle} />
       <meta property="twitter:description" content={description} />
       {image && <meta property="twitter:image" content={image} />}
       

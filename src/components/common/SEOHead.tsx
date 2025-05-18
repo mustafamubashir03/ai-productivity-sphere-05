@@ -14,7 +14,11 @@ const SEOHead = ({ title, description, canonicalUrl }: SEOHeadProps) => {
     <Helmet>
       <title>{siteTitle}</title>
       <meta name="description" content={description} />
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      {canonicalUrl ? (
+        <link rel="canonical" href={`https://alltopaitools.com${canonicalUrl}`} />
+      ) : (
+        <link rel="canonical" href="https://alltopaitools.com" />
+      )}
     </Helmet>
   );
 };

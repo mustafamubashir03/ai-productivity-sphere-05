@@ -95,8 +95,8 @@ const Footer = () => {
             © {currentYear} Top AI Tools. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0">
-            <a href="mailto:contact@topaitools.com" className="text-sm text-gray-400 hover:text-primary transition-colors">
-              contact@topaitools.com
+            <a href="mailto:contact@alltopaitools.com" className="text-sm text-gray-400 hover:text-primary transition-colors">
+              contact@alltopaitools.com
             </a>
           </div>
         </div>

@@ -1,3 +1,4 @@
+
 import SEOHead from "@/components/common/SEOHead";
 import PageHeader from "@/components/common/PageHeader";
 
@@ -5,8 +6,8 @@ const TermsPage = () => {
   return (
     <>
       <SEOHead 
-        title="Terms and Conditions - AI Productivity Hub"
-        description="Review the legal terms governing your use of AI Productivity Hub, including intellectual property rights, user responsibilities, and limitations of liability."
+        title="Terms and Conditions - Top AI Tools"
+        description="Review the legal terms governing your use of Top AI Tools, including intellectual property rights, user responsibilities, and limitations of liability."
       />
       
       <PageHeader 
@@ -19,7 +20,7 @@ const TermsPage = () => {
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">1. Acceptance of Terms</h2>
             <p className="mb-4">
-              By accessing and using AI Productivity Hub ("the Site"), you agree to be bound by these Terms and Conditions ("Terms"), our <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a>, and any additional terms that may apply to specific services or features of the Site.
+              By accessing and using Top AI Tools ("the Site"), you agree to be bound by these Terms and Conditions ("Terms"), our <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a>, and any additional terms that may apply to specific services or features of the Site.
             </p>
             <p>
               If you do not agree with any part of these Terms, you must immediately discontinue your use of the Site. Continued use constitutes acceptance of these Terms.
@@ -29,7 +30,7 @@ const TermsPage = () => {
           <div className="my-8">
             <h2 className="text-2xl font-bold mb-4">2. Intellectual Property Rights</h2>
             <p className="mb-4">
-              All content on the Site, including text, graphics, logos, images, software, and other materials ("Content"), is the property of AI Productivity Hub or its content suppliers and protected by international copyright and intellectual property laws.
+              All content on the Site, including text, graphics, logos, images, software, and other materials ("Content"), is the property of Top AI Tools or its content suppliers and protected by international copyright and intellectual property laws.
             </p>
             <p>
               You are granted a limited, non-exclusive, non-transferable license to access and use the Site for personal, non-commercial purposes. You may not:
@@ -100,7 +101,7 @@ const TermsPage = () => {
             
             <h3 className="text-xl font-semibold mb-2">5.2 Limitation of Liability</h3>
             <p className="italic">
-              IN NO EVENT SHALL AI PRODUCTIVITY HUB, ITS OFFICERS, DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF THE SITE, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, OR GOODWILL.
+              IN NO EVENT SHALL TOP AI TOOLS, ITS OFFICERS, DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF THE SITE, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, OR GOODWILL.
             </p>
           </div>
 
@@ -128,7 +129,7 @@ const TermsPage = () => {
               For questions about these Terms, please contact us at:
             </p>
             <address className="not-italic">
-              <p>Email: <a href="mailto:legal@aiproductivityhub.com" className="text-blue-600 hover:underline">legal@aiproductivityhub.com</a></p>
+              <p>Email: <a href="mailto:legal@alltopaitools.com" className="text-blue-600 hover:underline">legal@alltopaitools.com</a></p>
               <p>Postal Address: 123 Tech Lane, Suite 100, San Francisco, CA 94107</p>
             </address>
           </div>

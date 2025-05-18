@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import SEOHead from "@/components/common/SEOHead";
@@ -51,8 +50,8 @@ const ContactPage = () => {
   return (
     <>
       <SEOHead 
-        title="Contact Us - AI Productivity Hub"
-        description="Get in touch with the AI Productivity Hub team. We'd love to hear your feedback, answer questions, or discuss collaboration opportunities."
+        title="Contact Us - Top AI Tools"
+        description="Get in touch with the Top AI Tools team. We'd love to hear your feedback, answer questions, or discuss collaboration opportunities."
       />
       
       <PageHeader 
@@ -152,10 +151,10 @@ const ContactPage = () => {
                   <div>
                     <p className="font-medium text-gray-800 dark:text-white">Email Us</p>
                     <a 
-                      href="mailto:contact@aiproductivityhub.com"
+                      href="mailto:contact@alltopaitools.com"
                       className="text-primary hover:underline"
                     >
-                      contact@aiproductivityhub.com
+                      contact@alltopaitools.com
                     </a>
                   </div>
                 </div>

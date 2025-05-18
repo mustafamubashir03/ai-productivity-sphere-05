@@ -2,7 +2,7 @@
 import { Helmet } from "react-helmet-async";
 
 interface StructuredDataProps {
-  type: "Product" | "Article" | "FAQPage" | "Review";
+  type: "Product" | "Article" | "FAQPage" | "Review" | "WebSite" | "BreadcrumbList";
   data: any;
 }
 
@@ -53,6 +53,18 @@ const EnhancedSEO = ({
         data = {
           "@context": "https://schema.org",
           "@type": "Review",
+          ...data
+        };
+      } else if (item.type === "WebSite") {
+        data = {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          ...data
+        };
+      } else if (item.type === "BreadcrumbList") {
+        data = {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
           ...data
         };
       }

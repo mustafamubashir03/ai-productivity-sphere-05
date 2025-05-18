@@ -256,13 +256,16 @@ const BlogPage = () => {
             )}
           </div>
 
-          {/* Pagination Controls */}
-          {!isLoading && totalPages > 1 && (
-            <PaginationControls 
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
+          {/* Pagination Controls - Make sure it's visible regardless of post count */}
+          {!isLoading && blogs && blogs.length > 0 && (
+            <div className="mt-8 flex justify-center">
+              <PaginationControls 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                siblingCount={1}
+              />
+            </div>
           )}
 
           {/* Minimal newsletter signup at bottom */}

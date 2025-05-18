@@ -1,38 +1,27 @@
 
-import { useState } from "react";
-import { Filter, ChevronDown } from "lucide-react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
-} from "@/components/ui/accordion";
-import { 
-  Collapsible, 
-  CollapsibleContent, 
-  CollapsibleTrigger 
-} from "@/components/ui/collapsible";
+import { Checkbox } from "@/components/ui/checkbox";
 import { industries } from "@/data/industries";
 import { useCases } from "@/data/useCases";
-import { cn, getFilterLayoutClasses } from "@/lib/utils";
+import { ChevronDown, ChevronUp, Filter } from "lucide-react";
 
-interface FilterSidebarProps {
-  onSelectIndustry: (industrySlug: string | null) => void;
-  onSelectUseCase: (useCaseSlug: string | null) => void;
-  onSelectPricingModel?: (pricingModel: string | null) => void;
-  onSelectPlatform?: (platform: string | null) => void;
-  onSelectSubcategory?: (subcategory: string | null) => void;
+type FilterSidebarProps = {
+  onSelectIndustry: (industry: string | null) => void;
+  onSelectUseCase: (useCase: string | null) => void;
+  onSelectPricingModel: (pricingModel: string | null) => void;
+  onSelectPlatform: (platform: string | null) => void;
+  onSelectSubcategory: (subcategory: string | null) => void;
   activeIndustry: string | null;
   activeUseCase: string | null;
-  activePricingModel?: string | null;
-  activePlatform?: string | null;
-  activeSubcategory?: string | null;
-  subcategories?: string[];
-  pricingModels?: string[];
-  platforms?: string[];
+  activePricingModel: string | null;
+  activePlatform: string | null;
+  activeSubcategory: string | null;
+  subcategories: string[];
+  pricingModels: string[];
+  platforms: string[];
   isMobile: boolean;
-}
+};
 
 const FilterSidebar = ({
   onSelectIndustry,
@@ -45,365 +34,308 @@ const FilterSidebar = ({
   activePricingModel,
   activePlatform,
   activeSubcategory,
-  subcategories = [],
-  pricingModels = [],
-  platforms = [],
+  subcategories,
+  pricingModels,
+  platforms,
   isMobile
 }: FilterSidebarProps) => {
-  // Initialize as closed for both mobile and desktop for better UX
-  const [isOpen, setIsOpen] = useState(false);
-  const classes = getFilterLayoutClasses(isMobile);
+  // Set all sections collapsed by default
+  const [isIndustryOpen, setIsIndustryOpen] = useState(false);
+  const [isUseCaseOpen, setIsUseCaseOpen] = useState(false);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const [isPlatformOpen, setIsPlatformOpen] = useState(false);
+  const [isSubcategoryOpen, setIsSubcategoryOpen] = useState(false);
   
-  // Format display names for raw values
-  const formatDisplayName = (value: string) => {
-    if (value === 'one-time') return 'One-time Payment';
-    
-    return value
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+  // For mobile view
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  
+  const toggleSection = (section: string) => {
+    switch (section) {
+      case 'industry':
+        setIsIndustryOpen(!isIndustryOpen);
+        break;
+      case 'useCase':
+        setIsUseCaseOpen(!isUseCaseOpen);
+        break;
+      case 'pricing':
+        setIsPricingOpen(!isPricingOpen);
+        break;
+      case 'platform':
+        setIsPlatformOpen(!isPlatformOpen);
+        break;
+      case 'subcategory':
+        setIsSubcategoryOpen(!isSubcategoryOpen);
+        break;
+      default:
+        break;
+    }
   };
   
-  return (
-    <div className={cn(
-      "mb-6",
-      isMobile ? "w-full" : "w-full lg:w-64 lg:flex-shrink-0"
-    )}>
-      {isMobile ? (
-        <Accordion type="single" collapsible className={classes.container}>
-          <AccordionItem value="filters" className="border-none">
-            <AccordionTrigger className={classes.header}>
-              <span className="flex items-center">
-                <Filter className="w-4 h-4 mr-2" />
-                Filters
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className={classes.content}>
-              <div className="space-y-6">
-                {/* Subcategories Filter */}
-                {subcategories && subcategories.length > 0 && onSelectSubcategory && (
-                  <div className="filter-section">
-                    <h3 className={classes.sectionTitle}>Subcategories</h3>
-                    <div className={classes.buttonGroup}>
-                      <Button
-                        key="all-subcategories"
-                        variant={activeSubcategory === null ? "default" : "outline"}
-                        onClick={() => onSelectSubcategory(null)}
-                        size="sm"
-                        className={classes.button}
-                        type="button"
-                      >
-                        All Subcategories
-                      </Button>
-                      {subcategories.map((subcategory) => (
-                        <Button
-                          key={subcategory}
-                          variant={activeSubcategory === subcategory ? "default" : "outline"}
-                          onClick={() => onSelectSubcategory(subcategory)}
-                          size="sm"
-                          className={classes.button}
-                          type="button"
-                        >
-                          {formatDisplayName(subcategory)}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+  // Filter counts
+  const activeFilters = [
+    activeIndustry, 
+    activeUseCase, 
+    activePricingModel, 
+    activePlatform, 
+    activeSubcategory
+  ].filter(Boolean).length;
+  
+  const clearAllFilters = () => {
+    onSelectIndustry(null);
+    onSelectUseCase(null);
+    onSelectPricingModel(null);
+    onSelectPlatform(null);
+    onSelectSubcategory(null);
+  };
 
-                {/* Industry Filter */}
-                <div className="filter-section">
-                  <h3 className={classes.sectionTitle}>Industries</h3>
-                  <div className={classes.buttonGroup}>
-                    <Button
-                      key="all-industries"
-                      variant={activeIndustry === null ? "default" : "outline"}
-                      onClick={() => onSelectIndustry(null)}
-                      size="sm"
-                      className={classes.button}
-                      type="button"
-                    >
-                      All Industries
-                    </Button>
-                    {industries.map((industry) => (
-                      <Button
-                        key={industry.id}
-                        variant={activeIndustry === industry.slug ? "default" : "outline"}
-                        onClick={() => onSelectIndustry(industry.slug)}
-                        size="sm"
-                        className={classes.button}
-                        type="button"
-                      >
-                        {industry.name}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Use Case Filter */}
-                <div className="filter-section">
-                  <h3 className={classes.sectionTitle}>Use Cases</h3>
-                  <div className={classes.buttonGroup}>
-                    <Button
-                      key="all-usecases"
-                      variant={activeUseCase === null ? "default" : "outline"}
-                      onClick={() => onSelectUseCase(null)}
-                      size="sm"
-                      className={classes.button}
-                      type="button"
-                    >
-                      All Use Cases
-                    </Button>
-                    {useCases.map((useCase) => (
-                      <Button
-                        key={useCase.id}
-                        variant={activeUseCase === useCase.slug ? "default" : "outline"}
-                        onClick={() => onSelectUseCase(useCase.slug)}
-                        size="sm"
-                        className={classes.button}
-                        type="button"
-                      >
-                        {useCase.name}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+  const renderMobileFilters = () => (
+    <div className="mb-6">
+      <Button
+        onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
+        variant="outline"
+        size="sm"
+        className="w-full flex justify-between items-center"
+      >
+        <span className="flex items-center">
+          <Filter className="h-4 w-4 mr-2" />
+          Filters {activeFilters > 0 && `(${activeFilters})`}
+        </span>
+        {isMobileFilterOpen ? (
+          <ChevronUp className="h-4 w-4" />
+        ) : (
+          <ChevronDown className="h-4 w-4" />
+        )}
+      </Button>
+      
+      {isMobileFilterOpen && renderFilters()}
+    </div>
+  );
 
-                {/* Pricing Model Filter */}
-                {pricingModels && pricingModels.length > 0 && onSelectPricingModel && (
-                  <div className="filter-section">
-                    <h3 className={classes.sectionTitle}>Pricing</h3>
-                    <div className={classes.buttonGroup}>
-                      <Button
-                        key="all-pricing-models"
-                        variant={activePricingModel === null ? "default" : "outline"}
-                        onClick={() => onSelectPricingModel(null)}
-                        size="sm"
-                        className={classes.button}
-                        type="button"
-                      >
-                        All Pricing Models
-                      </Button>
-                      {pricingModels.map((model) => (
-                        <Button
-                          key={model}
-                          variant={activePricingModel === model ? "default" : "outline"}
-                          onClick={() => onSelectPricingModel(model)}
-                          size="sm"
-                          className={classes.button}
-                          type="button"
-                        >
-                          {formatDisplayName(model)}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Platform Filter */}
-                {platforms && platforms.length > 0 && onSelectPlatform && (
-                  <div className="filter-section">
-                    <h3 className={classes.sectionTitle}>Platforms</h3>
-                    <div className={classes.buttonGroup}>
-                      <Button
-                        key="all-platforms"
-                        variant={activePlatform === null ? "default" : "outline"}
-                        onClick={() => onSelectPlatform(null)}
-                        size="sm"
-                        className={classes.button}
-                        type="button"
-                      >
-                        All Platforms
-                      </Button>
-                      {platforms.map((platform) => (
-                        <Button
-                          key={platform}
-                          variant={activePlatform === platform ? "default" : "outline"}
-                          onClick={() => onSelectPlatform(platform)}
-                          size="sm"
-                          className={classes.button}
-                          type="button"
-                        >
-                          {formatDisplayName(platform)}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      ) : (
-        <Collapsible open={isOpen} onOpenChange={setIsOpen} className={classes.container}>
-          <div className={classes.header}>
-            <div className="flex items-center">
-              <Filter className="w-4 h-4 mr-2" />
-              <h3 className="font-medium">Filters</h3>
-            </div>
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="p-1" type="button">
-                <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                <span className="sr-only">Toggle filters</span>
-              </Button>
-            </CollapsibleTrigger>
-          </div>
+  const renderFilters = () => (
+    <div className="space-y-6">
+      {activeFilters > 0 && (
+        <div className="flex justify-between items-center pb-2 border-b border-gray-200 dark:border-gray-700">
+          <span className="text-sm font-medium">{activeFilters} active filters</span>
+          <Button
+            onClick={clearAllFilters}
+            variant="link"
+            size="sm"
+            className="text-primary h-auto p-0"
+          >
+            Clear all
+          </Button>
+        </div>
+      )}
+      
+      {/* Industries Section */}
+      {industries.length > 0 && (
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+          <button 
+            onClick={() => toggleSection('industry')}
+            className="flex justify-between items-center w-full text-left font-medium py-1"
+          >
+            <span>Industries</span>
+            {isIndustryOpen ? (
+              <ChevronUp className="h-4 w-4 text-gray-500" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            )}
+          </button>
           
-          <CollapsibleContent className={classes.content}>
-            {/* Subcategories Filter */}
-            {subcategories && subcategories.length > 0 && onSelectSubcategory && (
-              <div className="filter-section">
-                <h3 className={classes.sectionTitle}>Subcategories</h3>
-                <div className={classes.buttonGroup}>
-                  <Button
-                    key="all-subcategories-desktop"
-                    variant={activeSubcategory === null ? "default" : "outline"}
-                    onClick={() => onSelectSubcategory(null)}
-                    size="sm"
-                    className={classes.button}
-                    type="button"
-                  >
-                    All Subcategories
-                  </Button>
-                  {subcategories.map((subcategory) => (
-                    <Button
-                      key={subcategory}
-                      variant={activeSubcategory === subcategory ? "default" : "outline"}
-                      onClick={() => onSelectSubcategory(subcategory)}
-                      size="sm"
-                      className={classes.button}
-                      type="button"
-                    >
-                      {formatDisplayName(subcategory)}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Industry Filter */}
-            <div className="filter-section">
-              <h3 className={classes.sectionTitle}>Industries</h3>
-              <div className={classes.buttonGroup}>
-                <Button
-                  key="all-industries-desktop"
-                  variant={activeIndustry === null ? "default" : "outline"}
-                  onClick={() => onSelectIndustry(null)}
-                  size="sm"
-                  className={classes.button}
-                  type="button"
+          {isIndustryOpen && (
+            <div className="mt-2 space-y-1">
+              {industries.map(industry => (
+                <label 
+                  key={industry.id}
+                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
                 >
-                  All Industries
-                </Button>
-                {industries.map((industry) => (
-                  <Button
-                    key={industry.id}
-                    variant={activeIndustry === industry.slug ? "default" : "outline"}
-                    onClick={() => onSelectIndustry(industry.slug)}
-                    size="sm"
-                    className={classes.button}
-                    type="button"
-                  >
-                    {industry.name}
-                  </Button>
-                ))}
-              </div>
+                  <Checkbox 
+                    id={`industry-${industry.id}`}
+                    checked={industry.slug === activeIndustry}
+                    onCheckedChange={() => {
+                      onSelectIndustry(
+                        industry.slug === activeIndustry ? null : industry.slug
+                      );
+                    }}
+                  />
+                  <span>{industry.name}</span>
+                </label>
+              ))}
             </div>
-            
-            {/* Use Case Filter */}
-            <div className="filter-section">
-              <h3 className={classes.sectionTitle}>Use Cases</h3>
-              <div className={classes.buttonGroup}>
-                <Button
-                  key="all-usecases-desktop"
-                  variant={activeUseCase === null ? "default" : "outline"}
-                  onClick={() => onSelectUseCase(null)}
-                  size="sm"
-                  className={classes.button}
-                  type="button"
+          )}
+        </div>
+      )}
+      
+      {/* Use Cases Section */}
+      {useCases.length > 0 && (
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+          <button 
+            onClick={() => toggleSection('useCase')}
+            className="flex justify-between items-center w-full text-left font-medium py-1"
+          >
+            <span>Use Cases</span>
+            {isUseCaseOpen ? (
+              <ChevronUp className="h-4 w-4 text-gray-500" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            )}
+          </button>
+          
+          {isUseCaseOpen && (
+            <div className="mt-2 space-y-1">
+              {useCases.map(useCase => (
+                <label 
+                  key={useCase.id}
+                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
                 >
-                  All Use Cases
-                </Button>
-                {useCases.map((useCase) => (
-                  <Button
-                    key={useCase.id}
-                    variant={activeUseCase === useCase.slug ? "default" : "outline"}
-                    onClick={() => onSelectUseCase(useCase.slug)}
-                    size="sm"
-                    className={classes.button}
-                    type="button"
-                  >
-                    {useCase.name}
-                  </Button>
-                ))}
-              </div>
+                  <Checkbox 
+                    id={`useCase-${useCase.id}`}
+                    checked={useCase.slug === activeUseCase}
+                    onCheckedChange={() => {
+                      onSelectUseCase(
+                        useCase.slug === activeUseCase ? null : useCase.slug
+                      );
+                    }}
+                  />
+                  <span>{useCase.name}</span>
+                </label>
+              ))}
             </div>
-
-            {/* Pricing Model Filter */}
-            {pricingModels && pricingModels.length > 0 && onSelectPricingModel && (
-              <div className="filter-section">
-                <h3 className={classes.sectionTitle}>Pricing</h3>
-                <div className={classes.buttonGroup}>
-                  <Button
-                    key="all-pricing-models-desktop"
-                    variant={activePricingModel === null ? "default" : "outline"}
-                    onClick={() => onSelectPricingModel(null)}
-                    size="sm"
-                    className={classes.button}
-                    type="button"
-                  >
-                    All Pricing Models
-                  </Button>
-                  {pricingModels.map((model) => (
-                    <Button
-                      key={model}
-                      variant={activePricingModel === model ? "default" : "outline"}
-                      onClick={() => onSelectPricingModel(model)}
-                      size="sm"
-                      className={classes.button}
-                      type="button"
-                    >
-                      {formatDisplayName(model)}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+          )}
+        </div>
+      )}
+      
+      {/* Subcategories Section */}
+      {subcategories.length > 0 && (
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+          <button 
+            onClick={() => toggleSection('subcategory')}
+            className="flex justify-between items-center w-full text-left font-medium py-1"
+          >
+            <span>Subcategories</span>
+            {isSubcategoryOpen ? (
+              <ChevronUp className="h-4 w-4 text-gray-500" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-500" />
             )}
-
-            {/* Platform Filter */}
-            {platforms && platforms.length > 0 && onSelectPlatform && (
-              <div className="filter-section">
-                <h3 className={classes.sectionTitle}>Platforms</h3>
-                <div className={classes.buttonGroup}>
-                  <Button
-                    key="all-platforms-desktop"
-                    variant={activePlatform === null ? "default" : "outline"}
-                    onClick={() => onSelectPlatform(null)}
-                    size="sm"
-                    className={classes.button}
-                    type="button"
-                  >
-                    All Platforms
-                  </Button>
-                  {platforms.map((platform) => (
-                    <Button
-                      key={platform}
-                      variant={activePlatform === platform ? "default" : "outline"}
-                      onClick={() => onSelectPlatform(platform)}
-                      size="sm"
-                      className={classes.button}
-                      type="button"
-                    >
-                      {formatDisplayName(platform)}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+          </button>
+          
+          {isSubcategoryOpen && (
+            <div className="mt-2 space-y-1">
+              {subcategories.map((subcat, index) => (
+                <label 
+                  key={index}
+                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
+                >
+                  <Checkbox 
+                    id={`subcategory-${index}`}
+                    checked={subcat === activeSubcategory}
+                    onCheckedChange={() => {
+                      onSelectSubcategory(subcat === activeSubcategory ? null : subcat);
+                    }}
+                  />
+                  <span>{subcat}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Pricing Models Section */}
+      {pricingModels.length > 0 && (
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+          <button 
+            onClick={() => toggleSection('pricing')}
+            className="flex justify-between items-center w-full text-left font-medium py-1"
+          >
+            <span>Pricing</span>
+            {isPricingOpen ? (
+              <ChevronUp className="h-4 w-4 text-gray-500" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-500" />
             )}
-          </CollapsibleContent>
-        </Collapsible>
+          </button>
+          
+          {isPricingOpen && (
+            <div className="mt-2 space-y-1">
+              {pricingModels.map((pricing, index) => (
+                <label 
+                  key={index}
+                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
+                >
+                  <Checkbox 
+                    id={`pricing-${index}`}
+                    checked={pricing === activePricingModel}
+                    onCheckedChange={() => {
+                      onSelectPricingModel(pricing === activePricingModel ? null : pricing);
+                    }}
+                  />
+                  <span>{pricing}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Platforms Section */}
+      {platforms.length > 0 && (
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+          <button 
+            onClick={() => toggleSection('platform')}
+            className="flex justify-between items-center w-full text-left font-medium py-1"
+          >
+            <span>Platforms</span>
+            {isPlatformOpen ? (
+              <ChevronUp className="h-4 w-4 text-gray-500" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            )}
+          </button>
+          
+          {isPlatformOpen && (
+            <div className="mt-2 space-y-1">
+              {platforms.map((platform, index) => (
+                <label 
+                  key={index}
+                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
+                >
+                  <Checkbox 
+                    id={`platform-${index}`}
+                    checked={platform === activePlatform}
+                    onCheckedChange={() => {
+                      onSelectPlatform(platform === activePlatform ? null : platform);
+                    }}
+                  />
+                  <span>{platform}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
       )}
     </div>
+  );
+
+  return (
+    <>
+      {isMobile ? (
+        renderMobileFilters()
+      ) : (
+        <div className="w-64 flex-shrink-0 pr-6">
+          <div className="sticky top-20">
+            <h3 className="text-lg font-medium mb-4 flex items-center border-b pb-2 border-gray-200 dark:border-gray-700">
+              <Filter className="mr-2 h-5 w-5" /> 
+              Filters
+              {activeFilters > 0 && <span className="ml-2 text-primary text-sm">({activeFilters})</span>}
+            </h3>
+            
+            {renderFilters()}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -53,7 +53,7 @@ const PaginationLink = ({
         variant: isActive ? "outline" : "ghost",
         size,
       }),
-      isActive && "pointer-events-none",
+      isActive && "pointer-events-none bg-primary/10 border-primary/20 text-primary",
       className
     )}
     {...props}
@@ -68,7 +68,7 @@ const PaginationPrevious = ({
   <PaginationLink
     aria-label="Go to previous page"
     size="default"
-    className={cn("gap-1 pl-2.5", className)}
+    className={cn("gap-1 pl-2.5 font-medium", className)}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
@@ -84,7 +84,7 @@ const PaginationNext = ({
   <PaginationLink
     aria-label="Go to next page"
     size="default"
-    className={cn("gap-1 pr-2.5", className)}
+    className={cn("gap-1 pr-2.5 font-medium", className)}
     {...props}
   >
     <span>Next</span>
@@ -172,13 +172,21 @@ const PaginationControls = ({
   
   const pages = generatePagination();
   
+  // If there's only one page, don't show pagination
+  if (totalPages <= 1) {
+    return null;
+  }
+  
   return (
-    <Pagination className="mt-8">
+    <Pagination className="mt-8 bg-white dark:bg-gray-800 p-2 rounded-lg shadow-sm">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious 
             onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-            className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} 
+            className={cn(
+              "cursor-pointer",
+              currentPage === 1 ? "pointer-events-none opacity-50" : ""
+            )}
           />
         </PaginationItem>
         
@@ -190,7 +198,10 @@ const PaginationControls = ({
               <PaginationLink 
                 isActive={currentPage === page.number}
                 onClick={() => onPageChange(page.number)}
-                className="cursor-pointer"
+                className={cn(
+                  "cursor-pointer",
+                  currentPage === page.number ? "font-bold" : ""
+                )}
               >
                 {page.number}
               </PaginationLink>
@@ -201,7 +212,10 @@ const PaginationControls = ({
         <PaginationItem>
           <PaginationNext 
             onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
-            className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} 
+            className={cn(
+              "cursor-pointer",
+              currentPage === totalPages ? "pointer-events-none opacity-50" : ""
+            )}
           />
         </PaginationItem>
       </PaginationContent>
@@ -217,5 +231,5 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  PaginationControls, // Exporting the new enhanced component
+  PaginationControls, // Exporting the enhanced component
 }

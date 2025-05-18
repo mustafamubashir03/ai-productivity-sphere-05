@@ -10,6 +10,9 @@ import { toast } from "@/components/ui/sonner";
 import { PaginationControls } from "@/components/ui/pagination";
 import { useBlogs, API_BASE_URL, adaptBlogsResponse } from "@/hooks/use-api";
 import { formatBlogData } from "@/utils/formatters";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import EnhancedSEO from "@/components/common/EnhancedSEO";
+import { Home } from "lucide-react";
 
 // Define the Blog type based on the API response
 interface Blog {
@@ -135,6 +138,65 @@ const BlogPage = () => {
     return imagePath; // Return as is if none of the above
   };
 
+  // Generate structured data for blogs page
+  const structuredData = [
+    {
+      type: "WebSite" as const,
+      data: {
+        name: "Top AI Tools - Blog",
+        description: "Insights, guides, and tips on using top AI tools to enhance productivity and streamline your workflow.",
+        url: "https://alltopaitools.com/blog",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: "https://alltopaitools.com/blog?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    },
+    {
+      type: "BreadcrumbList" as const,
+      data: {
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://alltopaitools.com"
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Blog",
+            item: "https://alltopaitools.com/blog"
+          }
+        ]
+      }
+    },
+    {
+      type: "FAQPage" as const,
+      data: {
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "What kind of AI productivity tips can I find on the Top AI Tools blog?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Our blog covers a wide range of AI productivity topics including tool comparisons, step-by-step guides, industry insights, and tips for maximizing efficiency with AI tools across various industries and use cases."
+            }
+          },
+          {
+            "@type": "Question",
+            name: "How often is the Top AI Tools blog updated?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "We regularly update our blog with fresh content about the latest AI tools and productivity strategies. We aim to publish new articles weekly to keep you informed about the rapidly evolving AI landscape."
+            }
+          }
+        ]
+      }
+    }
+  ];
+
   // Handle error state
   if (error) {
     return (
@@ -155,9 +217,11 @@ const BlogPage = () => {
 
   return (
     <>
-      <SEOHead 
+      <EnhancedSEO 
         title="Blog - Top AI Tools"
         description="Learn about AI productivity tips, top AI tools comparisons, and industry insights to improve your workflow and efficiency."
+        canonicalUrl="/blog"
+        structuredData={structuredData}
       />
       
       <PageHeader 
@@ -165,8 +229,24 @@ const BlogPage = () => {
         description="Insights, guides, and tips on using top AI tools to enhance productivity and streamline your workflow."
       />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex justify-end mb-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Breadcrumbs */}
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">
+                <Home className="h-4 w-4 mr-1" />
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Blog</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        
+        <div className="flex justify-between items-center mb-6">
           <Link 
             to="/bookmarks" 
             className="flex items-center text-primary hover:underline"
@@ -174,6 +254,18 @@ const BlogPage = () => {
             <Bookmark className="mr-2 h-4 w-4" /> View Bookmarks
           </Link>
         </div>
+
+        {/* Pagination Controls at Top - Make sure it's always visible */}
+        {!isLoading && blogs && blogs.length > 0 && (
+          <div className="mb-8 flex justify-center">
+            <PaginationControls 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              siblingCount={1}
+            />
+          </div>
+        )}
         
         <div className="max-w-3xl mx-auto"> {/* Centered container */}
           <div className="grid grid-cols-1 gap-8">
@@ -198,6 +290,7 @@ const BlogPage = () => {
                         const target = e.target as HTMLImageElement;
                         target.src = "/placeholder.svg";
                       }}
+                      loading="lazy"
                     />
                   </div>
                   <div className="md:w-3/5 lg:w-2/3 p-5 flex flex-col">
@@ -239,6 +332,20 @@ const BlogPage = () => {
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                       {post.excerpt}
                     </p>
+                    {/* Tags/Categories for internal linking */}
+                    {post.tags && post.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {post.tags.slice(0, 3).map(tag => (
+                          <Link 
+                            key={tag} 
+                            to={`/tools?tag=${encodeURIComponent(tag)}`}
+                            className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-600 dark:text-gray-300 hover:bg-primary/10"
+                          >
+                            {tag}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                     <Link 
                       to={`/blog/${post.slug}`} 
                       className="text-primary font-medium flex items-center hover:underline mt-auto"
@@ -256,7 +363,7 @@ const BlogPage = () => {
             )}
           </div>
 
-          {/* Pagination Controls - Make sure it's visible regardless of post count */}
+          {/* Pagination Controls at Bottom */}
           {!isLoading && blogs && blogs.length > 0 && (
             <div className="mt-8 flex justify-center">
               <PaginationControls 
@@ -267,6 +374,27 @@ const BlogPage = () => {
               />
             </div>
           )}
+
+          {/* FAQ Section */}
+          <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">What kind of AI productivity tips can I find on the Top AI Tools blog?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Our blog covers a wide range of AI productivity topics including tool comparisons, step-by-step guides, 
+                  industry insights, and tips for maximizing efficiency with AI tools across various industries and use cases.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">How often is the Top AI Tools blog updated?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  We regularly update our blog with fresh content about the latest AI tools and productivity strategies. 
+                  We aim to publish new articles weekly to keep you informed about the rapidly evolving AI landscape.
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Minimal newsletter signup at bottom */}
           <div className="mt-16 border-t border-gray-200 dark:border-gray-700 pt-8 text-center">

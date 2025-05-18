@@ -1,13 +1,12 @@
-
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Search } from "lucide-react";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationControls } from "@/components/ui/pagination";
+import { Search, Home } from "lucide-react";
 import { categories } from "@/data/categories";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import CompareBar from "@/components/tools/CompareBar";
@@ -19,6 +18,7 @@ import { toast } from "@/components/ui/sonner";
 import { Tool, ToolsApiResponse } from "@/types/tools";
 import { adaptToolsResponse } from "@/hooks/use-api";
 import { formatToolsData } from "@/utils/formatters";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 const TOOLS_PER_PAGE = 9;
 
@@ -224,29 +224,112 @@ const ToolsPage = () => {
     }
   }
 
+  // Define FAQ data based on category
+  const getFaqData = () => {
+    const defaultFaqs = [
+      {
+        question: `What are the best ${title.toLowerCase()}?`,
+        answer: `We've curated the top-rated ${title.toLowerCase()} for productivity and efficiency. Browse our selection to find the perfect tool for your needs.`
+      },
+      {
+        question: "Are these AI tools free or paid?",
+        answer: "Our collection includes both free and paid AI tools. Many offer freemium models, allowing you to test before committing to a paid plan."
+      },
+      {
+        question: "How can I find the right AI tool for my specific needs?",
+        answer: "You can use our filters to narrow down by category, platform, pricing model, or specific use cases. You can also search for specific features or browse our blog for detailed guides."
+      },
+      {
+        question: "Can I compare different AI tools?",
+        answer: "Yes! Add tools to your compare list by clicking the compare button on any tool card, then click 'Compare Tools' to see a detailed side-by-side comparison."
+      }
+    ];
+
+    if (activeCategory) {
+      const category = categories.find(cat => cat.slug === activeCategory);
+      if (category) {
+        return [
+          {
+            question: `What are the best ${category.name.toLowerCase()}?`,
+            answer: `Our curated selection of ${category.name.toLowerCase()} helps users find the right tools for ${category.description.toLowerCase()}. Browse our top-rated options to find tools that match your specific requirements.`
+          },
+          ...defaultFaqs.slice(1)
+        ];
+      }
+    }
+    
+    return defaultFaqs;
+  };
+
+  // Generate FAQ items for structured data
+  const faqItems = getFaqData().map(faq => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer
+    }
+  }));
+
+  // Generate breadcrumb items
+  const generateBreadcrumbItems = () => {
+    const items = [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://alltopaitools.com"
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Tools",
+        item: "https://alltopaitools.com/tools"
+      }
+    ];
+
+    if (activeCategory) {
+      const category = categories.find(cat => cat.slug === activeCategory);
+      if (category) {
+        items.push({
+          "@type": "ListItem",
+          position: 3,
+          name: category.name,
+          item: `https://alltopaitools.com/tools/category/${activeCategory}`
+        });
+      }
+    }
+
+    return items;
+  };
+
   // Generate structured data
   const structuredData = [
     {
+      type: "WebSite" as const,
+      data: {
+        name: `${title} - Top AI Tools`,
+        description: description,
+        url: activeCategory 
+          ? `https://alltopaitools.com/tools/category/${activeCategory}`
+          : "https://alltopaitools.com/tools",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: "https://alltopaitools.com/tools?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    },
+    {
+      type: "BreadcrumbList" as const,
+      data: {
+        itemListElement: generateBreadcrumbItems()
+      }
+    },
+    {
       type: "FAQPage" as const,
       data: {
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: `What are the best ${title.toLowerCase()}?`,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: `We've curated the top-rated ${title.toLowerCase()} for productivity and efficiency. Browse our selection to find the perfect tool for your needs.`
-            }
-          },
-          {
-            "@type": "Question",
-            name: "Are these AI tools free or paid?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Our collection includes both free and paid AI tools. Many offer freemium models, allowing you to test before committing to a paid plan."
-            }
-          }
-        ]
+        mainEntity: faqItems
       }
     }
   ];
@@ -292,17 +375,69 @@ const ToolsPage = () => {
     }
   }, [categorySlug]);
 
+  // Find related blog posts based on category or tags
+  const getRelatedLinks = () => {
+    // This is just a placeholder - in a real implementation, you would fetch this data
+    // from your actual blogs data source or API
+    if (activeCategory) {
+      const category = categories.find(cat => cat.slug === activeCategory);
+      if (category) {
+        return [
+          { title: `Top 10 ${category.name} for Beginners`, url: `/blog/top-10-${activeCategory}-for-beginners` },
+          { title: `How to Choose the Right ${category.name}`, url: `/blog/how-to-choose-${activeCategory}` }
+        ];
+      }
+    }
+    
+    return [
+      { title: "Ultimate Guide to AI Tools", url: "/blog/ultimate-guide-to-ai-tools" },
+      { title: "2023 AI Tools Roundup", url: "/blog/2023-ai-tools-roundup" },
+      { title: "Free vs Paid AI Tools", url: "/blog/free-vs-paid-ai-tools" }
+    ];
+  };
+
   return (
     <>
       <EnhancedSEO 
-        title={`${title} - Top Rated AI`}
+        title={`${title} - Top AI Tools`}
         description={`Discover top ${title.toLowerCase()} to enhance your productivity and workflow efficiency.`}
+        canonicalUrl={activeCategory ? `/tools/category/${activeCategory}` : "/tools"}
         structuredData={structuredData}
       />
       
       <PageHeader title={title} description={description} />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Breadcrumbs */}
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">
+                <Home className="h-4 w-4 mr-1" />
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              {!activeCategory ? (
+                <BreadcrumbPage>Tools</BreadcrumbPage>
+              ) : (
+                <BreadcrumbLink href="/tools">Tools</BreadcrumbLink>
+              )}
+            </BreadcrumbItem>
+            {activeCategory && (
+              <>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>
+                    {categories.find(cat => cat.slug === activeCategory)?.name || activeCategory}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </>
+            )}
+          </BreadcrumbList>
+        </Breadcrumb>
+
         {/* Search */}
         <div className="mb-8">
           <form onSubmit={handleSearch} className="max-w-md mx-auto mb-6">
@@ -349,6 +484,18 @@ const ToolsPage = () => {
           </div>
         </div>
         
+        {/* Pagination at Top - Always visible */}
+        {!loading && (
+          <div className="mb-6 flex justify-center">
+            <PaginationControls 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+              siblingCount={1}
+            />
+          </div>
+        )}
+        
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Filters Sidebar */}
           <FilterSidebar
@@ -384,76 +531,45 @@ const ToolsPage = () => {
                   ))}
                 </div>
                 
+                {/* Related blog posts for internal linking */}
+                <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4">Related Articles</h3>
+                  <ul className="space-y-2">
+                    {getRelatedLinks().map((link, index) => (
+                      <li key={index} className="story-link">
+                        <Link 
+                          to={link.url} 
+                          className="text-primary hover:text-primary-dark transition-colors"
+                        >
+                          {link.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                {/* FAQ Section */}
+                <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                  <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+                  <div className="space-y-6">
+                    {getFaqData().map((faq, index) => (
+                      <div key={index}>
+                        <h3 className="text-lg font-semibold mb-2">{faq.question}</h3>
+                        <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
                 {/* Pagination - Only show if we have more than one page */}
                 {totalPages > 1 && (
                   <div className="mt-10">
-                    <Pagination>
-                      <PaginationContent>
-                        <PaginationItem>
-                          <PaginationPrevious 
-                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                            className={`${currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} dark:text-gray-300 dark:hover:text-white`}
-                          />
-                        </PaginationItem>
-                        
-                        {[...Array(totalPages)].map((_, i) => {
-                          // Only display a limited number of pagination links on mobile
-                          if (isMobile && totalPages > 5) {
-                            // Always show first, last, current and adjacent pages
-                            if (
-                              i === 0 || 
-                              i === totalPages - 1 || 
-                              i === currentPage - 1 ||
-                              i === currentPage - 2 ||
-                              i === currentPage
-                            ) {
-                              return (
-                                <PaginationItem key={i}>
-                                  <PaginationLink
-                                    isActive={currentPage === i + 1}
-                                    onClick={() => setCurrentPage(i + 1)}
-                                    className="cursor-pointer dark:text-gray-300 dark:hover:text-white"
-                                  >
-                                    {i + 1}
-                                  </PaginationLink>
-                                </PaginationItem>
-                              );
-                            } else if (
-                              (i === 1 && currentPage > 3) || 
-                              (i === totalPages - 2 && currentPage < totalPages - 2)
-                            ) {
-                              // Add ellipsis where needed
-                              return (
-                                <PaginationItem key={i}>
-                                  <span className="px-4 py-2 dark:text-gray-400">...</span>
-                                </PaginationItem>
-                              );
-                            }
-                            return null;
-                          }
-                          
-                          // On desktop, show all pagination links
-                          return (
-                            <PaginationItem key={i}>
-                              <PaginationLink
-                                isActive={currentPage === i + 1}
-                                onClick={() => setCurrentPage(i + 1)}
-                                className="cursor-pointer dark:text-gray-300 dark:hover:text-white"
-                              >
-                                {i + 1}
-                              </PaginationLink>
-                            </PaginationItem>
-                          );
-                        })}
-                        
-                        <PaginationItem>
-                          <PaginationNext 
-                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                            className={`${currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} dark:text-gray-300 dark:hover:text-white`}
-                          />
-                        </PaginationItem>
-                      </PaginationContent>
-                    </Pagination>
+                    <PaginationControls 
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={(page) => setCurrentPage(page)}
+                      siblingCount={1}
+                    />
                   </div>
                 )}
               </>

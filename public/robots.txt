@@ -30,6 +30,14 @@ Allow: /
 User-agent: Googlebot-Image
 Disallow: /assets/high-res/
 
+# Define important pages for crawling priority
+User-agent: *
+Allow: /tools
+Allow: /blog
+Allow: /tools/category/
+Allow: /about
+Allow: /contact
+
 # Allow sitemap
 Sitemap: https://alltopaitools.com/sitemap.xml
 

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Tool } from '@/types/tools';
 import { toast } from '@/components/ui/sonner';
 

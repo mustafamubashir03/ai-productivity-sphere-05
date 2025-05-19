@@ -1,4 +1,5 @@
 
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
@@ -8,13 +9,15 @@ import { CompareProvider } from './context/CompareContext.tsx'
 import './index.css'
 
 createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <HelmetProvider>
-      <BookmarkProvider>
-        <CompareProvider>
-          <App />
-        </CompareProvider>
-      </BookmarkProvider>
-    </HelmetProvider>
-  </BrowserRouter>
+  <React.StrictMode>
+    <BrowserRouter>
+      <HelmetProvider>
+        <BookmarkProvider>
+          <CompareProvider>
+            <App />
+          </CompareProvider>
+        </BookmarkProvider>
+      </HelmetProvider>
+    </BrowserRouter>
+  </React.StrictMode>
 );

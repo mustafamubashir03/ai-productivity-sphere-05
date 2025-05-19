@@ -9,6 +9,12 @@ import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
 import { toast } from "@/components/ui/sonner";
 import { useBookmarks } from "@/context/BookmarkContext";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const SavedToolsPage = () => {
   const { toolBookmarks } = useBookmarks();
@@ -115,6 +121,40 @@ const SavedToolsPage = () => {
             </Link>
           </div>
         )}
+        
+        {/* FAQ Section with Accordion */}
+        <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="text-lg font-semibold">
+                How do I save an AI tool to my collection?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-600 dark:text-gray-300">
+                You can save any AI tool to your collection by clicking the bookmark icon on the tool card or detail page. 
+                Your saved tools will be available in this section for easy access.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger className="text-lg font-semibold">
+                Can I organize my saved tools?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-600 dark:text-gray-300">
+                Currently, you can search through your saved tools. We're working on adding features to create custom 
+                collections and tags for better organization.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger className="text-lg font-semibold">
+                How do I remove tools from my saved collection?
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-600 dark:text-gray-300">
+                To remove a tool from your saved collection, simply click on the bookmark icon again on either the tool card 
+                or the tool's detail page. This will toggle off the bookmark and remove it from your saved tools.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       </div>
     </>
   );

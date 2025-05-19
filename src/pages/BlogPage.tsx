@@ -1,7 +1,6 @@
 
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Clock, Bookmark, BookmarkCheck } from "lucide-react";
-import SEOHead from "@/components/common/SEOHead";
+import { ArrowRight, Clock, Bookmark, BookmarkCheck, Home } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import { useEffect, useState } from "react";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
@@ -9,10 +8,8 @@ import { useBookmarks } from "@/context/BookmarkContext";
 import { toast } from "@/components/ui/sonner";
 import { PaginationControls } from "@/components/ui/pagination";
 import { useBlogs, API_BASE_URL, adaptBlogsResponse } from "@/hooks/use-api";
-import { formatBlogData } from "@/utils/formatters";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
-import { Home } from "lucide-react";
 
 // Define the Blog type based on the API response
 interface Blog {
@@ -221,6 +218,7 @@ const BlogPage = () => {
         title="Blog - Top AI Tools"
         description="Learn about AI productivity tips, top AI tools comparisons, and industry insights to improve your workflow and efficiency."
         canonicalUrl="/blog"
+        image="https://alltopaitools.com/og-image-blog.png"
         structuredData={structuredData}
       />
       
@@ -235,8 +233,8 @@ const BlogPage = () => {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">
-                <Home className="h-4 w-4 mr-1" />
-                Home
+                <Home className="h-4 w-4 mr-1" aria-hidden="true" />
+                <span>Home</span>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -250,22 +248,22 @@ const BlogPage = () => {
           <Link 
             to="/bookmarks" 
             className="flex items-center text-primary hover:underline"
+            aria-label="View your bookmarked articles"
           >
-            <Bookmark className="mr-2 h-4 w-4" /> View Bookmarks
+            <Bookmark className="mr-2 h-4 w-4" aria-hidden="true" /> View Bookmarks
           </Link>
         </div>
 
-        {/* Pagination Controls at Top - Make sure it's always visible */}
-        {!isLoading && blogs && blogs.length > 0 && (
-          <div className="mb-8 flex justify-center">
-            <PaginationControls 
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              siblingCount={1}
-            />
-          </div>
-        )}
+        {/* Pagination Controls at Top - Always visible */}
+        <div className="mb-8 flex justify-center">
+          <PaginationControls 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            siblingCount={1}
+            aria-label="Top pagination"
+          />
+        </div>
         
         <div className="max-w-3xl mx-auto"> {/* Centered container */}
           <div className="grid grid-cols-1 gap-8">
@@ -284,7 +282,7 @@ const BlogPage = () => {
                   <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
                     <img 
                       src={getImageUrl(post.coverImage || post.image || '')} 
-                      alt={post.title} 
+                      alt={`Cover image for article: ${post.title}`} 
                       className="w-full h-48 md:h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -326,7 +324,7 @@ const BlogPage = () => {
                       </Link>
                     </h2>
                     <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-3">
-                      <Clock className="h-3 w-3 mr-1" />
+                      <Clock className="h-3 w-3 mr-1" aria-hidden="true" />
                       <span>{post.readTime || getReadTime(post.content)} min read</span>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
@@ -349,8 +347,9 @@ const BlogPage = () => {
                     <Link 
                       to={`/blog/${post.slug}`} 
                       className="text-primary font-medium flex items-center hover:underline mt-auto"
+                      aria-label={`Read full article: ${post.title}`}
                     >
-                      Read Full Article <ArrowRight className="ml-1 h-4 w-4" />
+                      Read Full Article <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
@@ -364,16 +363,15 @@ const BlogPage = () => {
           </div>
 
           {/* Pagination Controls at Bottom */}
-          {!isLoading && blogs && blogs.length > 0 && (
-            <div className="mt-8 flex justify-center">
-              <PaginationControls 
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                siblingCount={1}
-              />
-            </div>
-          )}
+          <div className="mt-8 flex justify-center">
+            <PaginationControls 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              siblingCount={1}
+              aria-label="Bottom pagination"
+            />
+          </div>
 
           {/* FAQ Section */}
           <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -393,6 +391,20 @@ const BlogPage = () => {
                   We aim to publish new articles weekly to keep you informed about the rapidly evolving AI landscape.
                 </p>
               </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">How can I find AI tools related to my industry?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  You can browse our <Link to="/tools" className="text-primary hover:underline">AI tools directory</Link> and 
+                  filter by industry, use case, or category to find tools tailored to your specific requirements.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Can I suggest a topic for the blog?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Yes! We welcome topic suggestions and feedback. Please visit our <Link to="/contact" className="text-primary hover:underline">contact page</Link> to 
+                  submit your ideas or reach out to our editorial team.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -409,8 +421,12 @@ const BlogPage = () => {
                 type="email" 
                 placeholder="Your email" 
                 className="flex-grow px-4 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+                aria-label="Email for newsletter signup"
               />
-              <button className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-r-lg text-sm">
+              <button 
+                className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-r-lg text-sm"
+                aria-label="Subscribe to newsletter"
+              >
                 Subscribe
               </button>
             </div>

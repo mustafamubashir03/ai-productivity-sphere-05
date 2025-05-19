@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Pencil, Film, Image, Terminal, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SEOHead from "@/components/common/SEOHead";
+import EnhancedSEO from "@/components/common/EnhancedSEO";
 import CategoryCard from "@/components/common/CategoryCard";
 import ToolCard from "@/components/common/ToolCard";
 import { categories } from "@/data/categories";
@@ -88,11 +88,67 @@ const HomePage = () => {
     }
   }, [toolsData, blogData]);
 
+  // Generate homepage structured data
+  const structuredData = [
+    {
+      type: "WebSite" as const,
+      data: {
+        name: "Top AI Tools - Best AI Tools for Productivity",
+        description: "Curated AI tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity at Top AI Tools.",
+        url: "https://alltopaitools.com",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: "https://alltopaitools.com/tools?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        },
+        sameAs: [
+          "https://twitter.com/alltopaitools",
+          "https://www.linkedin.com/company/alltopaitools",
+          "https://www.facebook.com/alltopaitools"
+        ]
+      }
+    },
+    {
+      type: "FAQPage" as const,
+      data: {
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "What is Top AI Tools?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Top AI Tools is a curated collection of the best AI tools for productivity. We help creators, developers, and entrepreneurs find the perfect tools to enhance their workflow and boost efficiency."
+            }
+          },
+          {
+            "@type": "Question",
+            name: "How do I find the right AI tool for my needs?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "You can browse our categorized collection, use our search feature to find specific tools, or apply filters based on pricing, platform, or use case. We also provide detailed reviews and comparisons to help you make informed decisions."
+            }
+          },
+          {
+            "@type": "Question",
+            name: "Are all the AI tools free?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "We feature a mix of free, freemium, and premium tools. Each tool listing clearly indicates its pricing model, so you can easily find options that fit your budget."
+            }
+          }
+        ]
+      }
+    }
+  ];
+
   return (
     <>
-      <SEOHead
+      <EnhancedSEO
         title="Top AI Tools - Best AI Tools for Productivity"
         description="Curated AI tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity at Top AI Tools."
+        canonicalUrl="/"
+        image="https://alltopaitools.com/og-image-home.png"
+        structuredData={structuredData}
       />
       
       {/* Hero Section */}
@@ -111,11 +167,11 @@ const HomePage = () => {
                 Curated tools for creators, developers, and entrepreneurs – all in one place.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{animationDelay: "0.4s"}}>
-                <Button size="lg" className="w-full sm:w-auto" onClick={scrollToTools}>
+                <Button size="lg" className="w-full sm:w-auto" onClick={scrollToTools} aria-label="Browse our collection of top AI tools">
                   Explore Top AI Tools
                 </Button>
                 <Link to="/blog">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto dark:border-gray-700 dark:text-gray-200">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto dark:border-gray-700 dark:text-gray-200" aria-label="Read our AI tools blog articles">
                     Read Our Blogs
                   </Button>
                 </Link>
@@ -133,35 +189,35 @@ const HomePage = () => {
                   {/* Orbital Tool Cards */}
                   <div className="absolute left-1/2 top-0 -translate-x-1/2 transform -translate-y-5 animate-float" style={{animationDelay: "0s"}}>
                     <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
-                      <Pencil className="w-8 h-8 text-purple-500 mb-2" />
+                      <Pencil className="w-8 h-8 text-purple-500 mb-2" aria-hidden="true" />
                       <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Writing</span>
                     </div>
                   </div>
                   
                   <div className="absolute right-5 top-1/4 transform animate-float" style={{animationDelay: "0.5s"}}>
                     <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
-                      <Film className="w-8 h-8 text-blue-500 mb-2" />
+                      <Film className="w-8 h-8 text-blue-500 mb-2" aria-hidden="true" />
                       <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Video</span>
                     </div>
                   </div>
                   
                   <div className="absolute left-5 top-1/4 transform animate-float" style={{animationDelay: "1s"}}>
                     <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
-                      <Image className="w-8 h-8 text-green-500 mb-2" />
+                      <Image className="w-8 h-8 text-green-500 mb-2" aria-hidden="true" />
                       <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Design</span>
                     </div>
                   </div>
                   
                   <div className="absolute right-10 bottom-10 transform animate-float" style={{animationDelay: "1.5s"}}>
                     <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
-                      <Terminal className="w-8 h-8 text-amber-500 mb-2" />
+                      <Terminal className="w-8 h-8 text-amber-500 mb-2" aria-hidden="true" />
                       <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Coding</span>
                     </div>
                   </div>
                   
                   <div className="absolute left-10 bottom-10 transform animate-float" style={{animationDelay: "2s"}}>
                     <div className="w-24 h-24 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg flex flex-col items-center justify-center p-3 border border-white/20 dark:border-gray-700/30">
-                      <Bot className="w-8 h-8 text-red-500 mb-2" />
+                      <Bot className="w-8 h-8 text-red-500 mb-2" aria-hidden="true" />
                       <span className="text-xs font-medium text-gray-800 dark:text-gray-200">Automation</span>
                     </div>
                   </div>
@@ -208,8 +264,9 @@ const HomePage = () => {
             <Link 
               to="/tools" 
               className="text-primary font-medium flex items-center hover:underline"
+              aria-label="View all AI tools"
             >
-              View All Tools <ArrowRight className="ml-1 h-4 w-4" />
+              View All Tools <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
           
@@ -239,8 +296,9 @@ const HomePage = () => {
             <Link 
               to="/blog" 
               className="text-primary font-medium flex items-center hover:underline"
+              aria-label="View all blog articles"
             >
-              Read All Articles <ArrowRight className="ml-1 h-4 w-4" />
+              Read All Articles <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
           
@@ -254,12 +312,13 @@ const HomePage = () => {
                 <div key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover border border-gray-100 dark:border-gray-700">
                   <img 
                     src={post.image} 
-                    alt={post.title} 
+                    alt={`Cover image for article: ${post.title}`}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = "/placeholder.svg";
                     }}
+                    loading="lazy"
                   />
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2 dark:text-white">
@@ -275,8 +334,9 @@ const HomePage = () => {
                     <Link 
                       to={`/blog/${post.slug}`} 
                       className="text-primary font-medium flex items-center hover:underline"
+                      aria-label={`Read more about ${post.title}`}
                     >
-                      Read More <ArrowRight className="ml-1 h-4 w-4" />
+                      Read More <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
@@ -286,6 +346,35 @@ const HomePage = () => {
                 <p className="text-gray-500 dark:text-gray-400">No blog posts found</p>
               </div>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section for SEO */}
+      <section className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl font-bold mb-6 text-center dark:text-white">Frequently Asked Questions</h2>
+            <div className="space-y-6">
+              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold mb-2 dark:text-white">What is Top AI Tools?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Top AI Tools is a curated collection of the best AI tools for productivity. We help creators, developers, and entrepreneurs find the perfect tools to enhance their workflow and boost efficiency.
+                </p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold mb-2 dark:text-white">How do I find the right AI tool for my needs?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  You can browse our <Link to="/tools" className="text-primary hover:underline">categorized collection</Link>, use our search feature to find specific tools, or apply filters based on pricing, platform, or use case. We also provide detailed reviews and comparisons to help you make informed decisions.
+                </p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold mb-2 dark:text-white">Are all the AI tools free?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  We feature a mix of free, freemium, and premium tools. Each tool listing clearly indicates its pricing model, so you can easily find options that fit your budget.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -313,7 +402,7 @@ const HomePage = () => {
             Start exploring our collection of top AI productivity tools today and find the perfect solutions for your workflow.
           </p>
           <Link to="/tools">
-            <Button variant="secondary" size="lg">
+            <Button variant="secondary" size="lg" aria-label="Browse all AI tools in our collection">
               Explore All AI Tools
             </Button>
           </Link>

@@ -10,7 +10,7 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-User-agent: Yandexbot
+User-agent: Slurp
 Allow: /
 
 User-agent: DuckDuckBot
@@ -26,10 +26,6 @@ Allow: /
 User-agent: LinkedInBot
 Allow: /
 
-# Prevent media crawlers from crawling high-resolution images
-User-agent: Googlebot-Image
-Disallow: /assets/high-res/
-
 # Define important pages for crawling priority
 User-agent: *
 Allow: /tools
@@ -38,8 +34,8 @@ Allow: /tools/category/
 Allow: /about
 Allow: /contact
 
-# Allow sitemap
+# Sitemap
 Sitemap: https://alltopaitools.com/sitemap.xml
 
-# Crawl delay for rate limiting
+# Set a reasonable crawl rate to ensure all content is indexed
 Crawl-delay: 1

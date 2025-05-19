@@ -403,6 +403,8 @@ const ToolsPage = () => {
         description={`Discover top ${title.toLowerCase()} to enhance your productivity and workflow efficiency.`}
         canonicalUrl={activeCategory ? `/tools/category/${activeCategory}` : "/tools"}
         structuredData={structuredData}
+        image={`https://alltopaitools.com/og-image-tools${activeCategory ? '-' + activeCategory : ''}.png`}
+        ogType="website"
       />
       
       <PageHeader title={title} description={description} />
@@ -413,8 +415,8 @@ const ToolsPage = () => {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">
-                <Home className="h-4 w-4 mr-1" />
-                Home
+                <Home className="h-4 w-4 mr-1" aria-hidden="true" />
+                <span>Home</span>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -442,13 +444,14 @@ const ToolsPage = () => {
         <div className="mb-8">
           <form onSubmit={handleSearch} className="max-w-md mx-auto mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" aria-hidden="true" />
               <Input
                 type="text"
                 placeholder="Search for tools..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-4 py-2 dark:bg-gray-800 dark:text-white dark:border-gray-700 shadow-sm"
+                aria-label="Search for tools"
               />
             </div>
           </form>
@@ -464,6 +467,7 @@ const ToolsPage = () => {
                 "mb-2 dark:border-gray-700 dark:text-gray-200",
                 "hover:bg-primary/90 transition-colors"
               )}
+              aria-pressed={activeCategory === null}
             >
               All
             </Button>
@@ -477,6 +481,7 @@ const ToolsPage = () => {
                   "mb-2 dark:border-gray-700 dark:text-gray-200",
                   "hover:bg-primary/90 transition-colors"
                 )}
+                aria-pressed={activeCategory === cat.slug}
               >
                 {cat.name}
               </Button>
@@ -492,6 +497,7 @@ const ToolsPage = () => {
               totalPages={totalPages}
               onPageChange={(page) => setCurrentPage(page)}
               siblingCount={1}
+              aria-label="Top pagination"
             />
           </div>
         )}
@@ -569,6 +575,7 @@ const ToolsPage = () => {
                       totalPages={totalPages}
                       onPageChange={(page) => setCurrentPage(page)}
                       siblingCount={1}
+                      aria-label="Bottom pagination"
                     />
                   </div>
                 )}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
@@ -7,7 +6,7 @@ import ToolCard from "@/components/common/ToolCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationControls } from "@/components/ui/pagination";
-import { Search, Home } from "lucide-react";
+import { Search, Home, ChevronDown } from "lucide-react";
 import { categories, getCategoryBySlug } from "@/data/categories";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import CompareBar from "@/components/tools/CompareBar";
@@ -21,7 +20,8 @@ import { adaptToolsResponse } from "@/hooks/use-api";
 import { formatToolsData } from "@/utils/formatters";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { getBlogPosts } from "@/data/blog";
+import { blogPosts, getBlogPosts } from "@/data/blog";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const TOOLS_PER_PAGE = 9;
 
@@ -391,11 +391,14 @@ const ToolsPage = () => {
 
   // Get random blog posts from our own blog data
   const getRelatedLinks = () => {
-    const blogPosts = getBlogPosts().slice(0, 10); // Get first 10 blog posts
+    // Get all blog posts from our own data source
+    const allBlogPosts = getBlogPosts();
+    
     // Shuffle array randomly
-    const shuffled = [...blogPosts].sort(() => 0.5 - Math.random());
+    const shuffled = [...allBlogPosts].sort(() => 0.5 - Math.random());
+    
     // Return 3-5 random blog posts
-    return shuffled.slice(0, Math.min(5, shuffled.length)).map(post => ({
+    return shuffled.slice(0, Math.floor(Math.random() * 3) + 3).map(post => ({
       title: post.title,
       url: `/blog/${post.slug}`
     }));
@@ -461,33 +464,35 @@ const ToolsPage = () => {
             </div>
           </form>
           
-          {/* Category Tabs - using shadcn Tabs for better UI */}
-          <Tabs 
-            defaultValue={activeCategory || "all"} 
-            value={activeCategory || "all"}
-            onValueChange={handleCategoryTabChange}
-            className="w-full"
-          >
-            <TabsList className="w-full max-w-full overflow-x-auto flex flex-nowrap justify-start px-2 py-1 mb-4 bg-muted/80">
-              <TabsTrigger 
-                value="all" 
-                className="whitespace-nowrap"
-              >
-                All Tools
-              </TabsTrigger>
-
-              {categories.map((cat) => (
+          {/* Category Tabs - Fixed to be fully responsive */}
+          <div className="w-full max-w-full mb-4">
+            <Tabs 
+              defaultValue={activeCategory || "all"} 
+              value={activeCategory || "all"}
+              onValueChange={handleCategoryTabChange}
+              className="w-full"
+            >
+              <TabsList className="w-full h-auto flex flex-wrap justify-start px-2 py-1 mb-4 bg-muted/80">
                 <TabsTrigger 
-                  key={cat.id} 
-                  value={cat.slug} 
-                  className="whitespace-nowrap flex items-center gap-1"
+                  value="all" 
+                  className="m-1 whitespace-nowrap"
                 >
-                  <cat.LucideIcon className="h-4 w-4" />
-                  <span>{cat.name}</span>
+                  All Tools
                 </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+
+                {categories.map((cat) => (
+                  <TabsTrigger 
+                    key={cat.id} 
+                    value={cat.slug} 
+                    className="m-1 whitespace-nowrap flex items-center gap-1"
+                  >
+                    <cat.LucideIcon className="h-4 w-4" />
+                    <span>{cat.name}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
         
         {/* Pagination at Top - Always visible */}
@@ -555,17 +560,21 @@ const ToolsPage = () => {
                   </ul>
                 </div>
                 
-                {/* FAQ Section */}
+                {/* FAQ Section - Using Accordion for collapsible Q&A */}
                 <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
                   <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
-                  <div className="space-y-6">
+                  <Accordion type="single" collapsible className="space-y-2">
                     {getFaqData().map((faq, index) => (
-                      <div key={index}>
-                        <h3 className="text-lg font-semibold mb-2">{faq.question}</h3>
-                        <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
-                      </div>
+                      <AccordionItem key={index} value={`item-${index}`} className="border-b border-gray-200 dark:border-gray-700">
+                        <AccordionTrigger className="text-lg font-semibold py-4 hover:no-underline">
+                          {faq.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2 pb-4">
+                          {faq.answer}
+                        </AccordionContent>
+                      </AccordionItem>
                     ))}
-                  </div>
+                  </Accordion>
                 </div>
                 
                 {/* Pagination - Only show if we have more than one page */}

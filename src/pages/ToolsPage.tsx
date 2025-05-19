@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
@@ -7,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationControls } from "@/components/ui/pagination";
 import { Search, Home } from "lucide-react";
-import { categories } from "@/data/categories";
+import { categories, getCategoryBySlug } from "@/data/categories";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import CompareBar from "@/components/tools/CompareBar";
 import FilterSidebar from "@/components/tools/FilterSidebar";
@@ -19,6 +20,8 @@ import { Tool, ToolsApiResponse } from "@/types/tools";
 import { adaptToolsResponse } from "@/hooks/use-api";
 import { formatToolsData } from "@/utils/formatters";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { getBlogPosts } from "@/data/blog";
 
 const TOOLS_PER_PAGE = 9;
 
@@ -140,6 +143,17 @@ const ToolsPage = () => {
     
     // Update the URL without causing a page refresh
     const path = slug ? `/tools/category/${slug}` : '/tools';
+    navigate(path, { replace: true });
+  };
+  
+  const handleCategoryTabChange = (value: string) => {
+    const categorySlug = value === "all" ? null : value;
+    setActiveCategory(categorySlug);
+    setActiveSubcategory(null);
+    setCurrentPage(1);
+    
+    // Update the URL
+    const path = categorySlug ? `/tools/category/${categorySlug}` : '/tools';
     navigate(path, { replace: true });
   };
   
@@ -375,25 +389,16 @@ const ToolsPage = () => {
     }
   }, [categorySlug]);
 
-  // Find related blog posts based on category or tags
+  // Get random blog posts from our own blog data
   const getRelatedLinks = () => {
-    // This is just a placeholder - in a real implementation, you would fetch this data
-    // from your actual blogs data source or API
-    if (activeCategory) {
-      const category = categories.find(cat => cat.slug === activeCategory);
-      if (category) {
-        return [
-          { title: `Top 10 ${category.name} for Beginners`, url: `/blog/top-10-${activeCategory}-for-beginners` },
-          { title: `How to Choose the Right ${category.name}`, url: `/blog/how-to-choose-${activeCategory}` }
-        ];
-      }
-    }
-    
-    return [
-      { title: "Ultimate Guide to AI Tools", url: "/blog/ultimate-guide-to-ai-tools" },
-      { title: "2023 AI Tools Roundup", url: "/blog/2023-ai-tools-roundup" },
-      { title: "Free vs Paid AI Tools", url: "/blog/free-vs-paid-ai-tools" }
-    ];
+    const blogPosts = getBlogPosts().slice(0, 10); // Get first 10 blog posts
+    // Shuffle array randomly
+    const shuffled = [...blogPosts].sort(() => 0.5 - Math.random());
+    // Return 3-5 random blog posts
+    return shuffled.slice(0, Math.min(5, shuffled.length)).map(post => ({
+      title: post.title,
+      url: `/blog/${post.slug}`
+    }));
   };
 
   return (
@@ -456,37 +461,33 @@ const ToolsPage = () => {
             </div>
           </form>
           
-          {/* Category Filters */}
-          <div className="flex flex-wrap gap-2 justify-center mb-8">
-            <Button
-              key="all"
-              variant={activeCategory === null ? "default" : "outline"}
-              onClick={(e) => handleCategoryClick(e, null)}
-              type="button"
-              className={cn(
-                "mb-2 dark:border-gray-700 dark:text-gray-200",
-                "hover:bg-primary/90 transition-colors"
-              )}
-              aria-pressed={activeCategory === null}
-            >
-              All
-            </Button>
-            {categories.map((cat) => (
-              <Button
-                key={cat.id}
-                variant={activeCategory === cat.slug ? "default" : "outline"}
-                onClick={(e) => handleCategoryClick(e, cat.slug)}
-                type="button"
-                className={cn(
-                  "mb-2 dark:border-gray-700 dark:text-gray-200",
-                  "hover:bg-primary/90 transition-colors"
-                )}
-                aria-pressed={activeCategory === cat.slug}
+          {/* Category Tabs - using shadcn Tabs for better UI */}
+          <Tabs 
+            defaultValue={activeCategory || "all"} 
+            value={activeCategory || "all"}
+            onValueChange={handleCategoryTabChange}
+            className="w-full"
+          >
+            <TabsList className="w-full max-w-full overflow-x-auto flex flex-nowrap justify-start px-2 py-1 mb-4 bg-muted/80">
+              <TabsTrigger 
+                value="all" 
+                className="whitespace-nowrap"
               >
-                {cat.name}
-              </Button>
-            ))}
-          </div>
+                All Tools
+              </TabsTrigger>
+
+              {categories.map((cat) => (
+                <TabsTrigger 
+                  key={cat.id} 
+                  value={cat.slug} 
+                  className="whitespace-nowrap flex items-center gap-1"
+                >
+                  <cat.LucideIcon className="h-4 w-4" />
+                  <span>{cat.name}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
         
         {/* Pagination at Top - Always visible */}
@@ -533,7 +534,7 @@ const ToolsPage = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                   {paginatedTools.map((tool) => (
-                    <ToolCard key={tool._id} tool={tool} />
+                    <ToolCard key={tool._id || tool.id} tool={tool} />
                   ))}
                 </div>
                 

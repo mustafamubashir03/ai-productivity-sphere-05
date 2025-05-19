@@ -1,5 +1,7 @@
+
 import { Tool } from "@/types/tools";
 import { adaptToolsToInternal } from "@/utils/dataAdapters";
+import { categories } from "./categories";
 
 const rawTools = [
   {
@@ -190,6 +192,51 @@ const rawTools = [
   },
   {
     id: "5",
+    name: "ChatMaster",
+    slug: "chatmaster",
+    logo: "/placeholder.svg",
+    category: "ai-chatbots",
+    description: "Enterprise-grade conversational AI platform for building sophisticated customer service and sales chatbots.",
+    features: [
+      "Natural language understanding",
+      "Multi-channel deployment",
+      "Intent recognition",
+      "Seamless human handoff",
+      "Conversation analytics"
+    ],
+    useCases: [
+      "Customer support automation",
+      "Lead qualification",
+      "Internal knowledge base",
+      "Appointment scheduling"
+    ],
+    pricing: "$79/month for business plan, enterprise pricing available",
+    websiteUrl: "https://example.com/chatmaster",
+    rating: 4.7,
+    industryFit: ["marketers", "customer-support"],
+    useCase: ["customer-service"],
+    editorVerdict: "ChatMaster strikes an excellent balance between sophisticated AI capabilities and ease of implementation. The natural language understanding is among the best we've tested, recognizing complex queries and maintaining context throughout conversations. The analytics dashboard provides actionable insights for continuous improvement.",
+    relatedTools: ["1", "6"],
+    relatedBlogs: ["1"],
+    tags: ["Chatbots", "Customer Service", "AI"],
+    lastUpdated: "2025-05-03",
+    systemRequirements: "Web-based with API access",
+    apiAvailable: true,
+    integratedWith: ["Salesforce", "Zendesk", "Slack", "Microsoft Teams"],
+    testimonials: [
+      {
+        name: "Michael Roberts",
+        company: "Global Solutions Inc.",
+        comment: "ChatMaster has reduced our customer wait times by 87% while maintaining a 92% satisfaction rate."
+      }
+    ],
+    screenshots: [
+      "/placeholder.svg", 
+      "/placeholder.svg"
+    ]
+  },
+  {
+    id: "6",
     name: "WorkflowWizard",
     slug: "workflowwizard",
     logo: "/placeholder.svg",
@@ -235,7 +282,7 @@ const rawTools = [
     ]
   },
   {
-    id: "6",
+    id: "7",
     name: "AutoTask",
     slug: "autotask",
     logo: "/placeholder.svg",
@@ -281,7 +328,24 @@ const rawTools = [
   }
 ];
 
-export const tools: Tool[] = adaptToolsToInternal(rawTools);
+// Ensure all category slugs in tools match our defined categories
+const validateAndUpdateTools = () => {
+  const validCategorySlugs = categories.map(cat => cat.slug);
+  
+  return rawTools.map(tool => {
+    // Check if the tool's category exists in our categories
+    if (!validCategorySlugs.includes(tool.category)) {
+      console.warn(`Tool ${tool.name} has invalid category: ${tool.category}`);
+      // Assign a default category
+      return { ...tool, category: 'ai-chatbots' };
+    }
+    return tool;
+  });
+};
+
+// Apply validation to ensure tools have valid categories
+const validatedRawTools = validateAndUpdateTools();
+export const tools: Tool[] = adaptToolsToInternal(validatedRawTools);
 
 export const getTrendingTools = () => {
   return tools.filter(tool => tool.trending === true);
@@ -300,7 +364,7 @@ export const getToolsByIndustry = (industrySlug: string) => {
 };
 
 export const getToolsByUseCase = (useCaseSlug: string) => {
-  return tools.filter(tool => tool.useCases && tool.useCases.includes(useCaseSlug));
+  return tools.filter(tool => tool.useCase && tool.useCase.includes(useCaseSlug));
 };
 
 // Find similar tools based on category and tags

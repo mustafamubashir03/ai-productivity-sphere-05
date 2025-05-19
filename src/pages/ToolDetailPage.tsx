@@ -5,7 +5,7 @@ import { ArrowLeft, BarChart2, Bookmark, BookmarkCheck, ExternalLink, ThumbsUp, 
 import { Button } from "@/components/ui/button";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import { getToolBySlug, getRelatedTools } from "@/data/tools";
-import { getBlogPostsRelatedToTool } from "@/data/blog";
+import { getBlogPosts } from "@/data/blog";
 import { useBookmarks } from "@/context/BookmarkContext";
 import { useCompare } from "@/context/CompareContext";
 import ToolDetailSkeleton from "@/components/skeletons/ToolDetailSkeleton";
@@ -43,8 +43,10 @@ const ToolDetailPage = () => {
           const related = getRelatedTools(apiToolData._id);
           setRelatedTools(related);
           
-          const relatedBlogPosts = getBlogPostsRelatedToTool(apiToolData._id);
-          setRelatedPosts(relatedBlogPosts);
+          // Get random blog posts instead of empty relatedPosts
+          const allBlogPosts = getBlogPosts();
+          const shuffledPosts = [...allBlogPosts].sort(() => 0.5 - Math.random());
+          setRelatedPosts(shuffledPosts.slice(0, 3));
         }
         
         // Get votes from localStorage
@@ -68,8 +70,10 @@ const ToolDetailPage = () => {
           const related = getRelatedTools(toolId);
           setRelatedTools(related);
           
-          const relatedBlogPosts = getBlogPostsRelatedToTool(toolId);
-          setRelatedPosts(relatedBlogPosts);
+          // Get random blog posts instead of empty relatedPosts
+          const allBlogPosts = getBlogPosts();
+          const shuffledPosts = [...allBlogPosts].sort(() => 0.5 - Math.random());
+          setRelatedPosts(shuffledPosts.slice(0, 3));
           
           // Get votes from localStorage
           const savedUpvotes = localStorage.getItem(`tool-${toolId}-upvotes`);

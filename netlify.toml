@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "https://www.topratedai.biovasurgicals.com/api/sitemap.xml"
+  status = 200
+  force = true

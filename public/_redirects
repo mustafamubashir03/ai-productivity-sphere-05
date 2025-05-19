@@ -1,1 +1,6 @@
-/*    /index.html   200
+# Serve backend sitemap directly
+/sitemap.xml    https://www.topratedai.biovasurgicals.com/api/sitemap.xml    200
+
+# Catch-all rule for SPA (React)
+# This must come AFTER the above rule
+/*    /index.html    200

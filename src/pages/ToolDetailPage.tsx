@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, BarChart2, Bookmark, BookmarkCheck, ExternalLink, ThumbsUp, ThumbsDown, Star } from "lucide-react";
@@ -63,7 +64,7 @@ const ToolDetailPage = () => {
           setTool(localTool);
           
           // Get related data
-          const toolId = localTool._id;
+          const toolId = localTool._id || localTool.id || '';
           const related = getRelatedTools(toolId);
           setRelatedTools(related);
           
@@ -100,7 +101,7 @@ const ToolDetailPage = () => {
           // Add to front of array and keep only last 10
           const updatedRecentlyViewed = [
             {
-              _id: tool._id,
+              _id: tool._id || tool.id,
               name: tool.name,
               slug: tool.slug,
               logo: tool.logo,
@@ -122,7 +123,7 @@ const ToolDetailPage = () => {
   const handleBookmark = () => {
     if (!tool) return;
     
-    const toolId = tool._id;
+    const toolId = tool._id || tool.id || '';
     if (isBookmarked(toolId)) {
       removeBookmark(toolId);
       toast.success("Tool removed from bookmarks");
@@ -135,7 +136,7 @@ const ToolDetailPage = () => {
   const handleCompare = () => {
     if (!tool) return;
     
-    const toolId = tool._id;
+    const toolId = tool._id || tool.id || '';
     if (isInCompare(toolId)) {
       removeFromCompare(toolId);
     } else {
@@ -146,7 +147,7 @@ const ToolDetailPage = () => {
   const handleVote = (voteType: 'up' | 'down') => {
     if (!tool) return;
     
-    const toolId = tool._id;
+    const toolId = tool._id || tool.id || '';
     if (userVote === voteType) {
       // User is un-voting
       if (voteType === 'up') {
@@ -375,14 +376,14 @@ const ToolDetailPage = () => {
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Similar Tools You Might Like</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {relatedTools.map(relatedTool => (
-                    <ToolCard key={relatedTool._id} tool={relatedTool} />
+                    <ToolCard key={relatedTool._id || relatedTool.id} tool={relatedTool} />
                   ))}
                 </div>
               </div>
             )}
             
             {/* Related Blog Posts */}
-            {relatedPosts.length > 0 && (
+            {relatedPosts && relatedPosts.length > 0 ? (
               <div className="mt-12">
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Read More About {tool.name}</h2>
                 <div className="space-y-4">
@@ -396,6 +397,16 @@ const ToolDetailPage = () => {
                       <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{post.excerpt}</p>
                     </Link>
                   ))}
+                </div>
+              </div>
+            ) : (
+              <div className="mt-12">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Related Resources</h2>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg text-center">
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">Check out our blog for more information about AI tools like {tool.name}</p>
+                  <Link to="/blog">
+                    <Button variant="outline">Browse Blog Posts</Button>
+                  </Link>
                 </div>
               </div>
             )}
@@ -423,7 +434,7 @@ const ToolDetailPage = () => {
                     className="flex-1 dark:border-gray-700"
                     onClick={handleBookmark}
                   >
-                    {isBookmarked(tool._id) ? (
+                    {isBookmarked(tool._id || tool.id || '') ? (
                       <>
                         <BookmarkCheck className="mr-2 h-4 w-4" /> Saved
                       </>
@@ -440,7 +451,7 @@ const ToolDetailPage = () => {
                     onClick={handleCompare}
                   >
                     <BarChart2 className="mr-2 h-4 w-4" /> 
-                    {isInCompare(tool._id) ? 'Remove Compare' : 'Compare'}
+                    {isInCompare(tool._id || tool.id || '') ? 'Remove Compare' : 'Compare'}
                   </Button>
                 </div>
               </div>

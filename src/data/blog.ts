@@ -281,3 +281,8 @@ export const getBlogPostsRelatedToTool = (toolId: string) => {
     post.relatedTools && post.relatedTools.includes(toolId)
   );
 };
+
+// Add the missing getBlogPosts function
+export const getBlogPosts = () => {
+  return blogPosts;
+};

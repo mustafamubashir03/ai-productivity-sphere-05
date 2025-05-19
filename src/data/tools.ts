@@ -1,4 +1,3 @@
-
 import { Tool } from "@/types/tools";
 import { adaptToolsToInternal } from "@/utils/dataAdapters";
 import { categories } from "./categories";
@@ -364,7 +363,11 @@ export const getToolsByIndustry = (industrySlug: string) => {
 };
 
 export const getToolsByUseCase = (useCaseSlug: string) => {
-  return tools.filter(tool => tool.useCase && tool.useCase.includes(useCaseSlug));
+  return tools.filter(tool => tool.useCases && 
+    (Array.isArray(tool.useCases) ? 
+      tool.useCases.includes(useCaseSlug) : 
+      false)
+  );
 };
 
 // Find similar tools based on category and tags

@@ -1,6 +1,5 @@
-
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Clock, Bookmark, BookmarkCheck, Home } from "lucide-react";
+import { ArrowRight, Clock, Bookmark, BookmarkCheck, Home, Images } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import { useEffect, useState } from "react";
 import BlogCardSkeleton from "@/components/skeletons/BlogCardSkeleton";
@@ -10,6 +9,8 @@ import { PaginationControls } from "@/components/ui/pagination";
 import { useBlogs, API_BASE_URL, adaptBlogsResponse } from "@/hooks/use-api";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 // Define the Blog type based on the API response
 interface Blog {
@@ -279,17 +280,24 @@ const BlogPage = () => {
                   key={post._id}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row"
                 >
-                  <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
-                    <img 
-                      src={getImageUrl(post.coverImage || post.image || '')} 
-                      alt={`Cover image for article: ${post.title}`} 
-                      className="w-full h-48 md:h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = "/placeholder.svg";
-                      }}
-                      loading="lazy"
-                    />
+                  <div className="md:w-2/5 lg:w-1/3 relative">
+                    <AspectRatio ratio={16/9} className="h-full w-full">
+                      <img 
+                        src={getImageUrl(post.coverImage || post.image || '')} 
+                        alt={`Cover image for article: ${post.title}`} 
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/placeholder.svg";
+                        }}
+                        loading="lazy"
+                      />
+                    </AspectRatio>
+                    {!post.coverImage && !post.image && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
+                        <Images className="h-12 w-12 text-gray-400" aria-hidden="true" />
+                      </div>
+                    )}
                   </div>
                   <div className="md:w-3/5 lg:w-2/3 p-5 flex flex-col">
                     <div className="flex items-center justify-between mb-1">
@@ -373,39 +381,50 @@ const BlogPage = () => {
             />
           </div>
 
-          {/* FAQ Section */}
+          {/* FAQ Section with Accordions */}
           <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
             <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">What kind of AI productivity tips can I find on the Top AI Tools blog?</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="text-lg font-semibold">
+                  What kind of AI productivity tips can I find on the Top AI Tools blog?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 dark:text-gray-300">
                   Our blog covers a wide range of AI productivity topics including tool comparisons, step-by-step guides, 
                   industry insights, and tips for maximizing efficiency with AI tools across various industries and use cases.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">How often is the Top AI Tools blog updated?</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="text-lg font-semibold">
+                  How often is the Top AI Tools blog updated?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 dark:text-gray-300">
                   We regularly update our blog with fresh content about the latest AI tools and productivity strategies. 
                   We aim to publish new articles weekly to keep you informed about the rapidly evolving AI landscape.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">How can I find AI tools related to my industry?</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-3">
+                <AccordionTrigger className="text-lg font-semibold">
+                  How can I find AI tools related to my industry?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 dark:text-gray-300">
                   You can browse our <Link to="/tools" className="text-primary hover:underline">AI tools directory</Link> and 
                   filter by industry, use case, or category to find tools tailored to your specific requirements.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Can I suggest a topic for the blog?</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-4">
+                <AccordionTrigger className="text-lg font-semibold">
+                  Can I suggest a topic for the blog?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 dark:text-gray-300">
                   Yes! We welcome topic suggestions and feedback. Please visit our <Link to="/contact" className="text-primary hover:underline">contact page</Link> to 
                   submit your ideas or reach out to our editorial team.
-                </p>
-              </div>
-            </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
 
           {/* Minimal newsletter signup at bottom */}

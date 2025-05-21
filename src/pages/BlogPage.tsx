@@ -281,11 +281,11 @@ const BlogPage = () => {
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row"
                 >
                   <div className="md:w-2/5 lg:w-1/3 relative">
-                    <AspectRatio ratio={16/9} className="h-full w-full">
+                    <AspectRatio ratio={16/9} autoSize className="h-full w-full">
                       <img 
                         src={getImageUrl(post.coverImage || post.image || '')} 
                         alt={`Cover image for article: ${post.title}`} 
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        className="w-full h-auto object-contain transition-transform duration-300 hover:scale-105"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = "/placeholder.svg";
@@ -299,6 +299,7 @@ const BlogPage = () => {
                       </div>
                     )}
                   </div>
+                  {/* Post content */}
                   <div className="md:w-3/5 lg:w-2/3 p-5 flex flex-col">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs text-gray-500 dark:text-gray-400">

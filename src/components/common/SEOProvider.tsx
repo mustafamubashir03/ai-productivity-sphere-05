@@ -6,7 +6,7 @@ interface SEOProviderProps {
 }
 
 const SEOProvider = ({ children }: SEOProviderProps) => {
-  // Define the base URL for your logo - ensure this path is correct
+  // Define the base URL for your logo - use your favicon.svg
   const logoUrl = "https://alltopaitools.com/favicon.svg";
   
   // Organization structured data for Google Search
@@ -46,6 +46,10 @@ const SEOProvider = ({ children }: SEOProviderProps) => {
         <script type="application/ld+json">
           {JSON.stringify(websiteSchema)}
         </script>
+        
+        {/* Additional head tags to ensure favicon is properly recognized */}
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
       </Helmet>
       {children}
     </>

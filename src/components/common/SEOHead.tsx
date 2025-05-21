@@ -16,7 +16,7 @@ const SEOHead = ({
   title, 
   description, 
   canonicalUrl, 
-  image = "/placeholder.svg",
+  image = "/favicon.svg",
   ogType = "website",
   noIndex = false,
   twitterCardType = "summary_large_image",
@@ -63,6 +63,10 @@ const SEOHead = ({
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       <meta name="theme-color" content="#6366f1" />
       {author && <meta name="author" content={author} />}
+      
+      {/* Favicon links */}
+      <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      <link rel="apple-touch-icon" href="/favicon.svg" />
       
       {/* Performance optimizations */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />

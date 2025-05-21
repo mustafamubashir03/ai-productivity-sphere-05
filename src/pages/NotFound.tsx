@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Home, ArrowRight, Search } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
@@ -21,6 +20,7 @@ const NotFound = () => {
       <SEOHead 
         title="Page Not Found - Top AI Tools"
         description="The page you're looking for doesn't exist or has been moved."
+        image="/favicon.svg"
       />
       
       <div className="container mx-auto px-4 py-20">

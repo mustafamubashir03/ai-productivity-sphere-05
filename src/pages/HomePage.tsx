@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Pencil, Film, Image, Terminal, Bot } from "lucide-react";
@@ -88,7 +87,7 @@ const HomePage = () => {
     }
   }, [toolsData, blogData]);
 
-  // Generate homepage structured data
+  // Update the structuredData array in the HomePage component
   const structuredData = [
     {
       type: "WebSite" as const,
@@ -102,9 +101,9 @@ const HomePage = () => {
           "query-input": "required name=search_term_string"
         },
         sameAs: [
-          "https://twitter.com/alltopaitools",
-          "https://www.linkedin.com/company/alltopaitools",
-          "https://www.facebook.com/alltopaitools"
+          "https://twitter.com/topaitools",
+          "https://www.linkedin.com/company/topaitools",
+          "https://www.facebook.com/topaitools"
         ]
       }
     },
@@ -147,7 +146,7 @@ const HomePage = () => {
         title="Top AI Tools - Best AI Tools for Productivity"
         description="Curated AI tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity at Top AI Tools."
         canonicalUrl="/"
-        image="https://alltopaitools.com/og-image-home.png"
+        image="https://alltopaitools.com/favicon.svg"
         structuredData={structuredData}
       />
       

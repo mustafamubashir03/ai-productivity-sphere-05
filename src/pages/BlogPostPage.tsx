@@ -1,6 +1,7 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Bookmark, BookmarkCheck, Calendar, Clock, Share, Home, Images } from "lucide-react";
+import { ArrowLeft, Bookmark, BookmarkCheck, Calendar, Clock, Share, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import { useBookmarks } from "@/context/BookmarkContext";
@@ -8,8 +9,6 @@ import { toast } from "@/components/ui/sonner";
 import BlogDetailSkeleton from "@/components/skeletons/BlogDetailSkeleton";
 import { useBlog, useTool, API_BASE_URL } from "@/hooks/use-api";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -288,28 +287,19 @@ const BlogPostPage = () => {
           </div>
         </div>
 
-        {/* Featured Image with AspectRatio */}
+        {/* Featured Image */}
         <div className="mb-8 relative">
-          <AspectRatio ratio={21/9} autoSize className="rounded-lg overflow-hidden shadow-md">
-            {(post.coverImage || post.image) ? (
-              <img
-                src={getImageUrl(post.coverImage || post.image || '')}
-                alt={`Featured image for article: ${post.title}`}
-                className="w-full h-auto object-contain transition-transform duration-500 hover:scale-105"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "/placeholder.svg";
-                }}
-                loading="eager"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700">
-                <Images className="h-20 w-20 text-gray-400" aria-hidden="true" />
-              </div>
-            )}
-          </AspectRatio>
+          <img
+            src={getImageUrl(post.coverImage || post.image || '')}
+            alt={`Featured image for article: ${post.title}`}
+            className="w-full h-64 md:h-96 object-cover rounded-lg shadow-md"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/placeholder.svg";
+            }}
+            loading="eager"
+          />
           
-          {/* Category badge */}
           {post.category && (
             <div className="absolute top-4 left-4">
               <span className="inline-block px-3 py-1 bg-primary text-white text-sm font-medium rounded-full">
@@ -318,7 +308,6 @@ const BlogPostPage = () => {
             </div>
           )}
           
-          {/* Editor's pick badge */}
           {post.editorPick && (
             <div className="absolute top-4 right-4">
               <span className="inline-block px-3 py-1 bg-amber-500 text-white text-sm font-medium rounded-full">
@@ -401,7 +390,7 @@ const BlogPostPage = () => {
                   aria-label="Share on LinkedIn"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="mr-2" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878 1.216 0 .662.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
+                    <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
                   </svg>
                   LinkedIn
                 </Button>
@@ -419,45 +408,38 @@ const BlogPostPage = () => {
             </div>
           </div>
 
-          {/* FAQ Section - For better SEO - With Accordions */}
+          {/* FAQ Section - For better SEO */}
           <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700">
             <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="faq-1">
-                <AccordionTrigger className="text-lg font-semibold">
-                  What are the key points covered in this article?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-600 dark:text-gray-300">
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">What are the key points covered in this article?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
                   This article covers {post.excerpt || "important insights about AI tools and productivity enhancements. Read through for detailed information tailored to your needs."}
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="faq-2">
-                <AccordionTrigger className="text-lg font-semibold">
-                  Where can I find more articles like this?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-600 dark:text-gray-300">
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Where can I find more articles like this?</h3>
+                <p className="text-gray-600 dark:text-gray-300">
                   You can browse our <Link to="/blog" className="text-primary hover:underline">blog section</Link> for more articles on AI tools, productivity tips, and industry insights.
-                </AccordionContent>
-              </AccordionItem>
-              
+                </p>
+              </div>
               {post.category && (
-                <AccordionItem value="faq-3">
-                  <AccordionTrigger className="text-lg font-semibold">
-                    Where can I find more articles about {post.category}?
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600 dark:text-gray-300">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Where can I find more articles about {post.category}?</h3>
+                  <p className="text-gray-600 dark:text-gray-300">
                     Visit our <Link to={`/blog?category=${encodeURIComponent(post.category)}`} className="text-primary hover:underline">{post.category} category page</Link> for more related articles.
-                  </AccordionContent>
-                </AccordionItem>
+                  </p>
+                </div>
               )}
-            </Accordion>
+            </div>
           </div>
 
           {/* Related Articles - For better SEO and internal linking */}
           <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700">
             <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Placeholder for related articles - In a real app, you would fetch related articles from the API */}
               <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                 <Link to="/blog" className="text-lg font-semibold hover:text-primary dark:text-gray-100">
                   Explore More AI Productivity Tips

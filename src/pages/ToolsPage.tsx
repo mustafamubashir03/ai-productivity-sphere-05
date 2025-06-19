@@ -417,29 +417,29 @@ const ToolsPage = () => {
       
       <PageHeader title={title} description={description} />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6">
         {/* Breadcrumbs */}
-        <Breadcrumb className="mb-6">
+        <Breadcrumb className="mb-4 sm:mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">
-                <Home className="h-4 w-4 mr-1" aria-hidden="true" />
-                <span>Home</span>
+                <Home className="h-3 w-3 sm:h-4 sm:w-4 mr-1" aria-hidden="true" />
+                <span className="text-xs sm:text-sm">Home</span>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               {!activeCategory ? (
-                <BreadcrumbPage>Tools</BreadcrumbPage>
+                <BreadcrumbPage className="text-xs sm:text-sm">Tools</BreadcrumbPage>
               ) : (
-                <BreadcrumbLink href="/tools">Tools</BreadcrumbLink>
+                <BreadcrumbLink href="/tools" className="text-xs sm:text-sm">Tools</BreadcrumbLink>
               )}
             </BreadcrumbItem>
             {activeCategory && (
               <>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>
+                  <BreadcrumbPage className="text-xs sm:text-sm">
                     {categories.find(cat => cat.slug === activeCategory)?.name || activeCategory}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
@@ -449,22 +449,22 @@ const ToolsPage = () => {
         </Breadcrumb>
 
         {/* Search */}
-        <div className="mb-8">
-          <form onSubmit={handleSearch} className="max-w-md mx-auto mb-6">
+        <div className="mb-6 sm:mb-8">
+          <form onSubmit={handleSearch} className="max-w-md mx-auto mb-4 sm:mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-5 w-5" aria-hidden="true" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
               <Input
                 type="text"
                 placeholder="Search for tools..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 dark:bg-gray-800 dark:text-white dark:border-gray-700 shadow-sm"
+                className="pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base dark:bg-gray-800 dark:text-white dark:border-gray-700 shadow-sm"
                 aria-label="Search for tools"
               />
             </div>
           </form>
           
-          {/* Category Tabs - Fixed to be fully responsive */}
+          {/* Category Tabs - Responsive */}
           <div className="w-full max-w-full mb-4">
             <Tabs 
               defaultValue={activeCategory || "all"} 
@@ -472,10 +472,10 @@ const ToolsPage = () => {
               onValueChange={handleCategoryTabChange}
               className="w-full"
             >
-              <TabsList className="w-full h-auto flex flex-wrap justify-start px-2 py-1 mb-4 bg-muted/80">
+              <TabsList className="w-full h-auto flex flex-wrap justify-start px-1 sm:px-2 py-1 mb-4 bg-muted/80">
                 <TabsTrigger 
                   value="all" 
-                  className="m-1 whitespace-nowrap"
+                  className="m-0.5 sm:m-1 whitespace-nowrap text-xs sm:text-sm px-2 sm:px-3"
                 >
                   All Tools
                 </TabsTrigger>
@@ -484,10 +484,10 @@ const ToolsPage = () => {
                   <TabsTrigger 
                     key={cat.id} 
                     value={cat.slug} 
-                    className="m-1 whitespace-nowrap flex items-center gap-1"
+                    className="m-0.5 sm:m-1 whitespace-nowrap flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3"
                   >
-                    <cat.LucideIcon className="h-4 w-4" />
-                    <span>{cat.name}</span>
+                    <cat.LucideIcon className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden xs:inline sm:inline">{cat.name}</span>
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -495,7 +495,7 @@ const ToolsPage = () => {
           </div>
         </div>
         
-        {/* Filters - Now horizontal collapsible tabs */}
+        {/* Filters - Horizontal collapsible */}
         <FilterSidebar
           onSelectIndustry={handleIndustryChange}
           onSelectUseCase={handleUseCaseChange}
@@ -513,44 +513,44 @@ const ToolsPage = () => {
           isMobile={isMobile}
         />
         
-        {/* Pagination at Top - Always visible */}
+        {/* Pagination at Top - Always visible with smaller size on mobile */}
         {!loading && (
-          <div className="mb-6 flex justify-center">
+          <div className="mb-4 sm:mb-6 flex justify-center">
             <PaginationControls 
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={(page) => setCurrentPage(page)}
-              siblingCount={1}
+              siblingCount={isMobile ? 0 : 1}
               aria-label="Top pagination"
             />
           </div>
         )}
         
-        {/* Tools Grid - Now full width */}
+        {/* Tools Grid - Optimized for maximum 4 columns */}
         <div className="w-full">
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4">
-              {Array(14).fill(0).map((_, index) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
+              {Array(12).fill(0).map((_, index) => (
                 <ToolCardSkeleton key={`skeleton-${index}`} />
               ))}
             </div>
           ) : paginatedTools.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
                 {paginatedTools.map((tool) => (
                   <ToolCard key={tool._id || tool.id} tool={tool} />
                 ))}
               </div>
               
               {/* Related blog posts for internal linking */}
-              <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                <h3 className="text-lg font-semibold mb-4">Related Articles</h3>
-                <ul className="space-y-2">
+              <div className="mt-8 sm:mt-10 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Related Articles</h3>
+                <ul className="space-y-1 sm:space-y-2">
                   {getRelatedLinks().map((link, index) => (
                     <li key={index} className="story-link">
                       <Link 
                         to={link.url} 
-                        className="text-primary hover:text-primary-dark transition-colors"
+                        className="text-primary hover:text-primary-dark transition-colors text-sm sm:text-base"
                       >
                         {link.title}
                       </Link>
@@ -560,15 +560,15 @@ const ToolsPage = () => {
               </div>
               
               {/* FAQ Section - Using Accordion for collapsible Q&A */}
-              <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+              <div className="mt-8 sm:mt-10 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
+                <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="space-y-2">
                   {getFaqData().map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="border-b border-gray-200 dark:border-gray-700">
-                      <AccordionTrigger className="text-lg font-semibold py-4 hover:no-underline">
+                      <AccordionTrigger className="text-sm sm:text-lg font-semibold py-3 sm:py-4 hover:no-underline">
                         {faq.question}
                       </AccordionTrigger>
-                      <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2 pb-4">
+                      <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2 pb-3 sm:pb-4 text-sm sm:text-base">
                         {faq.answer}
                       </AccordionContent>
                     </AccordionItem>
@@ -578,21 +578,21 @@ const ToolsPage = () => {
               
               {/* Pagination - Only show if we have more than one page */}
               {totalPages > 1 && (
-                <div className="mt-10">
+                <div className="mt-8 sm:mt-10">
                   <PaginationControls 
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={(page) => setCurrentPage(page)}
-                    siblingCount={1}
+                    siblingCount={isMobile ? 0 : 1}
                     aria-label="Bottom pagination"
                   />
                 </div>
               )}
             </>
           ) : (
-            <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-white">No tools found</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+            <div className="text-center py-8 sm:py-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-medium mb-2 text-gray-800 dark:text-white">No tools found</h3>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4">
                 Try adjusting your search or filters to find what you're looking for.
               </p>
               <Button 
@@ -611,7 +611,7 @@ const ToolsPage = () => {
                   localStorage.removeItem('filterPreferences');
                 }}
                 variant="outline"
-                className="mt-4"
+                className="mt-4 text-sm sm:text-base"
                 type="button"
               >
                 Reset all filters

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Star } from 'lucide-react';
@@ -19,7 +18,7 @@ const RelatedTools: React.FC<RelatedToolsProps> = ({
   currentToolName 
 }) => {
   const [relatedTools, setRelatedTools] = useState<Tool[]>([]);
-  const { data: toolsData } = useTools({ category, limit: 10 });
+  const { data: toolsData } = useTools({ category, limit: "10" });
 
   useEffect(() => {
     if (toolsData?.tools) {

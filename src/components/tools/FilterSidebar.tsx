@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { industries } from "@/data/industries";
 import { useCases } from "@/data/useCases";
-import { ChevronDown, ChevronUp, Filter } from "lucide-react";
+import { ChevronDown, ChevronUp, Filter, X } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 type FilterSidebarProps = {
   onSelectIndustry: (industry: string | null) => void;
@@ -39,37 +40,7 @@ const FilterSidebar = ({
   platforms,
   isMobile
 }: FilterSidebarProps) => {
-  // Set all sections collapsed by default
-  const [isIndustryOpen, setIsIndustryOpen] = useState(false);
-  const [isUseCaseOpen, setIsUseCaseOpen] = useState(false);
-  const [isPricingOpen, setIsPricingOpen] = useState(false);
-  const [isPlatformOpen, setIsPlatformOpen] = useState(false);
-  const [isSubcategoryOpen, setIsSubcategoryOpen] = useState(false);
-  
-  // For mobile view
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  
-  const toggleSection = (section: string) => {
-    switch (section) {
-      case 'industry':
-        setIsIndustryOpen(!isIndustryOpen);
-        break;
-      case 'useCase':
-        setIsUseCaseOpen(!isUseCaseOpen);
-        break;
-      case 'pricing':
-        setIsPricingOpen(!isPricingOpen);
-        break;
-      case 'platform':
-        setIsPlatformOpen(!isPlatformOpen);
-        break;
-      case 'subcategory':
-        setIsSubcategoryOpen(!isSubcategoryOpen);
-        break;
-      default:
-        break;
-    }
-  };
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   
   // Filter counts
   const activeFilters = [
@@ -88,254 +59,179 @@ const FilterSidebar = ({
     onSelectSubcategory(null);
   };
 
-  const renderMobileFilters = () => (
-    <div className="mb-6">
-      <Button
-        onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-        variant="outline"
-        size="sm"
-        className="w-full flex justify-between items-center"
-      >
-        <span className="flex items-center">
-          <Filter className="h-4 w-4 mr-2" />
-          Filters {activeFilters > 0 && `(${activeFilters})`}
-        </span>
-        {isMobileFilterOpen ? (
-          <ChevronUp className="h-4 w-4" />
-        ) : (
-          <ChevronDown className="h-4 w-4" />
-        )}
-      </Button>
-      
-      {isMobileFilterOpen && renderFilters()}
-    </div>
-  );
-
-  const renderFilters = () => (
-    <div className="space-y-6">
-      {activeFilters > 0 && (
-        <div className="flex justify-between items-center pb-2 border-b border-gray-200 dark:border-gray-700">
-          <span className="text-sm font-medium">{activeFilters} active filters</span>
-          <Button
-            onClick={clearAllFilters}
-            variant="link"
-            size="sm"
-            className="text-primary h-auto p-0"
-          >
-            Clear all
-          </Button>
-        </div>
-      )}
-      
-      {/* Industries Section */}
-      {industries.length > 0 && (
-        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-          <button 
-            onClick={() => toggleSection('industry')}
-            className="flex justify-between items-center w-full text-left font-medium py-1"
-          >
-            <span>Industries</span>
-            {isIndustryOpen ? (
-              <ChevronUp className="h-4 w-4 text-gray-500" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-          
-          {isIndustryOpen && (
-            <div className="mt-2 space-y-1">
-              {industries.map(industry => (
-                <label 
-                  key={industry.id}
-                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
-                >
-                  <Checkbox 
-                    id={`industry-${industry.id}`}
-                    checked={industry.slug === activeIndustry}
-                    onCheckedChange={() => {
-                      onSelectIndustry(
-                        industry.slug === activeIndustry ? null : industry.slug
-                      );
-                    }}
-                  />
-                  <span>{industry.name}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      
-      {/* Use Cases Section */}
-      {useCases.length > 0 && (
-        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-          <button 
-            onClick={() => toggleSection('useCase')}
-            className="flex justify-between items-center w-full text-left font-medium py-1"
-          >
-            <span>Use Cases</span>
-            {isUseCaseOpen ? (
-              <ChevronUp className="h-4 w-4 text-gray-500" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-          
-          {isUseCaseOpen && (
-            <div className="mt-2 space-y-1">
-              {useCases.map(useCase => (
-                <label 
-                  key={useCase.id}
-                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
-                >
-                  <Checkbox 
-                    id={`useCase-${useCase.id}`}
-                    checked={useCase.slug === activeUseCase}
-                    onCheckedChange={() => {
-                      onSelectUseCase(
-                        useCase.slug === activeUseCase ? null : useCase.slug
-                      );
-                    }}
-                  />
-                  <span>{useCase.name}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      
-      {/* Subcategories Section */}
-      {subcategories.length > 0 && (
-        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-          <button 
-            onClick={() => toggleSection('subcategory')}
-            className="flex justify-between items-center w-full text-left font-medium py-1"
-          >
-            <span>Subcategories</span>
-            {isSubcategoryOpen ? (
-              <ChevronUp className="h-4 w-4 text-gray-500" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-          
-          {isSubcategoryOpen && (
-            <div className="mt-2 space-y-1">
-              {subcategories.map((subcat, index) => (
-                <label 
-                  key={index}
-                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
-                >
-                  <Checkbox 
-                    id={`subcategory-${index}`}
-                    checked={subcat === activeSubcategory}
-                    onCheckedChange={() => {
-                      onSelectSubcategory(subcat === activeSubcategory ? null : subcat);
-                    }}
-                  />
-                  <span>{subcat}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      
-      {/* Pricing Models Section */}
-      {pricingModels.length > 0 && (
-        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-          <button 
-            onClick={() => toggleSection('pricing')}
-            className="flex justify-between items-center w-full text-left font-medium py-1"
-          >
-            <span>Pricing</span>
-            {isPricingOpen ? (
-              <ChevronUp className="h-4 w-4 text-gray-500" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-          
-          {isPricingOpen && (
-            <div className="mt-2 space-y-1">
-              {pricingModels.map((pricing, index) => (
-                <label 
-                  key={index}
-                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
-                >
-                  <Checkbox 
-                    id={`pricing-${index}`}
-                    checked={pricing === activePricingModel}
-                    onCheckedChange={() => {
-                      onSelectPricingModel(pricing === activePricingModel ? null : pricing);
-                    }}
-                  />
-                  <span>{pricing}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      
-      {/* Platforms Section */}
-      {platforms.length > 0 && (
-        <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-          <button 
-            onClick={() => toggleSection('platform')}
-            className="flex justify-between items-center w-full text-left font-medium py-1"
-          >
-            <span>Platforms</span>
-            {isPlatformOpen ? (
-              <ChevronUp className="h-4 w-4 text-gray-500" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-          
-          {isPlatformOpen && (
-            <div className="mt-2 space-y-1">
-              {platforms.map((platform, index) => (
-                <label 
-                  key={index}
-                  className="flex items-center space-x-2 cursor-pointer text-sm py-1 hover:text-primary transition-colors"
-                >
-                  <Checkbox 
-                    id={`platform-${index}`}
-                    checked={platform === activePlatform}
-                    onCheckedChange={() => {
-                      onSelectPlatform(platform === activePlatform ? null : platform);
-                    }}
-                  />
-                  <span>{platform}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
   return (
-    <>
-      {isMobile ? (
-        renderMobileFilters()
-      ) : (
-        <div className="w-64 flex-shrink-0 pr-6">
-          <div className="sticky top-20">
-            <h3 className="text-lg font-medium mb-4 flex items-center border-b pb-2 border-gray-200 dark:border-gray-700">
-              <Filter className="mr-2 h-5 w-5" /> 
-              Filters
-              {activeFilters > 0 && <span className="ml-2 text-primary text-sm">({activeFilters})</span>}
-            </h3>
+    <div className="w-full mb-6">
+      <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full sm:w-auto flex justify-between items-center gap-2 mb-4"
+          >
+            <span className="flex items-center gap-2">
+              <Filter className="h-4 w-4" />
+              Advanced Filters
+              {activeFilters > 0 && (
+                <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full">
+                  {activeFilters}
+                </span>
+              )}
+            </span>
+            {isFiltersOpen ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-6">
+            {/* Clear all filters */}
+            {activeFilters > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">{activeFilters} active filters</span>
+                <Button
+                  onClick={clearAllFilters}
+                  variant="ghost"
+                  size="sm"
+                  className="text-primary h-auto p-0 hover:bg-transparent"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear all
+                </Button>
+              </div>
+            )}
             
-            {renderFilters()}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+              {/* Industries */}
+              {industries.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-3 text-sm">Industries</h4>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {industries.map(industry => (
+                      <label 
+                        key={industry.id}
+                        className="flex items-center space-x-2 cursor-pointer text-sm hover:text-primary transition-colors"
+                      >
+                        <Checkbox 
+                          id={`industry-${industry.id}`}
+                          checked={industry.slug === activeIndustry}
+                          onCheckedChange={() => {
+                            onSelectIndustry(
+                              industry.slug === activeIndustry ? null : industry.slug
+                            );
+                          }}
+                        />
+                        <span className="text-xs">{industry.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Use Cases */}
+              {useCases.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-3 text-sm">Use Cases</h4>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {useCases.map(useCase => (
+                      <label 
+                        key={useCase.id}
+                        className="flex items-center space-x-2 cursor-pointer text-sm hover:text-primary transition-colors"
+                      >
+                        <Checkbox 
+                          id={`useCase-${useCase.id}`}
+                          checked={useCase.slug === activeUseCase}
+                          onCheckedChange={() => {
+                            onSelectUseCase(
+                              useCase.slug === activeUseCase ? null : useCase.slug
+                            );
+                          }}
+                        />
+                        <span className="text-xs">{useCase.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Subcategories */}
+              {subcategories.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-3 text-sm">Subcategories</h4>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {subcategories.map((subcat, index) => (
+                      <label 
+                        key={index}
+                        className="flex items-center space-x-2 cursor-pointer text-sm hover:text-primary transition-colors"
+                      >
+                        <Checkbox 
+                          id={`subcategory-${index}`}
+                          checked={subcat === activeSubcategory}
+                          onCheckedChange={() => {
+                            onSelectSubcategory(subcat === activeSubcategory ? null : subcat);
+                          }}
+                        />
+                        <span className="text-xs">{subcat}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Pricing Models */}
+              {pricingModels.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-3 text-sm">Pricing</h4>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {pricingModels.map((pricing, index) => (
+                      <label 
+                        key={index}
+                        className="flex items-center space-x-2 cursor-pointer text-sm hover:text-primary transition-colors"
+                      >
+                        <Checkbox 
+                          id={`pricing-${index}`}
+                          checked={pricing === activePricingModel}
+                          onCheckedChange={() => {
+                            onSelectPricingModel(pricing === activePricingModel ? null : pricing);
+                          }}
+                        />
+                        <span className="text-xs">{pricing}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Platforms */}
+              {platforms.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-3 text-sm">Platforms</h4>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {platforms.map((platform, index) => (
+                      <label 
+                        key={index}
+                        className="flex items-center space-x-2 cursor-pointer text-sm hover:text-primary transition-colors"
+                      >
+                        <Checkbox 
+                          id={`platform-${index}`}
+                          checked={platform === activePlatform}
+                          onCheckedChange={() => {
+                            onSelectPlatform(platform === activePlatform ? null : platform);
+                          }}
+                        />
+                        <span className="text-xs">{platform}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
-    </>
+        </CollapsibleContent>
+      </Collapsible>
+    </div>
   );
 };
 

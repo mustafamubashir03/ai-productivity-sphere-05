@@ -495,6 +495,24 @@ const ToolsPage = () => {
           </div>
         </div>
         
+        {/* Filters - Now horizontal collapsible tabs */}
+        <FilterSidebar
+          onSelectIndustry={handleIndustryChange}
+          onSelectUseCase={handleUseCaseChange}
+          onSelectPricingModel={handlePricingModelChange}
+          onSelectPlatform={handlePlatformChange}
+          onSelectSubcategory={handleSubcategoryChange}
+          activeIndustry={activeIndustry}
+          activeUseCase={activeUseCase}
+          activePricingModel={activePricingModel}
+          activePlatform={activePlatform}
+          activeSubcategory={activeSubcategory}
+          subcategories={uniqueSubcategories}
+          pricingModels={uniquePricingModels}
+          platforms={uniquePlatforms}
+          isMobile={isMobile}
+        />
+        
         {/* Pagination at Top - Always visible */}
         {!loading && (
           <div className="mb-6 flex justify-center">
@@ -508,118 +526,98 @@ const ToolsPage = () => {
           </div>
         )}
         
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Filters Sidebar */}
-          <FilterSidebar
-            onSelectIndustry={handleIndustryChange}
-            onSelectUseCase={handleUseCaseChange}
-            onSelectPricingModel={handlePricingModelChange}
-            onSelectPlatform={handlePlatformChange}
-            onSelectSubcategory={handleSubcategoryChange}
-            activeIndustry={activeIndustry}
-            activeUseCase={activeUseCase}
-            activePricingModel={activePricingModel}
-            activePlatform={activePlatform}
-            activeSubcategory={activeSubcategory}
-            subcategories={uniqueSubcategories}
-            pricingModels={uniquePricingModels}
-            platforms={uniquePlatforms}
-            isMobile={isMobile}
-          />
-          
-          {/* Tools Grid */}
-          <div className="flex-1">
-            {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
-                {Array(10).fill(0).map((_, index) => (
-                  <ToolCardSkeleton key={`skeleton-${index}`} />
+        {/* Tools Grid - Now full width */}
+        <div className="w-full">
+          {loading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4">
+              {Array(14).fill(0).map((_, index) => (
+                <ToolCardSkeleton key={`skeleton-${index}`} />
+              ))}
+            </div>
+          ) : paginatedTools.length > 0 ? (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4">
+                {paginatedTools.map((tool) => (
+                  <ToolCard key={tool._id || tool.id} tool={tool} />
                 ))}
               </div>
-            ) : paginatedTools.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
-                  {paginatedTools.map((tool) => (
-                    <ToolCard key={tool._id || tool.id} tool={tool} />
+              
+              {/* Related blog posts for internal linking */}
+              <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">Related Articles</h3>
+                <ul className="space-y-2">
+                  {getRelatedLinks().map((link, index) => (
+                    <li key={index} className="story-link">
+                      <Link 
+                        to={link.url} 
+                        className="text-primary hover:text-primary-dark transition-colors"
+                      >
+                        {link.title}
+                      </Link>
+                    </li>
                   ))}
-                </div>
-                
-                {/* Related blog posts for internal linking */}
-                <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4">Related Articles</h3>
-                  <ul className="space-y-2">
-                    {getRelatedLinks().map((link, index) => (
-                      <li key={index} className="story-link">
-                        <Link 
-                          to={link.url} 
-                          className="text-primary hover:text-primary-dark transition-colors"
-                        >
-                          {link.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                {/* FAQ Section - Using Accordion for collapsible Q&A */}
-                <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                  <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
-                  <Accordion type="single" collapsible className="space-y-2">
-                    {getFaqData().map((faq, index) => (
-                      <AccordionItem key={index} value={`item-${index}`} className="border-b border-gray-200 dark:border-gray-700">
-                        <AccordionTrigger className="text-lg font-semibold py-4 hover:no-underline">
-                          {faq.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2 pb-4">
-                          {faq.answer}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-                
-                {/* Pagination - Only show if we have more than one page */}
-                {totalPages > 1 && (
-                  <div className="mt-10">
-                    <PaginationControls 
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={(page) => setCurrentPage(page)}
-                      siblingCount={1}
-                      aria-label="Bottom pagination"
-                    />
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-white">No tools found</h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Try adjusting your search or filters to find what you're looking for.
-                </p>
-                <Button 
-                  onClick={() => {
-                    setSearchQuery("");
-                    setActiveCategory(null);
-                    setActiveSubcategory(null);
-                    setActiveIndustry(null);
-                    setActiveUseCase(null);
-                    setActivePricingModel(null);
-                    setActivePlatform(null);
-                    setCurrentPage(1);
-                    navigate('/tools', { replace: true });
-                    
-                    // Also clear localStorage preferences
-                    localStorage.removeItem('filterPreferences');
-                  }}
-                  variant="outline"
-                  className="mt-4"
-                  type="button"
-                >
-                  Reset all filters
-                </Button>
+                </ul>
               </div>
-            )}
-          </div>
+              
+              {/* FAQ Section - Using Accordion for collapsible Q&A */}
+              <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+                <Accordion type="single" collapsible className="space-y-2">
+                  {getFaqData().map((faq, index) => (
+                    <AccordionItem key={index} value={`item-${index}`} className="border-b border-gray-200 dark:border-gray-700">
+                      <AccordionTrigger className="text-lg font-semibold py-4 hover:no-underline">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2 pb-4">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+              
+              {/* Pagination - Only show if we have more than one page */}
+              {totalPages > 1 && (
+                <div className="mt-10">
+                  <PaginationControls 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => setCurrentPage(page)}
+                    siblingCount={1}
+                    aria-label="Bottom pagination"
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-white">No tools found</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Try adjusting your search or filters to find what you're looking for.
+              </p>
+              <Button 
+                onClick={() => {
+                  setSearchQuery("");
+                  setActiveCategory(null);
+                  setActiveSubcategory(null);
+                  setActiveIndustry(null);
+                  setActiveUseCase(null);
+                  setActivePricingModel(null);
+                  setActivePlatform(null);
+                  setCurrentPage(1);
+                  navigate('/tools', { replace: true });
+                  
+                  // Also clear localStorage preferences
+                  localStorage.removeItem('filterPreferences');
+                }}
+                variant="outline"
+                className="mt-4"
+                type="button"
+              >
+                Reset all filters
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, BarChart2, Bookmark, BookmarkCheck, ExternalLink, ThumbsUp, ThumbsDown, Star, Calendar, Users, Globe, Code, CheckCircle, XCircle, Quote, Eye, MousePointer } from "lucide-react";
@@ -16,6 +15,8 @@ import { Tool } from "@/types/tools";
 import CompareBar from "@/components/tools/CompareBar";
 import { toast } from "@/components/ui/sonner";
 import { useTool } from "@/hooks/use-api";
+import ScreenshotCarousel from "@/components/tools/ScreenshotCarousel";
+import RelatedTools from "@/components/tools/RelatedTools";
 
 const ToolDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -483,35 +484,8 @@ const ToolDetailPage = () => {
               </div>
             )}
             
-            {/* Screenshots */}
-            {tool.screenshots && tool.screenshots.length > 0 ? (
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Screenshots</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {tool.screenshots.map((screenshot: string, index: number) => (
-                    <div key={index} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                      <img
-                        src={screenshot}
-                        alt={`${tool.name} screenshot ${index + 1}`}
-                        className="w-full h-auto rounded-md shadow-sm"
-                        loading="lazy"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-8">
-                <img
-                  src="/placeholder.svg"
-                  alt={`${tool.name} screenshot placeholder`}
-                  className="w-full h-auto rounded-md shadow-sm mb-4"
-                />
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  {tool.name} interface screenshot
-                </p>
-              </div>
-            )}
+            {/* Screenshots with Auto-Scroll Carousel */}
+            <ScreenshotCarousel screenshots={tool.screenshots} toolName={tool.name} />
             
             {/* Testimonials */}
             {tool.testimonials && tool.testimonials.length > 0 && (
@@ -558,17 +532,12 @@ const ToolDetailPage = () => {
               </button>
             </div>
             
-            {/* Related Tools */}
-            {relatedTools.length > 0 && (
-              <div className="mt-12">
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Similar Tools You Might Like</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {relatedTools.map(relatedTool => (
-                    <ToolCard key={relatedTool._id || relatedTool.id} tool={relatedTool} />
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Related Tools from Backend */}
+            <RelatedTools 
+              currentToolId={tool._id || tool.id || ''} 
+              category={tool.category}
+              currentToolName={tool.name}
+            />
             
             {/* Related Blog Posts */}
             {relatedPosts && relatedPosts.length > 0 ? (

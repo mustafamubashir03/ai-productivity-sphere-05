@@ -530,14 +530,14 @@ const ToolsPage = () => {
           {/* Tools Grid */}
           <div className="flex-1">
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {Array(6).fill(0).map((_, index) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+                {Array(10).fill(0).map((_, index) => (
                   <ToolCardSkeleton key={`skeleton-${index}`} />
                 ))}
               </div>
             ) : paginatedTools.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
                   {paginatedTools.map((tool) => (
                     <ToolCard key={tool._id || tool.id} tool={tool} />
                   ))}

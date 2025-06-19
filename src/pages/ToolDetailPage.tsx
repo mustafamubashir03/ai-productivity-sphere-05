@@ -1,8 +1,10 @@
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, BarChart2, Bookmark, BookmarkCheck, ExternalLink, ThumbsUp, ThumbsDown, Star } from "lucide-react";
+import { ArrowLeft, BarChart2, Bookmark, BookmarkCheck, ExternalLink, ThumbsUp, ThumbsDown, Star, Calendar, Users, Globe, Code, CheckCircle, XCircle, Quote, Eye, MousePointer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import { getToolBySlug, getRelatedTools } from "@/data/tools";
 import { getBlogPosts } from "@/data/blog";
@@ -10,7 +12,7 @@ import { useBookmarks } from "@/context/BookmarkContext";
 import { useCompare } from "@/context/CompareContext";
 import ToolDetailSkeleton from "@/components/skeletons/ToolDetailSkeleton";
 import ToolCard from "@/components/common/ToolCard";
-import { Tool } from "@/types/tools"; // Import Tool type from our types file
+import { Tool } from "@/types/tools";
 import CompareBar from "@/components/tools/CompareBar";
 import { toast } from "@/components/ui/sonner";
 import { useTool } from "@/hooks/use-api";
@@ -24,6 +26,8 @@ const ToolDetailPage = () => {
   const [upvotes, setUpvotes] = useState<number>(0);
   const [downvotes, setDownvotes] = useState<number>(0);
   const [userVote, setUserVote] = useState<'up' | 'down' | null>(null);
+  const [showMoreFeatures, setShowMoreFeatures] = useState(false);
+  const [showMoreUseCases, setShowMoreUseCases] = useState(false);
   
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
@@ -206,10 +210,10 @@ const ToolDetailPage = () => {
       data: {
         name: tool?.name,
         description: tool?.description,
-        image: tool?.logo || "/placeholder.svg",
+        image: tool?.logo || "/favicon.svg",
         brand: {
           "@type": "Brand",
-          name: "AI Productivity Hub"
+          name: "Top AI Tools"
         },
         offers: {
           "@type": "Offer",
@@ -239,7 +243,7 @@ const ToolDetailPage = () => {
         },
         author: {
           "@type": "Organization",
-          name: "AI Productivity Hub"
+          name: "Top AI Tools"
         },
         reviewBody: tool?.editorVerdict || tool?.description
       }
@@ -249,9 +253,9 @@ const ToolDetailPage = () => {
   return (
     <>
       <EnhancedSEO 
-        title={`${tool.name} Review - AI Productivity Hub`}
+        title={`${tool.name} Review - Top AI Tools`}
         description={tool.description}
-        image={tool.logo || "/placeholder.svg"}
+        image={tool.logo || "/favicon.svg"}
         canonicalUrl={window.location.href}
         structuredData={structuredData}
       />
@@ -267,111 +271,291 @@ const ToolDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center">
+            {/* Header Section */}
+            <div className="flex items-start gap-6 mb-8">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center flex-shrink-0">
                 <img
                   src={tool.logo}
                   alt={`${tool.name} logo`}
-                  className="w-12 h-12 object-contain"
+                  className="w-16 h-16 object-contain rounded-lg"
                   loading="lazy"
                 />
               </div>
-              <div>
-                <h1 className="text-3xl font-bold dark:text-white">{tool.name}</h1>
-                <div className="flex items-center mt-1">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-3xl font-bold dark:text-white">{tool.name}</h1>
+                  {tool.featured && <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Featured</Badge>}
+                  {tool.trending && <Badge variant="secondary" className="bg-green-100 text-green-800">Trending</Badge>}
+                  {tool.reviewed && <Badge variant="secondary" className="bg-blue-100 text-blue-800">Reviewed</Badge>}
+                </div>
+                
+                <div className="flex items-center gap-4 mb-3">
                   {tool.rating && (
-                    <div className="flex items-center text-yellow-500 mr-3">
+                    <div className="flex items-center text-yellow-500">
                       {Array.from({ length: 5 }).map((_, index) => (
                         <Star 
                           key={index} 
-                          className={`h-4 w-4 ${index < Math.floor(tool.rating) ? 'fill-yellow-500' : (index < tool.rating ? 'fill-yellow-500' : '')}`}
-                          fill={index < Math.floor(tool.rating) ? 'currentColor' : 'none'}
+                          className={`h-4 w-4 ${index < Math.floor(tool.rating!) ? 'fill-yellow-500' : ''}`}
+                          fill={index < Math.floor(tool.rating!) ? 'currentColor' : 'none'}
                         />
                       ))}
-                      <span className="ml-1 text-sm text-gray-600 dark:text-gray-300">{tool.rating}</span>
+                      <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {tool.rating} ({tool.reviewCount || upvotes + downvotes} reviews)
+                      </span>
                     </div>
                   )}
-                  <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-                    <span>{upvotes} upvotes</span>
-                    <span>•</span>
-                    <span>{tool.trending ? 'Trending' : 'Active'}</span>
+                </div>
+                
+                {/* Metrics */}
+                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-1">
+                    <Eye className="h-4 w-4" />
+                    <span>{tool.viewCount || Math.floor(Math.random() * 1000) + 100} views</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MousePointer className="h-4 w-4" />
+                    <span>{tool.clickCount || Math.floor(Math.random() * 100) + 20} clicks</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <ThumbsUp className="h-4 w-4" />
+                    <span>{upvotes} helpful</span>
                   </div>
                 </div>
+                
+                {/* Tags */}
+                {tool.tags && tool.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {tool.tags.map((tag: string) => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             
-            <div className="prose max-w-none dark:prose-invert">
-              <p className="text-lg mb-6 text-gray-700 dark:text-gray-300">{tool.description}</p>
-              
-              {/* Editor's Verdict */}
-              {tool.editorVerdict && (
-                <div className="bg-primary/5 dark:bg-primary/10 border-l-4 border-primary p-4 rounded-r-lg mb-8">
-                  <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Editor's Verdict</h2>
-                  <p className="text-gray-700 dark:text-gray-300 italic">{tool.editorVerdict}</p>
-                </div>
+            {/* Description */}
+            <div className="prose max-w-none dark:prose-invert mb-8">
+              <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                {tool.shortDescription || tool.description}
+              </p>
+              {tool.shortDescription && tool.description !== tool.shortDescription && (
+                <p className="text-gray-600 dark:text-gray-400 mt-4">
+                  {tool.description}
+                </p>
               )}
-              
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Key Features</h2>
-                <ul className="list-disc pl-5 space-y-1">
-                  {tool.features && tool.features.map((feature: string, index: number) => (
-                    <li key={index} className="text-gray-700 dark:text-gray-300">{feature}</li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Use Cases</h2>
-                <ul className="list-disc pl-5 space-y-1">
-                  {tool.useCases && tool.useCases.map((useCase: string, index: number) => (
-                    <li key={index} className="text-gray-700 dark:text-gray-300">{useCase}</li>
-                  ))}
-                </ul>
-              </div>
-              
-              {tool.screenshots && tool.screenshots.length > 0 ? (
-                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-8">
-                  <img
-                    src={tool.screenshots[0]}
-                    alt={`${tool.name} screenshot`}
-                    className="w-full h-auto rounded-md shadow-sm mb-4"
-                    loading="lazy"
-                  />
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                    {tool.name} interface screenshot
-                  </p>
+            </div>
+            
+            {/* Platform and System Info */}
+            {(tool.platforms || tool.languagesSupported || tool.systemRequirements) && (
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-8">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Platform Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tool.platforms && tool.platforms.length > 0 && (
+                    <div>
+                      <h4 className="font-medium text-sm text-gray-600 dark:text-gray-400 mb-2">Platforms</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {tool.platforms.map((platform: string) => (
+                          <Badge key={platform} variant="secondary" className="text-xs">
+                            <Globe className="w-3 h-3 mr-1" />
+                            {platform}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {tool.languagesSupported && tool.languagesSupported.length > 0 && (
+                    <div>
+                      <h4 className="font-medium text-sm text-gray-600 dark:text-gray-400 mb-2">Languages</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {tool.languagesSupported.map((lang: string) => (
+                          <Badge key={lang} variant="outline" className="text-xs">
+                            {lang}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-8">
-                  <img
-                    src="/placeholder.svg"
-                    alt={`${tool.name} screenshot placeholder`}
-                    className="w-full h-auto rounded-md shadow-sm mb-4"
-                  />
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                    {tool.name} interface screenshot
-                  </p>
-                </div>
-              )}
-              
-              {/* User Voting */}
-              <div className="flex items-center justify-center space-x-8 py-6 border-t border-b border-gray-200 dark:border-gray-700 mb-8">
-                <button 
-                  onClick={() => handleVote('up')}
-                  className={`flex flex-col items-center ${userVote === 'up' ? 'text-green-600 dark:text-green-500' : 'text-gray-500 dark:text-gray-400'}`}
-                >
-                  <ThumbsUp className="h-6 w-6 mb-1" />
-                  <span className="text-sm font-medium">Helpful ({upvotes})</span>
-                </button>
                 
-                <button 
-                  onClick={() => handleVote('down')}
-                  className={`flex flex-col items-center ${userVote === 'down' ? 'text-red-600 dark:text-red-500' : 'text-gray-500 dark:text-gray-400'}`}
-                >
-                  <ThumbsDown className="h-6 w-6 mb-1" />
-                  <span className="text-sm font-medium">Not Helpful ({downvotes})</span>
-                </button>
+                {tool.systemRequirements && (
+                  <div className="mt-4">
+                    <h4 className="font-medium text-sm text-gray-600 dark:text-gray-400 mb-2">System Requirements</h4>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">{tool.systemRequirements}</p>
+                  </div>
+                )}
               </div>
+            )}
+            
+            {/* Editor's Verdict */}
+            {tool.editorVerdict && (
+              <div className="bg-primary/5 dark:bg-primary/10 border-l-4 border-primary p-6 rounded-r-lg mb-8">
+                <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white flex items-center">
+                  <Star className="w-5 h-5 mr-2 text-primary" />
+                  Editor's Verdict
+                </h2>
+                <p className="text-gray-700 dark:text-gray-300 italic leading-relaxed">{tool.editorVerdict}</p>
+              </div>
+            )}
+            
+            {/* Key Features */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Key Features</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {tool.features && tool.features.slice(0, showMoreFeatures ? tool.features.length : 6).map((feature: string, index: number) => (
+                  <div key={index} className="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
+                  </div>
+                ))}
+              </div>
+              {tool.features && tool.features.length > 6 && (
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setShowMoreFeatures(!showMoreFeatures)}
+                  className="mt-4"
+                >
+                  {showMoreFeatures ? 'Show Less' : `Show ${tool.features.length - 6} More Features`}
+                </Button>
+              )}
+            </div>
+            
+            {/* Use Cases */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Use Cases</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {tool.useCases && tool.useCases.slice(0, showMoreUseCases ? tool.useCases.length : 4).map((useCase: string, index: number) => (
+                  <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-700 dark:text-gray-300 text-sm">{useCase}</span>
+                  </div>
+                ))}
+              </div>
+              {tool.useCases && tool.useCases.length > 4 && (
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setShowMoreUseCases(!showMoreUseCases)}
+                  className="mt-4"
+                >
+                  {showMoreUseCases ? 'Show Less' : `Show ${tool.useCases.length - 4} More Use Cases`}
+                </Button>
+              )}
+            </div>
+            
+            {/* Pros and Cons */}
+            {(tool.pros || tool.cons) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {tool.pros && tool.pros.length > 0 && (
+                  <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg">
+                    <h3 className="text-lg font-semibold mb-4 text-green-800 dark:text-green-300 flex items-center">
+                      <CheckCircle className="w-5 h-5 mr-2" />
+                      Pros
+                    </h3>
+                    <ul className="space-y-2">
+                      {tool.pros.map((pro: string, index: number) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-green-700 dark:text-green-300">
+                          <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          {pro}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {tool.cons && tool.cons.length > 0 && (
+                  <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg">
+                    <h3 className="text-lg font-semibold mb-4 text-red-800 dark:text-red-300 flex items-center">
+                      <XCircle className="w-5 h-5 mr-2" />
+                      Cons
+                    </h3>
+                    <ul className="space-y-2">
+                      {tool.cons.map((con: string, index: number) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-red-700 dark:text-red-300">
+                          <XCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          {con}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Screenshots */}
+            {tool.screenshots && tool.screenshots.length > 0 ? (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Screenshots</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tool.screenshots.map((screenshot: string, index: number) => (
+                    <div key={index} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                      <img
+                        src={screenshot}
+                        alt={`${tool.name} screenshot ${index + 1}`}
+                        className="w-full h-auto rounded-md shadow-sm"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-8">
+                <img
+                  src="/placeholder.svg"
+                  alt={`${tool.name} screenshot placeholder`}
+                  className="w-full h-auto rounded-md shadow-sm mb-4"
+                />
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                  {tool.name} interface screenshot
+                </p>
+              </div>
+            )}
+            
+            {/* Testimonials */}
+            {tool.testimonials && tool.testimonials.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">What Users Say</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {tool.testimonials.map((testimonial, index) => (
+                    <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                      <Quote className="w-8 h-8 text-primary mb-4 opacity-50" />
+                      <p className="text-gray-700 dark:text-gray-300 mb-4 italic">"{testimonial.comment}"</p>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                          {testimonial.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-800 dark:text-white">{testimonial.name}</p>
+                          {testimonial.company && (
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.company}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* User Voting */}
+            <div className="flex items-center justify-center space-x-8 py-6 border-t border-b border-gray-200 dark:border-gray-700 mb-8">
+              <button 
+                onClick={() => handleVote('up')}
+                className={`flex flex-col items-center transition-colors ${userVote === 'up' ? 'text-green-600 dark:text-green-500' : 'text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-500'}`}
+              >
+                <ThumbsUp className="h-6 w-6 mb-1" />
+                <span className="text-sm font-medium">Helpful ({upvotes})</span>
+              </button>
+              
+              <button 
+                onClick={() => handleVote('down')}
+                className={`flex flex-col items-center transition-colors ${userVote === 'down' ? 'text-red-600 dark:text-red-500' : 'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500'}`}
+              >
+                <ThumbsDown className="h-6 w-6 mb-1" />
+                <span className="text-sm font-medium">Not Helpful ({downvotes})</span>
+              </button>
             </div>
             
             {/* Related Tools */}
@@ -455,37 +639,68 @@ const ToolDetailPage = () => {
                     onClick={handleCompare}
                   >
                     <BarChart2 className="mr-2 h-4 w-4" /> 
-                    {isInCompare(tool._id || tool.id || '') ? 'Remove Compare' : 'Compare'}
+                    {isInCompare(tool._id || tool.id || '') ? 'Remove' : 'Compare'}
                   </Button>
                 </div>
               </div>
               
+              {/* Pricing Information */}
               {tool.pricing && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Pricing</h3>
-                  <p className="text-gray-700 dark:text-gray-300">{tool.pricing}</p>
+                  <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">Pricing</h3>
+                  <div className="space-y-2">
+                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{tool.pricing}</p>
+                    {tool.pricingModel && (
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {tool.pricingModel.charAt(0).toUpperCase() + tool.pricingModel.slice(1)}
+                        </Badge>
+                        {tool.apiAvailable && (
+                          <Badge variant="outline" className="text-xs">
+                            <Code className="w-3 h-3 mr-1" />
+                            API Available
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
               
-              <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Category</h3>
+              {/* Category and Subcategories */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">Category</h3>
                 <Link
                   to={`/tools/category/${tool.category}`}
-                  className="text-primary hover:underline"
+                  className="text-primary hover:underline font-medium"
                 >
                   {tool.category.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                 </Link>
+                
+                {tool.subcategories && tool.subcategories.length > 0 && (
+                  <div className="mt-3">
+                    <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Subcategories</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {tool.subcategories.map((subcat: string) => (
+                        <Badge key={subcat} variant="outline" className="text-xs">
+                          {subcat}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
               
+              {/* Industry Fit */}
               {tool.industryFit && tool.industryFit.length > 0 && (
-                <div className="pt-6 border-t border-gray-200 dark:border-gray-700 mt-6">
-                  <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Best For</h3>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">Best For</h3>
                   <div className="flex flex-wrap gap-2">
                     {tool.industryFit.map((industry: string) => (
                       <Link
                         key={industry}
                         to={`/tools?industry=${industry}`}
-                        className="inline-block px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                        className="inline-block px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors"
                       >
                         {industry.charAt(0).toUpperCase() + industry.slice(1)}
                       </Link>
@@ -494,8 +709,33 @@ const ToolDetailPage = () => {
                 </div>
               )}
               
+              {/* Integrations */}
+              {tool.integratedWith && tool.integratedWith.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">Integrations</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {tool.integratedWith.map((integration: string) => (
+                      <Badge key={integration} variant="outline" className="text-xs">
+                        {integration}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Last Updated */}
+              {tool.lastUpdated && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Last Updated</h3>
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <Calendar className="w-4 h-4" />
+                    {new Date(tool.lastUpdated).toLocaleDateString()}
+                  </div>
+                </div>
+              )}
+              
               {/* Sponsor Section */}
-              <div className="pt-6 border-t border-gray-200 dark:border-gray-700 mt-6">
+              <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Premium Listing</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   Want your tool to be featured prominently?

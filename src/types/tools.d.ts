@@ -34,6 +34,7 @@ export interface Tool {
   tags?: string[];
   platforms?: string[];
   languagesSupported?: string[];
+  systemRequirements?: string;
   
   // Marketing and display
   trending?: boolean;

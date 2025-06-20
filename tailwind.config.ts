@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			maxWidth: {
+				container: "1280px",
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -121,6 +124,10 @@ export default {
           '50%': {
             opacity: '0.9'
           }
+        },
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(calc(-100% - var(--gap)))' }
         }
 			},
 			animation: {
@@ -129,7 +136,8 @@ export default {
         'fade-in': 'fade-in 0.3s ease-out',
         'scale-in': 'scale-in 0.2s ease-out',
         'float': 'float 3s ease-in-out infinite',
-        'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite'
+        'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
+        marquee: 'marquee var(--duration) linear infinite',
 			},
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

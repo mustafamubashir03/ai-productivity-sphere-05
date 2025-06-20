@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { TestimonialsSection } from "@/components/ui/testimonials-with-marquee";
+import { FeaturesSectionWithHoverEffects } from "@/components/ui/feature-section-with-hover-effects";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Zap, Target, Users } from "lucide-react";
 import Logo from "@/components/common/Logo";
@@ -174,33 +175,33 @@ const LandingPage = () => {
               </motion.div>
             </motion.div>
           </div>
-
-          {/* Scroll Animation Section - Moved Lower */}
-          <ContainerScroll
-            titleComponent={
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-center mb-8"
-              >
-                <h2 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                  Experience the Power of AI
-                </h2>
-                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                  See how our platform brings together the best AI tools in one intuitive interface
-                </p>
-              </motion.div>
-            }
-          >
-            <img
-              src="/lovable-uploads/92767d84-2f91-49a0-a5c0-85e309218221.png"
-              alt="AI Tools Dashboard Preview"
-              className="mx-auto rounded-2xl object-cover h-full object-top w-full"
-              draggable={false}
-            />
-          </ContainerScroll>
         </section>
+
+        {/* Scroll Animation Section - Moved Lower */}
+        <ContainerScroll
+          titleComponent={
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-center mb-8"
+            >
+              <h2 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Experience the Power of AI
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                See how our platform brings together the best AI tools in one intuitive interface
+              </p>
+            </motion.div>
+          }
+        >
+          <img
+            src="/lovable-uploads/92767d84-2f91-49a0-a5c0-85e309218221.png"
+            alt="AI Tools Dashboard Preview"
+            className="mx-auto rounded-2xl object-cover h-full object-top w-full"
+            draggable={false}
+          />
+        </ContainerScroll>
 
         {/* Features Section */}
         <section className="py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
@@ -279,12 +280,32 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* Enhanced Features Section */}
+        <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Everything You Need to Succeed
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Comprehensive features designed to help you find and utilize the best AI tools
+              </p>
+            </motion.div>
+            <FeaturesSectionWithHoverEffects />
+          </div>
+        </section>
+
         {/* Testimonials Section */}
         <TestimonialsSection
           title="Trusted by creators worldwide"
           description="Join thousands of developers, creators, and entrepreneurs who have discovered their perfect AI tools"
           testimonials={testimonials}
-          className="bg-gray-50 dark:bg-gray-900"
+          className="bg-white dark:bg-gray-800"
         />
 
         {/* Stats Section */}

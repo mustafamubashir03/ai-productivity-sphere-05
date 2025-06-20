@@ -25,11 +25,13 @@ const LandingPage = () => {
   };
 
   const floatingAnimation = {
-    y: [0, -10, 0],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      ease: "easeInOut"
+    animate: {
+      y: [0, -10, 0],
+      transition: {
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
     }
   };
 
@@ -84,7 +86,7 @@ const LandingPage = () => {
                   variants={fadeInUp}
                   className="flex items-center justify-center gap-2 mb-6"
                 >
-                  <motion.div animate={floatingAnimation}>
+                  <motion.div {...floatingAnimation}>
                     <Sparkles className="h-8 w-8 text-primary" />
                   </motion.div>
                   <span className="text-primary font-semibold text-lg">Discover AI Excellence</span>
@@ -192,8 +194,15 @@ const LandingPage = () => {
                   className="group p-8 bg-gray-50 dark:bg-gray-700 rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
                 >
                   <motion.div
-                    animate={floatingAnimation}
-                    style={{ animationDelay: `${index * 0.5}s` }}
+                    animate={{
+                      y: [0, -10, 0],
+                      transition: {
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: index * 0.5
+                      }
+                    }}
                     className="mb-6"
                   >
                     <feature.icon className="h-12 w-12 text-primary mx-auto" />

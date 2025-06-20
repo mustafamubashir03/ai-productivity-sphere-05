@@ -8,6 +8,7 @@ import Layout from "./components/layout/Layout";
 
 // Pages
 import HomePage from "./pages/HomePage";
+import LandingPage from "./pages/LandingPage";
 import ToolsPage from "./pages/ToolsPage";
 import ToolDetailPage from "./pages/ToolDetailPage";
 import BlogPage from "./pages/BlogPage";
@@ -42,29 +43,37 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <Layout>
-        <ScrollToTop/>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/tools" element={<ToolsPage />} />
-          <Route path="/tools/category/:categorySlug" element={<ToolsPage />} />
-          <Route path="/tools/:slug" element={<ToolDetailPage />} />
-          <Route path="/compare/:slugs" element={<CompareToolsPage />} />
-          <Route path="/saved-tools" element={<SavedToolsPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/bookmarks" element={<BookmarksPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/trending-tools" element={<TrendingToolsPage />} />
-          <Route path="/submit-tool" element={<SubmitToolPage />} />
-          <Route path="/insights" element={<InsightsPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="/terms-and-conditions" element={<TermsPage />} />
-          <Route path="/disclaimer" element={<DisclaimerPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Landing page without layout */}
+        <Route path="/landing" element={<LandingPage />} />
+        
+        {/* All other routes with layout */}
+        <Route path="/*" element={
+          <Layout>
+            <ScrollToTop/>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/tools" element={<ToolsPage />} />
+              <Route path="/tools/category/:categorySlug" element={<ToolsPage />} />
+              <Route path="/tools/:slug" element={<ToolDetailPage />} />
+              <Route path="/compare/:slugs" element={<CompareToolsPage />} />
+              <Route path="/saved-tools" element={<SavedToolsPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/bookmarks" element={<BookmarksPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/trending-tools" element={<TrendingToolsPage />} />
+              <Route path="/submit-tool" element={<SubmitToolPage />} />
+              <Route path="/insights" element={<InsightsPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms-and-conditions" element={<TermsPage />} />
+              <Route path="/disclaimer" element={<DisclaimerPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        } />
+      </Routes>
     </TooltipProvider>
   </QueryClientProvider>
 );

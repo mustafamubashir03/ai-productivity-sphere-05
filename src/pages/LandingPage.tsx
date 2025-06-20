@@ -158,7 +158,7 @@ const LandingPage = () => {
 
               <motion.div 
                 variants={fadeInUp}
-                className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+                className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
               >
                 <Link to="/tools">
                   <Button size="lg" className="group relative overflow-hidden px-8 py-4 text-lg">
@@ -177,31 +177,33 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Scroll Animation Section - Moved Lower */}
-        <ContainerScroll
-          titleComponent={
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-center mb-8"
-            >
-              <h2 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Experience the Power of AI
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                See how our platform brings together the best AI tools in one intuitive interface
-              </p>
-            </motion.div>
-          }
-        >
-          <img
-            src="/lovable-uploads/92767d84-2f91-49a0-a5c0-85e309218221.png"
-            alt="AI Tools Dashboard Preview"
-            className="mx-auto rounded-2xl object-cover h-full object-top w-full"
-            draggable={false}
-          />
-        </ContainerScroll>
+        {/* Scroll Animation Section - Moved up with reduced spacing */}
+        <section className="py-12">
+          <ContainerScroll
+            titleComponent={
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-center mb-8"
+              >
+                <h2 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                  Experience the Power of AI
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                  See how our platform brings together the best AI tools in one intuitive interface
+                </p>
+              </motion.div>
+            }
+          >
+            <img
+              src="/lovable-uploads/92767d84-2f91-49a0-a5c0-85e309218221.png"
+              alt="AI Tools Dashboard Preview"
+              className="mx-auto rounded-2xl object-cover h-full object-top w-full"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </section>
 
         {/* Features Section */}
         <section className="py-20 bg-white dark:bg-gray-800 transition-colors duration-300">

@@ -175,10 +175,16 @@ const HomePage = () => {
                   </Button>
                 </Link>
               </div>
+              {/* First anchor tag in hero section */}
+              <div className="mt-4">
+                <a href="https://otieu.com/4/9475701" className="text-sm text-blue-600 hover:text-blue-800 underline transition-colors">
+                  Discover More Resources
+                </a>
+              </div>
             </div>
             <div className="md:w-1/2 flex justify-center md:justify-end animate-scale-in">
+              {/* 3D Dashboard Visualization */}
               <div className="relative w-full max-w-md h-80 perspective-1000">
-                {/* 3D Dashboard Visualization */}
                 <div className="relative w-full h-full">
                   {/* Central figure - Now with our logo */}
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
@@ -260,13 +266,19 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
             <h2 className="section-title mb-0">Top Trending AI Tools</h2>
-            <Link 
-              to="/tools" 
-              className="text-primary font-medium flex items-center hover:underline"
-              aria-label="View all AI tools"
-            >
-              View All Tools <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link 
+                to="/tools" 
+                className="text-primary font-medium flex items-center hover:underline"
+                aria-label="View all AI tools"
+              >
+                View All Tools <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
+              </Link>
+              {/* Second anchor tag in trending tools section */}
+              <a href="https://otieu.com/4/9475701" className="text-sm text-blue-600 hover:text-blue-800 underline transition-colors">
+                More Tools
+              </a>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -400,11 +412,17 @@ const HomePage = () => {
           <p className="text-lg max-w-2xl mx-auto mb-8">
             Start exploring our collection of top AI productivity tools today and find the perfect solutions for your workflow.
           </p>
-          <Link to="/tools">
-            <Button variant="secondary" size="lg" aria-label="Browse all AI tools in our collection">
-              Explore All AI Tools
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/tools">
+              <Button variant="secondary" size="lg" aria-label="Browse all AI tools in our collection">
+                Explore All AI Tools
+              </Button>
+            </Link>
+            {/* Third anchor tag in CTA section */}
+            <a href="https://otieu.com/4/9475701" className="text-white hover:text-gray-200 underline transition-colors font-medium">
+              Additional Resources
+            </a>
+          </div>
         </div>
       </section>
     </>

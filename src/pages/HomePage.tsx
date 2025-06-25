@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Pencil, Film, Image, Terminal, Bot } from "lucide-react";
@@ -175,12 +176,6 @@ const HomePage = () => {
                   </Button>
                 </Link>
               </div>
-              {/* First anchor tag in hero section */}
-              <div className="mt-4">
-                <a href="https://otieu.com/4/9475701" className="text-sm text-blue-600 hover:text-blue-800 underline transition-colors">
-                  Discover More Resources
-                </a>
-              </div>
             </div>
             <div className="md:w-1/2 flex justify-center md:justify-end animate-scale-in">
               {/* 3D Dashboard Visualization */}
@@ -258,6 +253,13 @@ const HomePage = () => {
               ))
             )}
           </div>
+          
+          {/* Subtle anchor link at bottom of categories */}
+          <div className="text-center mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Looking for more resources? <a href="https://otieu.com/4/9475701" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline transition-colors">Check this out</a>
+            </p>
+          </div>
         </div>
       </section>
 
@@ -266,19 +268,13 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
             <h2 className="section-title mb-0">Top Trending AI Tools</h2>
-            <div className="flex items-center gap-4">
-              <Link 
-                to="/tools" 
-                className="text-primary font-medium flex items-center hover:underline"
-                aria-label="View all AI tools"
-              >
-                View All Tools <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-              </Link>
-              {/* Second anchor tag in trending tools section */}
-              <a href="https://otieu.com/4/9475701" className="text-sm text-blue-600 hover:text-blue-800 underline transition-colors">
-                More Tools
-              </a>
-            </div>
+            <Link 
+              to="/tools" 
+              className="text-primary font-medium flex items-center hover:underline"
+              aria-label="View all AI tools"
+            >
+              View All Tools <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -386,6 +382,13 @@ const HomePage = () => {
                 </p>
               </div>
             </div>
+            
+            {/* Subtle anchor link at bottom of FAQ */}
+            <div className="text-center mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Need additional help? <a href="https://otieu.com/4/9475701" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline transition-colors">Explore more</a>
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -418,10 +421,13 @@ const HomePage = () => {
                 Explore All AI Tools
               </Button>
             </Link>
-            {/* Third anchor tag in CTA section */}
-            <a href="https://otieu.com/4/9475701" className="text-white hover:text-gray-200 underline transition-colors font-medium">
-              Additional Resources
-            </a>
+            
+            {/* Subtle footer link in CTA */}
+            <div className="text-center mt-4 sm:mt-0 sm:ml-4">
+              <p className="text-xs text-white/70">
+                <a href="https://otieu.com/4/9475701" className="text-white/70 hover:text-white/90 underline transition-colors">Additional resources</a>
+              </p>
+            </div>
           </div>
         </div>
       </section>

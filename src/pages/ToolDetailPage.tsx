@@ -578,7 +578,7 @@ const ToolDetailPage = () => {
                 {/* Action Buttons */}
                 <div className="flex flex-col space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                   <a
-                    href={tool.websiteUrl}
+                    href={`${tool.websiteUrl}/?ref=alltopaitools.com`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block w-full"

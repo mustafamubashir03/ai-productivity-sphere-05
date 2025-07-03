@@ -24,7 +24,6 @@ const Navbar = () => {
     { name: "Landing", path: "/landing" },
     { name: "Tools", path: "/tools" },
     { name: "Trending", path: "/trending-tools" },
-    { name: "Insights", path: "/insights" },
     { name: "Blog", path: "/blog" },
     { name: "Submit Tool", path: "/submit-tool" },
     { name: "About", path: "/about" },

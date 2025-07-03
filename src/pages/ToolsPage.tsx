@@ -529,6 +529,18 @@ const ToolsPage = () => {
                 ))}
               </div>
               
+              {/* Pagination - Positioned above FAQ section */}
+              {totalPages > 1 && (
+                <div className="mt-8 sm:mt-10">
+                  <PaginationControls 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => setCurrentPage(page)}
+                    siblingCount={isMobile ? 0 : 1}
+                  />
+                </div>
+              )}
+              
               {/* Related blog posts for internal linking */}
               <div className="mt-8 sm:mt-10 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
                 <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Related Articles</h3>
@@ -562,18 +574,6 @@ const ToolsPage = () => {
                   ))}
                 </Accordion>
               </div>
-              
-              {/* Pagination - Only at the bottom */}
-              {totalPages > 1 && (
-                <div className="mt-8 sm:mt-10">
-                  <PaginationControls 
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={(page) => setCurrentPage(page)}
-                    siblingCount={isMobile ? 0 : 1}
-                  />
-                </div>
-              )}
             </>
           ) : (
             <div className="text-center py-8 sm:py-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 sm:p-6">

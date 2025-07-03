@@ -184,6 +184,18 @@ const TrendingToolsPage = () => {
               ))}
             </div>
             
+            {/* Pagination - Positioned above FAQ section */}
+            {totalPages > 1 && (
+              <div className="mt-8 sm:mt-10">
+                <PaginationControls 
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => setCurrentPage(page)}
+                  siblingCount={isMobile ? 0 : 1}
+                />
+              </div>
+            )}
+            
             {/* FAQ Section for SEO */}
             <div className="mt-16 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
               <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
@@ -227,18 +239,6 @@ const TrendingToolsPage = () => {
                 <Link to="/tools/category/video" className="text-primary hover:underline">AI Video Tools</Link>
               </div>
             </div>
-
-            {/* Pagination - Only at the bottom */}
-            {totalPages > 1 && (
-              <div className="mt-8 sm:mt-10">
-                <PaginationControls 
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(page) => setCurrentPage(page)}
-                  siblingCount={isMobile ? 0 : 1}
-                />
-              </div>
-            )}
           </>
         ) : (
           <div className="text-center py-10">

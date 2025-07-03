@@ -38,7 +38,7 @@ PaginationItem.displayName = "PaginationItem"
 type PaginationLinkProps = {
   isActive?: boolean
 } & Pick<ButtonProps, "size"> &
-  React.ComponentProps<"a">
+  React.ComponentProps<"button">
 
 const PaginationLink = ({
   className,
@@ -46,14 +46,14 @@ const PaginationLink = ({
   size = "icon",
   ...props
 }: PaginationLinkProps) => (
-  <a
+  <button
     aria-current={isActive ? "page" : undefined}
     className={cn(
       buttonVariants({
-        variant: isActive ? "outline" : "ghost",
+        variant: isActive ? "default" : "ghost",
         size,
       }),
-      isActive && "pointer-events-none bg-primary/10 border-primary/20 text-primary",
+      isActive && "bg-primary text-primary-foreground font-semibold",
       className
     )}
     {...props}
@@ -109,7 +109,7 @@ const PaginationEllipsis = ({
 PaginationEllipsis.displayName = "PaginationEllipsis"
 
 /**
- * Enhanced pagination component for Blog page
+ * Enhanced pagination component
  */
 type PaginationControlsProps = {
   currentPage: number;
@@ -124,47 +124,42 @@ const PaginationControls = ({
   onPageChange,
   siblingCount = 1,
 }: PaginationControlsProps) => {
-  // Generate page numbers
+  // Generate page numbers without duplication
   const generatePagination = () => {
-    const pages = [];
+    if (totalPages <= 7) {
+      // Show all pages if 7 or fewer
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const pages: (number | 'ellipsis')[] = [];
     
-    // Always include first page and last page
-    if (totalPages <= 5) {
-      // Less than 5 pages, show all
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push({ type: 'page', number: i });
+    // Always show first page
+    pages.push(1);
+    
+    // Calculate range around current page
+    const leftSibling = Math.max(currentPage - siblingCount, 2);
+    const rightSibling = Math.min(currentPage + siblingCount, totalPages - 1);
+    
+    // Add left ellipsis if needed
+    if (leftSibling > 2) {
+      pages.push('ellipsis');
+    }
+    
+    // Add pages around current page
+    for (let i = leftSibling; i <= rightSibling; i++) {
+      if (i !== 1 && i !== totalPages) {
+        pages.push(i);
       }
-    } else {
-      // Always add first page
-      pages.push({ type: 'page', number: 1 });
-      
-      // Calculate start and end of the middle section
-      const startPage = Math.max(2, currentPage - siblingCount);
-      const endPage = Math.min(totalPages - 1, currentPage + siblingCount);
-      
-      // Add ellipsis if needed before middle section
-      if (startPage > 2) {
-        pages.push({ type: 'ellipsis' });
-      } else if (startPage === 2) {
-        pages.push({ type: 'page', number: 2 });
-      }
-      
-      // Add middle pages
-      for (let i = Math.max(2, startPage); i <= Math.min(totalPages - 1, endPage); i++) {
-        pages.push({ type: 'page', number: i });
-      }
-      
-      // Add ellipsis if needed after middle section
-      if (endPage < totalPages - 1) {
-        pages.push({ type: 'ellipsis' });
-      } else if (endPage === totalPages - 1) {
-        pages.push({ type: 'page', number: totalPages - 1 });
-      }
-      
-      // Always add last page
-      if (totalPages > 1) {
-        pages.push({ type: 'page', number: totalPages });
-      }
+    }
+    
+    // Add right ellipsis if needed
+    if (rightSibling < totalPages - 1) {
+      pages.push('ellipsis');
+    }
+    
+    // Always show last page
+    if (totalPages > 1) {
+      pages.push(totalPages);
     }
     
     return pages;
@@ -177,12 +172,19 @@ const PaginationControls = ({
     return null;
   }
   
+  const handlePageChange = (page: number) => {
+    if (page !== currentPage && page >= 1 && page <= totalPages) {
+      onPageChange(page);
+    }
+  };
+  
   return (
     <Pagination className="mt-8 bg-white dark:bg-gray-800 p-2 rounded-lg shadow-sm">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious 
-            onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
             className={cn(
               "cursor-pointer",
               currentPage === 1 ? "pointer-events-none opacity-50" : ""
@@ -190,20 +192,17 @@ const PaginationControls = ({
           />
         </PaginationItem>
         
-        {pages.map((page, i) => (
-          <PaginationItem key={`${page.type}-${i}`}>
-            {page.type === 'ellipsis' ? (
+        {pages.map((page, index) => (
+          <PaginationItem key={`page-${index}`}>
+            {page === 'ellipsis' ? (
               <PaginationEllipsis />
             ) : (
               <PaginationLink 
-                isActive={currentPage === page.number}
-                onClick={() => onPageChange(page.number)}
-                className={cn(
-                  "cursor-pointer",
-                  currentPage === page.number ? "font-bold" : ""
-                )}
+                isActive={currentPage === page}
+                onClick={() => handlePageChange(page)}
+                className="cursor-pointer"
               >
-                {page.number}
+                {page}
               </PaginationLink>
             )}
           </PaginationItem>
@@ -211,7 +210,8 @@ const PaginationControls = ({
         
         <PaginationItem>
           <PaginationNext 
-            onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
             className={cn(
               "cursor-pointer",
               currentPage === totalPages ? "pointer-events-none opacity-50" : ""
@@ -231,5 +231,5 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  PaginationControls, // Exporting the enhanced component
+  PaginationControls,
 }

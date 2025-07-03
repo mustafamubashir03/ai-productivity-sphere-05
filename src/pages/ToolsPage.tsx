@@ -5,7 +5,7 @@ import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationControls } from "@/components/ui/pagination";
+import { PaginationControls } from "@/components/ui/pagination";
 import { Search, Home, ChevronDown } from "lucide-react";
 import { categories, getCategoryBySlug } from "@/data/categories";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
@@ -23,7 +23,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { blogPosts, getBlogPosts } from "@/data/blog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-const TOOLS_PER_PAGE = 9;
+const TOOLS_PER_PAGE = 12;
 
 const ToolsPage = () => {
   const { categorySlug } = useParams();
@@ -513,20 +513,7 @@ const ToolsPage = () => {
           isMobile={isMobile}
         />
         
-        {/* Pagination at Top - Always visible with smaller size on mobile */}
-        {!loading && (
-          <div className="mb-4 sm:mb-6 flex justify-center">
-            <PaginationControls 
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={(page) => setCurrentPage(page)}
-              siblingCount={isMobile ? 0 : 1}
-              aria-label="Top pagination"
-            />
-          </div>
-        )}
-        
-        {/* Tools Grid - Optimized for maximum 4 columns */}
+        {/* Tools Grid - Fixed to 4 cards per row */}
         <div className="w-full">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
@@ -576,7 +563,7 @@ const ToolsPage = () => {
                 </Accordion>
               </div>
               
-              {/* Pagination - Only show if we have more than one page */}
+              {/* Pagination - Only at the bottom */}
               {totalPages > 1 && (
                 <div className="mt-8 sm:mt-10">
                   <PaginationControls 
@@ -584,7 +571,6 @@ const ToolsPage = () => {
                     totalPages={totalPages}
                     onPageChange={(page) => setCurrentPage(page)}
                     siblingCount={isMobile ? 0 : 1}
-                    aria-label="Bottom pagination"
                   />
                 </div>
               )}

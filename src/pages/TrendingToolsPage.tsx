@@ -3,35 +3,65 @@ import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
-import { useState, useEffect } from "react";
+import { PaginationControls } from "@/components/ui/pagination";
+import { useState, useEffect, useMemo } from "react";
 import { useTools, adaptToolsResponse } from "@/hooks/use-api";
 import { formatToolsData } from "@/utils/formatters";
 import { toast } from "@/components/ui/sonner";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const TOOLS_PER_PAGE = 12; // Show 12 tools per page (3 rows of 4)
 
 const TrendingToolsPage = () => {
-  // State to store formatted tools
+  const isMobile = useIsMobile();
+  
+  // State to store formatted tools and pagination
   const [formattedTools, setFormattedTools] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Fetch trending tools from the API
+  // Fetch trending tools from the API with pagination
   const { 
     data: trendingToolsResponse,
     isLoading: loading,
     error
-  } = useTools({ trending: "true", limit: "12" });
+  } = useTools({ 
+    trending: "true", 
+    limit: String(TOOLS_PER_PAGE),
+    page: String(currentPage - 1) // API uses 0-based indexing
+  });
   
   // Process and format tools data when it arrives
   useEffect(() => {
     if (trendingToolsResponse) {
       console.log("Trending tools response:", trendingToolsResponse);
-      const toolsArray = adaptToolsResponse(trendingToolsResponse);
-      const formatted = formatToolsData(toolsArray);
-      console.log("Formatted trending tools:", formatted);
-      setFormattedTools(formatted);
+      
+      // Check if data follows the new API response format
+      if ('tools' in trendingToolsResponse && Array.isArray(trendingToolsResponse.tools)) {
+        // New API format (paginated response)
+        const formatted = formatToolsData(trendingToolsResponse.tools);
+        setFormattedTools(formatted);
+        setTotalPages(trendingToolsResponse.totalPages || 1);
+      } else {
+        // Legacy format or direct array
+        const toolsArray = adaptToolsResponse(trendingToolsResponse);
+        const formatted = formatToolsData(toolsArray);
+        
+        // For client-side pagination
+        const startIndex = (currentPage - 1) * TOOLS_PER_PAGE;
+        const endIndex = startIndex + TOOLS_PER_PAGE;
+        const paginatedTools = formatted.slice(startIndex, endIndex);
+        
+        setFormattedTools(paginatedTools);
+        setTotalPages(Math.ceil(formatted.length / TOOLS_PER_PAGE));
+      }
+      
+      console.log("Formatted trending tools:", formattedTools);
     }
-  }, [trendingToolsResponse]);
+  }, [trendingToolsResponse, currentPage]);
   
   // Show error toast if API request fails
   useEffect(() => {
@@ -141,14 +171,14 @@ const TrendingToolsPage = () => {
         </Breadcrumb>
         
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array(6).fill(0).map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
+            {Array(12).fill(0).map((_, index) => (
               <ToolCardSkeleton key={`skeleton-${index}`} />
             ))}
           </div>
         ) : formattedTools && formattedTools.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
               {formattedTools.map((tool) => (
                 <ToolCard key={tool._id} tool={tool} />
               ))}
@@ -197,6 +227,18 @@ const TrendingToolsPage = () => {
                 <Link to="/tools/category/video" className="text-primary hover:underline">AI Video Tools</Link>
               </div>
             </div>
+
+            {/* Pagination - Only at the bottom */}
+            {totalPages > 1 && (
+              <div className="mt-8 sm:mt-10">
+                <PaginationControls 
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => setCurrentPage(page)}
+                  siblingCount={isMobile ? 0 : 1}
+                />
+              </div>
+            )}
           </>
         ) : (
           <div className="text-center py-10">

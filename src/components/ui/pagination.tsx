@@ -109,7 +109,7 @@ const PaginationEllipsis = ({
 PaginationEllipsis.displayName = "PaginationEllipsis"
 
 /**
- * Enhanced pagination component
+ * Enhanced pagination component with smooth behavior
  */
 type PaginationControlsProps = {
   currentPage: number;
@@ -145,9 +145,9 @@ const PaginationControls = ({
       pages.push('ellipsis');
     }
     
-    // Add pages around current page
+    // Add pages around current page (excluding first and last)
     for (let i = leftSibling; i <= rightSibling; i++) {
-      if (i !== 1 && i !== totalPages) {
+      if (i > 1 && i < totalPages) {
         pages.push(i);
       }
     }
@@ -157,7 +157,7 @@ const PaginationControls = ({
       pages.push('ellipsis');
     }
     
-    // Always show last page
+    // Always show last page if more than 1 page
     if (totalPages > 1) {
       pages.push(totalPages);
     }
@@ -172,7 +172,8 @@ const PaginationControls = ({
     return null;
   }
   
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (e: React.MouseEvent, page: number) => {
+    e.preventDefault();
     if (page !== currentPage && page >= 1 && page <= totalPages) {
       onPageChange(page);
     }
@@ -183,7 +184,7 @@ const PaginationControls = ({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious 
-            onClick={() => handlePageChange(currentPage - 1)}
+            onClick={(e) => handlePageChange(e, currentPage - 1)}
             disabled={currentPage === 1}
             className={cn(
               "cursor-pointer",
@@ -193,13 +194,13 @@ const PaginationControls = ({
         </PaginationItem>
         
         {pages.map((page, index) => (
-          <PaginationItem key={`page-${index}`}>
+          <PaginationItem key={`page-${page}-${index}`}>
             {page === 'ellipsis' ? (
               <PaginationEllipsis />
             ) : (
               <PaginationLink 
                 isActive={currentPage === page}
-                onClick={() => handlePageChange(page)}
+                onClick={(e) => handlePageChange(e, page)}
                 className="cursor-pointer"
               >
                 {page}
@@ -210,7 +211,7 @@ const PaginationControls = ({
         
         <PaginationItem>
           <PaginationNext 
-            onClick={() => handlePageChange(currentPage + 1)}
+            onClick={(e) => handlePageChange(e, currentPage + 1)}
             disabled={currentPage === totalPages}
             className={cn(
               "cursor-pointer",

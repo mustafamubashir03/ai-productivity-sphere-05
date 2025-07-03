@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
@@ -23,7 +23,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { blogPosts, getBlogPosts } from "@/data/blog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-const TOOLS_PER_PAGE = 12;
+const TOOLS_PER_PAGE = 12; // Exactly 12 tools per page
 
 const ToolsPage = () => {
   const { categorySlug } = useParams();
@@ -181,6 +181,11 @@ const ToolsPage = () => {
     setActiveSubcategory(subcategory);
     setCurrentPage(1);
   };
+  
+  // Smooth pagination handler that prevents scrolling
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
   
   // Get unique subcategories, pricing models, and platforms from tools for filters
   const uniqueSubcategories = useMemo(() => {
@@ -535,7 +540,7 @@ const ToolsPage = () => {
                   <PaginationControls 
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    onPageChange={(page) => setCurrentPage(page)}
+                    onPageChange={handlePageChange}
                     siblingCount={isMobile ? 0 : 1}
                   />
                 </div>

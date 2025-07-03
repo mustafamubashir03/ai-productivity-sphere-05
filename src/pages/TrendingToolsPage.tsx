@@ -1,10 +1,9 @@
-
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import PageHeader from "@/components/common/PageHeader";
 import ToolCard from "@/components/common/ToolCard";
 import ToolCardSkeleton from "@/components/skeletons/ToolCardSkeleton";
 import { PaginationControls } from "@/components/ui/pagination";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTools, adaptToolsResponse } from "@/hooks/use-api";
 import { formatToolsData } from "@/utils/formatters";
 import { toast } from "@/components/ui/sonner";
@@ -13,7 +12,7 @@ import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const TOOLS_PER_PAGE = 12; // Show 12 tools per page (3 rows of 4)
+const TOOLS_PER_PAGE = 12; // Exactly 12 tools per page
 
 const TrendingToolsPage = () => {
   const isMobile = useIsMobile();
@@ -34,6 +33,11 @@ const TrendingToolsPage = () => {
     page: String(currentPage - 1) // API uses 0-based indexing
   });
   
+  // Smooth pagination handler that prevents scrolling
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
+
   // Process and format tools data when it arrives
   useEffect(() => {
     if (trendingToolsResponse) {
@@ -190,7 +194,7 @@ const TrendingToolsPage = () => {
                 <PaginationControls 
                   currentPage={currentPage}
                   totalPages={totalPages}
-                  onPageChange={(page) => setCurrentPage(page)}
+                  onPageChange={handlePageChange}
                   siblingCount={isMobile ? 0 : 1}
                 />
               </div>

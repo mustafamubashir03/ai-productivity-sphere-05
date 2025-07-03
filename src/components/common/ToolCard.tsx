@@ -6,9 +6,10 @@ import { ArrowRight, BarChart2, Bookmark, BookmarkCheck, TrendingUp } from "luci
 import { useBookmarks } from "@/context/BookmarkContext";
 import { useCompare } from "@/context/CompareContext";
 import { toast } from "@/components/ui/sonner";
-import { Tool as ToolType } from "@/types/tools"; // Import the Tool type from types
+import { Tool as ToolType } from "@/types/tools";
+import ReactMarkdown from "react-markdown";
 
-export type Tool = ToolType; // Re-export for compatibility with existing code
+export type Tool = ToolType;
 
 interface ToolCardProps {
   tool: Tool;
@@ -171,14 +172,22 @@ const ToolCard = ({ tool }: ToolCardProps) => {
         </div>
       )}
       
-      {/* Features */}
+      {/* Features with Markdown rendering */}
       {tool.features && tool.features.length > 0 && (
         <div className="mt-2">
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Key Features:</p>
           <div className="flex flex-wrap gap-1">
             {tool.features.slice(0, 2).map((feature, index) => (
               <span key={index} className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full truncate max-w-full">
-                {feature}
+                <ReactMarkdown 
+                  className="inline"
+                  components={{
+                    p: ({ children }) => <span>{children}</span>,
+                    strong: ({ children }) => <strong className="font-bold">{children}</strong>
+                  }}
+                >
+                  {feature}
+                </ReactMarkdown>
               </span>
             ))}
           </div>

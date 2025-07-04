@@ -142,7 +142,7 @@ const HomePage = () => {
   ];
 
   return (
-    <>
+    <div itemScope itemType="http://schema.org/WebSite">
       <EnhancedSEO
         title="Top AI Tools - Best AI Tools for Productivity"
         description="Curated AI tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity at Top AI Tools."
@@ -151,8 +151,13 @@ const HomePage = () => {
         structuredData={structuredData}
       />
       
+      {/* HTML5 Microdata for Website */}
+      <meta itemProp="name" content="Top AI Tools - Best AI Tools for Productivity" />
+      <meta itemProp="description" content="Curated AI tools for creators, developers, and entrepreneurs – all in one place. Discover top AI tools for productivity at Top AI Tools." />
+      <meta itemProp="url" content="https://alltopaitools.com" />
+      
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 overflow-hidden relative">
+      <section className="bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 overflow-hidden relative" itemScope itemType="http://schema.org/Organization">
         <div className="absolute inset-0 opacity-10 dark:opacity-5">
           <div className="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:20px_20px]"></div>
         </div>
@@ -160,12 +165,14 @@ const HomePage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0 z-10">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 animate-fade-in">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 animate-fade-in" itemProp="name">
                 Boost Your Productivity with the <span className="text-primary">Best AI Tools</span>
               </h1>
-              <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 animate-fade-in" style={{animationDelay: "0.2s"}}>
+              <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 animate-fade-in" style={{animationDelay: "0.2s"}} itemProp="description">
                 Curated tools for creators, developers, and entrepreneurs – all in one place.
               </p>
+              <meta itemProp="url" content="https://alltopaitools.com" />
+              <meta itemProp="logo" content="https://alltopaitools.com/favicon.svg" />
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{animationDelay: "0.4s"}}>
                 <Button size="lg" className="w-full sm:w-auto" onClick={scrollToTools} aria-label="Browse our collection of top AI tools">
                   Explore Top AI Tools
@@ -233,13 +240,14 @@ const HomePage = () => {
       </section>
 
       {/* Categories Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900 transition-colors duration-300" itemScope itemType="http://schema.org/ItemList">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="section-title mb-3">Explore AI Tool Categories</h2>
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <h2 className="section-title mb-3" itemProp="name">Explore AI Tool Categories</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto" itemProp="description">
               Browse our curated collection of AI tools organized by functional category to find the perfect solution for your needs.
             </p>
+            <meta itemProp="numberOfItems" content={categories.length.toString()} />
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -248,8 +256,11 @@ const HomePage = () => {
                 <CategoryCardSkeleton key={`cat-skeleton-${index}`} />
               ))
             ) : (
-              displayedCategories.map((category) => (
-                <CategoryCard key={category.id} category={category} />
+              displayedCategories.map((category, index) => (
+                <div key={category.id} itemScope itemType="http://schema.org/ListItem" itemProp="itemListElement">
+                  <meta itemProp="position" content={(index + 1).toString()} />
+                  <CategoryCard category={category} />
+                </div>
               ))
             )}
           </div>
@@ -264,10 +275,10 @@ const HomePage = () => {
       </section>
 
       {/* Trending Tools Section */}
-      <section id="tools-section" className="py-16 dark:bg-gray-800 transition-colors duration-300">
+      <section id="tools-section" className="py-16 dark:bg-gray-800 transition-colors duration-300" itemScope itemType="http://schema.org/ItemList">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
-            <h2 className="section-title mb-0">Top Trending AI Tools</h2>
+            <h2 className="section-title mb-0" itemProp="name">Top Trending AI Tools</h2>
             <Link 
               to="/tools" 
               className="text-primary font-medium flex items-center hover:underline"
@@ -283,8 +294,14 @@ const HomePage = () => {
                 <ToolCardSkeleton key={`tool-skeleton-${index}`} />
               ))
             ) : trendingTools.length > 0 ? (
-              trendingTools.filter(tool => tool.trending).slice(0,3).map((tool) => (
-                <ToolCard key={tool._id} tool={tool} />
+              trendingTools.filter(tool => tool.trending).slice(0,3).map((tool, index) => (
+                <div key={tool._id} itemScope itemType="http://schema.org/SoftwareApplication" itemProp="itemListElement">
+                  <meta itemProp="position" content={(index + 1).toString()} />
+                  <meta itemProp="name" content={tool.name} />
+                  <meta itemProp="description" content={tool.shortDescription || tool.description} />
+                  <meta itemProp="url" content={`https://alltopaitools.com/tools/${tool.slug}`} />
+                  <ToolCard tool={tool} />
+                </div>
               ))
             ) : (
               <div className="col-span-3 text-center py-10">
@@ -292,14 +309,15 @@ const HomePage = () => {
               </div>
             )}
           </div>
+          <meta itemProp="numberOfItems" content={trendingTools.filter(tool => tool.trending).slice(0,3).length.toString()} />
         </div>
       </section>
 
       {/* Blog Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900 transition-colors duration-300" itemScope itemType="http://schema.org/Blog">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-10">
-            <h2 className="section-title mb-0">Latest from Our Blog</h2>
+            <h2 className="section-title mb-0" itemProp="name">Latest from Our Blog</h2>
             <Link 
               to="/blog" 
               className="text-primary font-medium flex items-center hover:underline"
@@ -316,7 +334,7 @@ const HomePage = () => {
               ))
             ) : featuredPosts.length > 0 ? (
               featuredPosts.slice(0,2).map((post) => (
-                <div key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover border border-gray-100 dark:border-gray-700">
+                <article key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover border border-gray-100 dark:border-gray-700" itemScope itemType="http://schema.org/BlogPosting" itemProp="blogPost">
                   <img 
                     src={post.image} 
                     alt={`Cover image for article: ${post.title}`}
@@ -326,18 +344,22 @@ const HomePage = () => {
                       target.src = "/placeholder.svg";
                     }}
                     loading="lazy"
+                    itemProp="image"
                   />
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2 dark:text-white">
+                    <h3 className="text-xl font-semibold mb-2 dark:text-white" itemProp="headline">
                       <Link 
                         to={`/blog/${post.slug}`} 
                         className="hover:text-primary transition-colors"
+                        itemProp="url"
                       >
                         {post.title}
                       </Link>
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{post.date}</p>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">{post.excerpt}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                      <time itemProp="datePublished">{post.date}</time>
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4" itemProp="description">{post.excerpt}</p>
                     <Link 
                       to={`/blog/${post.slug}`} 
                       className="text-primary font-medium flex items-center hover:underline"
@@ -346,7 +368,7 @@ const HomePage = () => {
                       Read More <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
                     </Link>
                   </div>
-                </div>
+                </article>
               ))
             ) : (
               <div className="col-span-2 text-center py-10">
@@ -358,28 +380,34 @@ const HomePage = () => {
       </section>
 
       {/* FAQ Section for SEO */}
-      <section className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300" itemScope itemType="http://schema.org/FAQPage">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-center dark:text-white">Frequently Asked Questions</h2>
             <div className="space-y-6">
-              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold mb-2 dark:text-white">What is Top AI Tools?</h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Top AI Tools is a curated collection of the best AI tools for productivity. We help creators, developers, and entrepreneurs find the perfect tools to enhance their workflow and boost efficiency.
-                </p>
+              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg" itemScope itemType="http://schema.org/Question" itemProp="mainEntity">
+                <h3 className="text-lg font-semibold mb-2 dark:text-white" itemProp="name">What is Top AI Tools?</h3>
+                <div itemScope itemType="http://schema.org/Answer" itemProp="acceptedAnswer">
+                  <p className="text-gray-600 dark:text-gray-300" itemProp="text">
+                    Top AI Tools is a curated collection of the best AI tools for productivity. We help creators, developers, and entrepreneurs find the perfect tools to enhance their workflow and boost efficiency.
+                  </p>
+                </div>
               </div>
-              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold mb-2 dark:text-white">How do I find the right AI tool for my needs?</h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  You can browse our <Link to="/tools" className="text-primary hover:underline">categorized collection</Link>, use our search feature to find specific tools, or apply filters based on pricing, platform, or use case. We also provide detailed reviews and comparisons to help you make informed decisions.
-                </p>
+              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg" itemScope itemType="http://schema.org/Question" itemProp="mainEntity">
+                <h3 className="text-lg font-semibold mb-2 dark:text-white" itemProp="name">How do I find the right AI tool for my needs?</h3>
+                <div itemScope itemType="http://schema.org/Answer" itemProp="acceptedAnswer">
+                  <p className="text-gray-600 dark:text-gray-300" itemProp="text">
+                    You can browse our <Link to="/tools" className="text-primary hover:underline">categorized collection</Link>, use our search feature to find specific tools, or apply filters based on pricing, platform, or use case. We also provide detailed reviews and comparisons to help you make informed decisions.
+                  </p>
+                </div>
               </div>
-              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold mb-2 dark:text-white">Are all the AI tools free?</h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  We feature a mix of free, freemium, and premium tools. Each tool listing clearly indicates its pricing model, so you can easily find options that fit your budget.
-                </p>
+              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg" itemScope itemType="http://schema.org/Question" itemProp="mainEntity">
+                <h3 className="text-lg font-semibold mb-2 dark:text-white" itemProp="name">Are all the AI tools free?</h3>
+                <div itemScope itemType="http://schema.org/Answer" itemProp="acceptedAnswer">
+                  <p className="text-gray-600 dark:text-gray-300" itemProp="text">
+                    We feature a mix of free, freemium, and premium tools. Each tool listing clearly indicates its pricing model, so you can easily find options that fit your budget.
+                  </p>
+                </div>
               </div>
             </div>
             
@@ -394,12 +422,12 @@ const HomePage = () => {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-16 bg-white dark:bg-gray-800 transition-colors duration-300">
+      <section className="py-16 bg-white dark:bg-gray-800 transition-colors duration-300" itemScope itemType="http://schema.org/Organization">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-8">
-              <h2 className="section-title">Stay Ahead with the Latest AI Tools</h2>
-              <p className="text-gray-600 dark:text-gray-300">
+              <h2 className="section-title" itemProp="name">Stay Ahead with the Latest AI Tools</h2>
+              <p className="text-gray-600 dark:text-gray-300" itemProp="description">
                 Subscribe to receive top AI tool updates, guides, and productivity insights delivered to your inbox.
               </p>
             </div>
@@ -409,10 +437,10 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-primary text-white">
+      <section className="py-16 bg-primary text-white" itemScope itemType="http://schema.org/Organization">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Supercharge Your Productivity?</h2>
-          <p className="text-lg max-w-2xl mx-auto mb-8">
+          <h2 className="text-3xl font-bold mb-4" itemProp="name">Ready to Supercharge Your Productivity?</h2>
+          <p className="text-lg max-w-2xl mx-auto mb-8" itemProp="description">
             Start exploring our collection of top AI productivity tools today and find the perfect solutions for your workflow.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -431,7 +459,7 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

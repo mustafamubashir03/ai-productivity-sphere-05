@@ -12,7 +12,7 @@ import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const TOOLS_PER_PAGE = 12; // Exactly 12 tools per page
+const TOOLS_PER_PAGE = 12; // Exactly 12 tools per page (4 cards per row × 3 rows)
 
 const TrendingToolsPage = () => {
   const isMobile = useIsMobile();
@@ -36,6 +36,8 @@ const TrendingToolsPage = () => {
   // Smooth pagination handler that prevents scrolling
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
+    // Prevent default scroll behavior
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
   }, []);
 
   // Process and format tools data when it arrives

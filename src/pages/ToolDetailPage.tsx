@@ -17,6 +17,7 @@ import { toast } from "@/components/ui/sonner";
 import { useTool } from "@/hooks/use-api";
 import ScreenshotCarousel from "@/components/tools/ScreenshotCarousel";
 import RelatedTools from "@/components/tools/RelatedTools";
+import ReactMarkdown from "react-markdown";
 
 const ToolDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -404,14 +405,24 @@ const ToolDetailPage = () => {
                 </div>
               )}
               
-              {/* Key Features */}
+              {/* Key Features with Markdown Rendering */}
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800 dark:text-white">Key Features</h2>
                 <div className="grid grid-cols-1 gap-2 sm:gap-3">
                   {tool.features && tool.features.slice(0, showMoreFeatures ? tool.features.length : 6).map((feature: string, index: number) => (
                     <div key={index} className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                       <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700 dark:text-gray-300 text-xs sm:text-sm break-words">{feature}</span>
+                      <div className="text-gray-700 dark:text-gray-300 text-xs sm:text-sm break-words prose-sm max-w-none">
+                        <ReactMarkdown 
+                          components={{
+                            p: ({ children }) => <span>{children}</span>,
+                            strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                            em: ({ children }) => <em className="italic">{children}</em>
+                          }}
+                        >
+                          {feature}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   ))}
                 </div>

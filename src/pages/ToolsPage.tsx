@@ -23,7 +23,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { blogPosts, getBlogPosts } from "@/data/blog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-const TOOLS_PER_PAGE = 12; // Exactly 12 tools per page
+const TOOLS_PER_PAGE = 12; // Exactly 12 tools per page (4 cards per row × 3 rows)
 
 const ToolsPage = () => {
   const { categorySlug } = useParams();
@@ -185,6 +185,8 @@ const ToolsPage = () => {
   // Smooth pagination handler that prevents scrolling
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
+    // Prevent default scroll behavior
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
   }, []);
   
   // Get unique subcategories, pricing models, and platforms from tools for filters
@@ -518,7 +520,7 @@ const ToolsPage = () => {
           isMobile={isMobile}
         />
         
-        {/* Tools Grid - Fixed to 4 cards per row */}
+        {/* Tools Grid - Fixed to 4 cards per row (12 tools total per page) */}
         <div className="w-full">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">

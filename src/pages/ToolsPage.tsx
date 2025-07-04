@@ -69,7 +69,7 @@ const ToolsPage = () => {
   // Store all fetched tools in state after formatting
   useEffect(() => {
     if (toolsData) {
-      console.log("Tools data:", toolsData);
+      console.log("Tools data:", toolsData.tools.length);
       
       // Check if data follows the new API response format
       if ('tools' in toolsData && Array.isArray(toolsData.tools)) {

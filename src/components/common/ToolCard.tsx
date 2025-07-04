@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -180,7 +179,6 @@ const ToolCard = ({ tool }: ToolCardProps) => {
             {tool.features.slice(0, 2).map((feature, index) => (
               <span key={index} className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full truncate max-w-full">
                 <ReactMarkdown 
-                  className="inline"
                   components={{
                     p: ({ children }) => <span>{children}</span>,
                     strong: ({ children }) => <strong className="font-bold">{children}</strong>

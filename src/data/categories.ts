@@ -71,7 +71,7 @@ export const categories: CategoryWithIcon[] = [
   {
     id: "8",
     name: "E-commerce AI",
-    slug: "e-commerce",
+    slug: "E-commerce",
     icon: "/icons/ecommerce.svg",
     description: "AI tools for personalized shopping, recommendations, and smart inventory.",
     LucideIcon: ShoppingCart

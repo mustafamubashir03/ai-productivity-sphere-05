@@ -10,6 +10,7 @@ import { ArrowRight, Sparkles, Zap, Target, Users } from "lucide-react";
 import Logo from "@/components/common/Logo";
 import EnhancedSEO from "@/components/common/EnhancedSEO";
 import ThemeToggle from "@/components/layout/ThemeToggle";
+import Navbar from "@/components/layout/Navbar";
 
 const LandingPage = () => {
   const fadeInUp = {
@@ -96,18 +97,7 @@ const LandingPage = () => {
                 <span className="text-primary font-bold text-xl dark:text-white">Top AI Tools</span>
               </div>
               
-              <div className="flex items-center gap-3">
-                <ThemeToggle />
-                <Link to="/">
-                  <Button 
-                    className="group relative overflow-hidden"
-                    size="sm"
-                  >
-                    <span className="relative z-10">Explore Tools</span>
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </div>
+              <Navbar/>
             </div>
           </div>
         </motion.header>

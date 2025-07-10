@@ -210,8 +210,8 @@ const ToolDetailPage = () => {
     {
       type: "Product" as const,
       data: {
-        name: tool?.name,
-        description: tool?.description,
+        name: tool?.metaTitle,
+        description: tool?.metaDescription,
         image: tool?.logo || "/favicon.svg",
         brand: {
           "@type": "Brand",
@@ -236,7 +236,7 @@ const ToolDetailPage = () => {
       data: {
         itemReviewed: {
           "@type": "SoftwareApplication",
-          name: tool?.name,
+          name: tool?.metaTitle,
         },
         reviewRating: {
           "@type": "Rating",
@@ -255,8 +255,8 @@ const ToolDetailPage = () => {
   return (
     <>
       <EnhancedSEO 
-        title={`${tool.name} Review - Top AI Tools`}
-        description={tool.description}
+        title={`${tool.metaTitle} Review - Top AI Tools`}
+        description={tool.metaDescription}
         image={tool.logo || "/favicon.svg"}
         canonicalUrl={window.location.href}
         structuredData={structuredData}

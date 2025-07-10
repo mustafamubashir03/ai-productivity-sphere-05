@@ -26,6 +26,8 @@ export interface Tool {
   description: string;
   shortDescription?: string;
   category: string;
+  metaTitle:string;
+  metaDescription:string;
   subcategories?: string[];
   
   // Features and details

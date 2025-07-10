@@ -104,58 +104,6 @@ const FilterSidebar = ({
             )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-              {/* Industries */}
-              {industries.length > 0 && (
-                <div>
-                  <h4 className="font-medium mb-3 text-sm">Industries</h4>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {industries.map(industry => (
-                      <label 
-                        key={industry.id}
-                        className="flex items-center space-x-2 cursor-pointer text-sm hover:text-primary transition-colors"
-                      >
-                        <Checkbox 
-                          id={`industry-${industry.id}`}
-                          checked={industry.slug === activeIndustry}
-                          onCheckedChange={() => {
-                            onSelectIndustry(
-                              industry.slug === activeIndustry ? null : industry.slug
-                            );
-                          }}
-                        />
-                        <span className="text-xs">{industry.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Use Cases */}
-              {useCases.length > 0 && (
-                <div>
-                  <h4 className="font-medium mb-3 text-sm">Use Cases</h4>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {useCases.map(useCase => (
-                      <label 
-                        key={useCase.id}
-                        className="flex items-center space-x-2 cursor-pointer text-sm hover:text-primary transition-colors"
-                      >
-                        <Checkbox 
-                          id={`useCase-${useCase.id}`}
-                          checked={useCase.slug === activeUseCase}
-                          onCheckedChange={() => {
-                            onSelectUseCase(
-                              useCase.slug === activeUseCase ? null : useCase.slug
-                            );
-                          }}
-                        />
-                        <span className="text-xs">{useCase.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
               {/* Subcategories */}
               {subcategories.length > 0 && (
                 <div>

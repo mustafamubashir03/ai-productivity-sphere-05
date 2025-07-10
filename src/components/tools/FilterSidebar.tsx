@@ -8,13 +8,9 @@ import { ChevronDown, ChevronUp, Filter, X } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 type FilterSidebarProps = {
-  onSelectIndustry: (industry: string | null) => void;
-  onSelectUseCase: (useCase: string | null) => void;
   onSelectPricingModel: (pricingModel: string | null) => void;
   onSelectPlatform: (platform: string | null) => void;
   onSelectSubcategory: (subcategory: string | null) => void;
-  activeIndustry: string | null;
-  activeUseCase: string | null;
   activePricingModel: string | null;
   activePlatform: string | null;
   activeSubcategory: string | null;
@@ -25,13 +21,9 @@ type FilterSidebarProps = {
 };
 
 const FilterSidebar = ({
-  onSelectIndustry,
-  onSelectUseCase,
   onSelectPricingModel,
   onSelectPlatform,
   onSelectSubcategory,
-  activeIndustry,
-  activeUseCase,
   activePricingModel,
   activePlatform,
   activeSubcategory,
@@ -44,16 +36,12 @@ const FilterSidebar = ({
   
   // Filter counts
   const activeFilters = [
-    activeIndustry, 
-    activeUseCase, 
     activePricingModel, 
     activePlatform, 
     activeSubcategory
   ].filter(Boolean).length;
   
   const clearAllFilters = () => {
-    onSelectIndustry(null);
-    onSelectUseCase(null);
     onSelectPricingModel(null);
     onSelectPlatform(null);
     onSelectSubcategory(null);

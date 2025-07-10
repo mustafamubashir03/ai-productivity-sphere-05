@@ -34,8 +34,6 @@ const ToolsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(categorySlug || null);
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
-  const [activeIndustry, setActiveIndustry] = useState<string | null>(null);
-  const [activeUseCase, setActiveUseCase] = useState<string | null>(null);
   const [activePricingModel, setActivePricingModel] = useState<string | null>(null);
   const [activePlatform, setActivePlatform] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,8 +48,6 @@ const ToolsPage = () => {
   const apiParams = useMemo(() => {
     const params: Record<string, string> = {};
     if (activeCategory) params.category = activeCategory;
-    if (activeIndustry) params.industry = activeIndustry;
-    if (activeUseCase) params.useCase = activeUseCase;
     if (activePricingModel) params.pricingModel = activePricingModel;
     if (activePlatform) params.platform = activePlatform;
     if (searchQuery) params.search = searchQuery;
@@ -61,7 +57,7 @@ const ToolsPage = () => {
     params.limit = String(TOOLS_PER_PAGE);
     
     return params;
-  }, [activeCategory, activeIndustry, activeUseCase, activePricingModel, activePlatform, searchQuery, currentPage]);
+  }, [activeCategory, activePricingModel, activePlatform, searchQuery, currentPage]);
   
   // Fetch tools based on filters
   const { data: toolsData, isLoading: loading, error } = useTools(apiParams);
@@ -155,16 +151,6 @@ const ToolsPage = () => {
     // Update the URL
     const path = categorySlug ? `/tools/category/${categorySlug}` : '/tools';
     navigate(path, { replace: true });
-  };
-  
-  const handleIndustryChange = (industrySlug: string | null) => {
-    setActiveIndustry(industrySlug);
-    setCurrentPage(1); // Reset pagination when industry changes
-  };
-  
-  const handleUseCaseChange = (useCaseSlug: string | null) => {
-    setActiveUseCase(useCaseSlug);
-    setCurrentPage(1); // Reset pagination when use case changes
   };
 
   const handlePricingModelChange = (pricingModel: string | null) => {
@@ -361,15 +347,13 @@ const ToolsPage = () => {
     const filterPreferences = {
       category: activeCategory,
       subcategory: activeSubcategory,
-      industry: activeIndustry,
-      useCase: activeUseCase,
       pricingModel: activePricingModel,
       platform: activePlatform,
       page: currentPage
     };
     
     localStorage.setItem('filterPreferences', JSON.stringify(filterPreferences));
-  }, [activeCategory, activeSubcategory, activeIndustry, activeUseCase, activePricingModel, activePlatform, currentPage]);
+  }, [activeCategory, activeSubcategory, activePricingModel, activePlatform, currentPage]);
 
   // Load filter preferences from localStorage on initial load
   useEffect(() => {
@@ -384,8 +368,6 @@ const ToolsPage = () => {
           // Apply saved filters
           if (preferences.category) setActiveCategory(preferences.category);
           if (preferences.subcategory) setActiveSubcategory(preferences.subcategory);
-          if (preferences.industry) setActiveIndustry(preferences.industry);
-          if (preferences.useCase) setActiveUseCase(preferences.useCase);
           if (preferences.pricingModel) setActivePricingModel(preferences.pricingModel);
           if (preferences.platform) setActivePlatform(preferences.platform);
           if (preferences.page > 1) setCurrentPage(preferences.page);
@@ -504,13 +486,9 @@ const ToolsPage = () => {
         
         {/* Filters - Horizontal collapsible */}
         <FilterSidebar
-          onSelectIndustry={handleIndustryChange}
-          onSelectUseCase={handleUseCaseChange}
           onSelectPricingModel={handlePricingModelChange}
           onSelectPlatform={handlePlatformChange}
           onSelectSubcategory={handleSubcategoryChange}
-          activeIndustry={activeIndustry}
-          activeUseCase={activeUseCase}
           activePricingModel={activePricingModel}
           activePlatform={activePlatform}
           activeSubcategory={activeSubcategory}

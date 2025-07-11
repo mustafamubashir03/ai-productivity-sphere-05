@@ -265,7 +265,7 @@ const BlogPage = () => {
           />
         </div>
         
-        <div className="max-w-3xl mx-auto"> {/* Centered container */}
+        <div className="max-w-5xl mx-auto"> {/* Centered container */}
           <div className="grid grid-cols-1 gap-8">
             {isLoading ? (
               // Show skeletons while loading
@@ -283,7 +283,7 @@ const BlogPage = () => {
                     <img 
                       src={getImageUrl(post.coverImage || post.image || '')} 
                       alt={`Cover image for article: ${post.title}`} 
-                      className="w-auto h-auto object-cover"
+                      className="w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = "/placeholder.svg";

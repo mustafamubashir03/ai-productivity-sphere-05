@@ -292,7 +292,7 @@ const BlogPostPage = () => {
           <img
             src={getImageUrl(post.coverImage || post.image || '')}
             alt={`Featured image for article: ${post.title}`}
-            className="w-[100%] max-w-[958px]  h-auto  object-cover rounded-lg shadow-md"
+            className="w-[100%] max-w-[958px] mx-auto  h-auto  object-cover rounded-lg shadow-md"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = "/placeholder.svg";

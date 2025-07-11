@@ -279,11 +279,11 @@ const BlogPage = () => {
                   key={post._id}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row"
                 >
-                  <div className="md:w-2/5 lg:w-1/3 flex-shrink-0">
+                  <div className="w-[100%] mx-auto">
                     <img 
                       src={getImageUrl(post.coverImage || post.image || '')} 
                       alt={`Cover image for article: ${post.title}`} 
-                      className="w-full h-48 md:h-full object-cover"
+                      className="w-auto h-auto object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = "/placeholder.svg";
